@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head
+	　prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
+<meta property="og:title" content="ひよんとふ - ひよこどどんとふクライアント" />
+<meta property="og:type" content="website" />
+<meta property="og:url"
+	content="http://sy17.sakura.ne.jp/shunshun/tofChatProto.html" />
+<meta property="og:image"
+	content="http://shunshun94.web.fc2.com/material/hiyontof.png" />
+<meta property="og:site_name" content="ひよこどどんとふクライアント" />
+<meta property="og:description"
+	content="スマートフォンでどどんとふを利用できるウェブページです。iPhone / Android 両対応。" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@Shunshun94" />
+
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- 以下 配布テンプレート固有 
+  // TODO
+  // 二重に jQuery 読み込みはさすがにやめたい
+  // script 要素は最後に回せませんか
+-->
+<link rel="stylesheet"href="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.css" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+<script src="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.js"></script>
+<!-- 以上 配布テンプレート固有 -->
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/tofStyle.css" />
+<title>ひよこどどんとふクライアント</title>
+</head>
+
+<body>
+	<div id="tofChat" data-role="page" data-theme="f">
+
+		<div data-role="header" data-theme="f">
+			<h1 id="tofChat-Title"></h1>
+		</div>
+		<div data-role="content">
+			<div id="tofChat-work">
+				<div id="tofChat-chat" class="tofChat-tabContent">
+					<div id="tofChat-cm"></div>
+					<div id="tofChat-log"></div>
+					<div id="tofChat-jump">
+						<p>▼</p>
+					</div>
+					<p>
+						Status: <span id="tofChat-connection-status"></span>
+					</p>
+					<input type="button" id="tofChat-input-get" value="更新" />
+					<div id="tofChat-inputArea">
+						<div id="tofChat-input">
+							<div class="tofChat-input-half">
+								色<input
+									class="jscolor {closable:true,closeText:'閉じる',onFineChange:'com.hiyoko.tofclient.Chat.Util.colorChange(this)'}"
+									type="text" placeholder="文字色" id="tofChat-input-color"
+									value="000000" size="5" maxlength="7" />
+							</div>
+							<div class="tofChat-input-half">
+								名前<input type="text" placeholder="名前" id="tofChat-input-name" />
+							</div>
+							<textarea rows="7" placeholder="発言内容を入力" id="tofChat-input-msg"></textarea>
+							<br />
+
+							<div class="tofChat-input-half">
+								<input type="button" id="tofChat-input-initByparentheses"
+									value="「」入力" />
+							</div>
+							<div class="tofChat-input-half">
+								<select id="tofChat-input-tablist"><option value="0"
+										label="メイン">メイン</option></select>
+							</div>
+							<div>
+								<div class="tofChat-input-short">
+									<div class="tofChat-button-heavy"
+										id="tofChat-input-sendCallRoll">点呼</div>
+								</div>
+								<div class="tofChat-input-short">
+									<div class="tofChat-button-heavy"
+										id="tofChat-input-sendQuestion">投票</div>
+								</div>
+								<div class="tofChat-input-short">
+									<div class="tofChat-button-heavy" id="tofChat-input-send">送信</div>
+								</div>
+							</div>
+							<div class="tofChat-input-short">
+								<input type="button" id="tofChat-input-switch" value="履歴" />
+							</div>
+							<div class="tofChat-input-long">
+								<select id="tofChat-input-dicebot"><option
+										value="default" label="デフォルト">部屋指定のダイスボット</option></select>
+							</div>
+						</div>
+						<div id="tofChat-parette">
+							<p id="tofChat-parette-tabs"></p>
+							<select id="tofChat-parette-list"><option>-</option></select>
+							<div class="tofChat-input-half">
+								<input type="button" id="tofChat-parette-action-edit"
+									value="編集して送信" />
+							</div>
+							<div class="tofChat-input-half">
+								<input type="button" id="tofChat-parette-action-send" value="送信" />
+							</div>
+							<div class="tofChat-input-short">
+								<input type="button" id="tofChat-parette-switch" value="通常入力" />
+							</div>
+							<div class="tofChat-input-short">
+								<input type="button" id="tofChat-parette-delete" value="削除" />
+							</div>
+							<div class="tofChat-input-short">
+								<input type="button" id="tofChat-parette-reload" value="更新" />
+							</div>
+						</div>
+					</div>
+
+				</div>
+				<div id="tofChat-map" class="tofChat-tabContent">
+					<div id="tofChat-map-char-switch" class="tofChat-button">キャラ表示切替</div>
+					<div id="tofChat-map-display"></div>
+					<div id="tofChat-map-status"></div>
+					<div id="tofChat-map-reload" class="tofChat-button">更新</div>
+					<br />
+					<div id="tofChat-map-reset" class="tofChat-button-heavy">再読み込み</div>
+				</div>
+				<div id="tofChat-table" class="tofChat-tabContent">
+					<div id="tofChat-table-display"></div>
+					<input id="tofChat-table-reload" type="button" value="読み込み" />
+				</div>
+				<div id="tofChat-memo" class="tofChat-tabContent">
+					<div id="tofChat-memo-display"></div>
+					<input id="tofChat-memo-reload" type="button" value="読み込み" />
+					<textarea rows="7" placeholder="追加するメモの内容"
+						id="tofChat-memo-content"></textarea>
+					<input id="tofChat-memo-append" type="button" value="メモを追加" />
+				</div>
+			</div>
+
+			<div id="tofChat-tabs">
+				<span class="tofChat-tab active" title="tofChat-chat"> チャット</span><span
+					class="tofChat-tab" title="tofChat-map"> マップ</span><span
+					class="tofChat-tab" title="tofChat-table"> 能力表</span><span
+					class="tofChat-tab" title="tofChat-memo"> メモ</span>
+			</div>
+
+
+			<div id="tofChat-init">
+				<p>
+					<label>どどんとふ URL</label><input
+						placeholder="リストから選択もしくはどどんとふの URL を直接入力"
+						list="tofChat-init-url-list" autocomplete="on" type="text"
+						id="tofChat-init-url" />
+				</p>
+				<datalist id="tofChat-init-url-list"></datalist>
+				<p>
+					<label>部屋番号</label><input type="number"
+						list="tofChat-init-room-list" autocomplete="on" min="0"
+						id="tofChat-init-room" />
+				</p>
+				<datalist id="tofChat-init-room-list"></datalist>
+				<p>
+					<label>部屋パスワード</label><input placeholder="不要ならば空欄でOK" type="text"
+						id="tofChat-init-pass" />
+				</p>
+				<p>
+					<label>自動リロード間隔 (秒)</label><input type="number" min="10" value="25"
+						id="tofChat-init-reload" />
+				</p>
+				<p>
+					<span id="tofChat-init-advanced-toggle"
+						class="ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block ui-btn-up-f">追加メニューを表示▼</span>
+				</p>
+				<div id="tofChat-init-advanced">
+					<p id="tofChat-init-time" class="tof-chat-radio-base">
+						<label>タイムスタンプを出す</label><br /> <span><label> <input
+								type="radio" name="time" value="time=" checked="checked" />OFF
+						</label></span> <span><label> <input type="radio" name="time"
+								value="time=true" />ON
+						</label></span>
+					</p>
+				</div>
+				<button id="tofChat-init-jump">入室</button>
+			</div>
+
+		</div>
+
+		<div data-role="footer" data-theme="f">
+			<p>
+				<small id="tofChat-version">ひよこどどんとふクライアント Ver. 20151223</small><br>
+				<small>&copy; <a href="https://twitter.com/Shunshun94">Shunshun94</a>
+				</small><br> <small><a href="http://template-party.com/"
+					target="_blank">Web Design:Template-Party</a></small>
+			</p>
+		</div>
+	</div>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<script src="https://rawgit.com/briangonzalez/jquery.pep.js/master/src/jquery.pep.js"></script>
+	<script src='js/lib/jscolor/jscolor.min.js'></script>
+	<script src="js/src/hiyokoUtilV1.js"></script>
+	<script src="js/src/tofServerList.js"></script>
+	<script src="js/src/tofClient.js"></script>
+	<script src="js/src/tofChat.js"></script>
+	<script src="js/src/tofMap.js"></script>
+	<script src="js/src/tofTable.js"></script>
+	<script src="js/src/tofMemo.js"></script>
+	<script src="js/src/tofApp.js"></script>
+	<script src="js/src/tofInit.js"></script>
+	<script>
+		
+	</script>
+
+</body>
+
+</html>

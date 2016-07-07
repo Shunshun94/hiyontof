@@ -1,0 +1,87 @@
+/* F
+-----------------------------------------------------------------------------------------------------------*/
+
+.ui-bar-f {
+	border: 1px solid 		#355721;
+	background: 			#3f6727;
+	color: 					#ffffff;
+	font-weight: bold;
+	text-shadow: 0 -1px 1px #355721;
+	background-image: -webkit-gradient(linear, left top, left bottom, from( #78c34a), to( #3f6727));
+	background-image: -webkit-linear-gradient(#78c34a, #3f6727);
+	background-image:    -moz-linear-gradient(#78c34a, #3f6727);
+	background-image:     -ms-linear-gradient(#78c34a, #3f6727);
+	background-image:      -o-linear-gradient(#78c34a, #3f6727);
+	background-image:         linear-gradient(#78c34a, #3f6727);
+}
+
+
+
+.ui-btn-up-f {
+	text-decoration: none;
+	border: 1px solid 		#355721;
+	background: 			#3f6727;
+	font-weight: bold;
+	color: 					#fff;
+	text-shadow: 0 -1px 1px #355721;
+	background-image: -webkit-gradient(linear, left top, left bottom, from( #78c34a), to( #3f6727));
+	background-image: -webkit-linear-gradient(#78c34a, #3f6727);
+	background-image:    -moz-linear-gradient(#78c34a, #3f6727);
+	background-image:     -ms-linear-gradient(#78c34a, #3f6727);
+	background-image:      -o-linear-gradient(#78c34a, #3f6727);
+	background-image:         linear-gradient(#78c34a, #3f6727);
+}
+.ui-btn-hover-f,
+.ui-btn-down-f,
+.ui-body-f .ui-btn-active {
+	text-decoration: none;
+	border: 1px solid 		#355721;
+	background: 			#3f6727;
+	font-weight: bold;
+	color: 					#fff;
+	text-shadow: 0 -1px 1px #355721;
+	background-image: -webkit-gradient(linear, left top, left bottom, from( #3f6727), to( #78c34a));
+	background-image: -webkit-linear-gradient(#3f6727, #78c34a);
+	background-image:    -moz-linear-gradient(#3f6727, #78c34a);
+	background-image:     -ms-linear-gradient(#3f6727, #78c34a);
+	background-image:      -o-linear-gradient(#3f6727, #78c34a);
+	background-image:         linear-gradient(#3f6727, #78c34a);
+}
+
+/* 他
+-----------------------------------------------------------------------------------------------------------*/
+#staff .ui-block-a {
+	width: 40%;
+}
+#staff .ui-block-b {
+	width: 60%;
+}
+#new dl, #new dt, #new dd {
+	margin: 0px;
+	padding: 0px;
+}
+#new dt {
+	font-weight: bold;
+}
+#new dd {
+	border-bottom: 1px solid #999;
+}
+h2 {
+	font-size: 1.2em;
+	color: #3f6727;
+}
+h2::before {
+	content: "■";
+}
+.ui-footer {
+	text-align: center;
+}
+.ui-footer a {
+	color: #FFF;
+	font-weight: normal;
+	text-decoration: none;
+}
+.ui-header h1 {
+	margin-left:0 !important;
+	margin-right:0 !important;
+}
