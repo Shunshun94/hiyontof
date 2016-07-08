@@ -9,8 +9,8 @@ HTML/JS で動くスマートフォン向けどどんとふクライアントで
 以下2つのコマンドをリポジトリ内で実行した後、
 main ディレクトリの中身をまとめて任意のディレクトリにデプロイしてください。
 
-$ git submodule init
-$ git submodule update
+``$ git submodule init``   
+``$ git submodule update``
 
 ## 利用しているライブラリ類
 
