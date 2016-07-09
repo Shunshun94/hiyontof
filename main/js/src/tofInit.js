@@ -13,14 +13,18 @@ $("#tofChat-version").text("ひよこどどんとふクライアント Ver. 2016
 	
 	var serverListModule = new com.hiyoko.tofclient.ServerList();
 	var serverList = serverListModule.getList();
-	
-	if (initData.url && com.hiyoko.tofclient.ServerList.RESTRICTION && ! Boolean(serverList[initData.url])) {
-		var alertServerList = '';
-		for(var key in serverList) {
-			alertServerList += '\n＊' + serverList[key];
+	if (com.hiyoko.tofclient.ServerList.RESTRICTION) {
+		$('#tofChat-init-url').attr('placeholder', 'リストからアクセスするどどんとふを選択');
+		if (initData.url && ! Boolean(serverList[initData.url])) {
+			var alertServerList = '';
+			for(var key in serverList) {
+				alertServerList += '\n＊' + serverList[key];
+			}
+			alert('本ひよんとふは以下のサーバにのみアクセスできます。\nそれ以外のどどんとふにはアクセスできません。\n' + alertServerList);
+			initData.url = '';
 		}
-		alert('本ひよんとふは以下のサーバにのみアクセスできます。\nそれ以外のどどんとふにはアクセスできません。\n' + alertServerList);
-		initData.url = '';
+	} else {
+		$("#tofChat-init-url").attr("placeholder", "アクセスするどどんとふの URL を入力");
 	}
 	
 	if(initData.url && initData.room){
@@ -29,7 +33,6 @@ $("#tofChat-version").text("ひよこどどんとふクライアント Ver. 2016
 			serverListModule.appendListToStorage(initData.url);
 		});
 	}else{
-		$("#tofChat-init-url").attr("placeholder", "どどんとふの URL を入力");
 		for(var key in serverList) {
 			$("#tofChat-init-url-list").append(
 					"<option value=\""+key+"\">"+serverList[key]+"</option>"
