@@ -1,15 +1,9 @@
-
-
-$("#tofChat-version").text("ひよこどどんとふクライアント Ver. 20160702");
-
 (function(){
 	var initData = {
 			url: getParam("url", false),
 			room: getParam("room", false),
 			pass: getParam("pass",false),
 	};
-	
-	$('div[data-role=footer]>p').append('<br/><small><a href="http://shunshun94.web.fc2.com/material/hiyontof-libs.html">Libraries List</a></small>');
 	
 	var serverListModule = new com.hiyoko.tofclient.ServerList();
 	var serverList = serverListModule.getList();
