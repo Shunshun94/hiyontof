@@ -7,7 +7,7 @@ com.hiyoko = com.hiyoko || {};
 com.hiyoko.tofclient = com.hiyoko.tofclient || {};
 
 com.hiyoko.tofclient.ServerList = function() {
-  this.list = this.loadListFromStorage();
+  this.list = com.hiyoko.tofclient.ServerList.RESTRICTION ? {} : this.loadListFromStorage();
   var defaultList = com.hiyoko.tofclient.ServerList.SERVER_LIST;
   for(var key in defaultList){
 	  this.list[key] = defaultList[key];
@@ -40,4 +40,4 @@ com.hiyoko.tofclient.ServerList.prototype.appendListToStorage = function(url, op
 
 // See hiyontof.conf.js
 com.hiyoko.tofclient.ServerList.SERVER_LIST = {};
-
+com.hiyoko.tofclient.ServerList.RESTRICTION = false;

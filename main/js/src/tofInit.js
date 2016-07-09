@@ -11,19 +11,28 @@ $("#tofChat-version").text("ひよこどどんとふクライアント Ver. 2016
 	
 	$('div[data-role=footer]>p').append('<br/><small><a href="http://shunshun94.web.fc2.com/material/hiyontof-libs.html">Libraries List</a></small>');
 	
-	var serverList = new com.hiyoko.tofclient.ServerList();
-
+	var serverListModule = new com.hiyoko.tofclient.ServerList();
+	var serverList = serverListModule.getList();
+	
+	if (initData.url && com.hiyoko.tofclient.ServerList.RESTRICTION && ! Boolean(serverList[initData.url])) {
+		var alertServerList = '';
+		for(var key in serverList) {
+			alertServerList += '\n＊' + serverList[key];
+		}
+		alert('本ひよんとふは以下のサーバにのみアクセスできます。\nそれ以外のどどんとふにはアクセスできません。\n' + alertServerList);
+		initData.url = '';
+	}
+	
 	if(initData.url && initData.room){
 		var myTofRoom = new com.hiyoko.tof.room(initData.url, initData.room, initData.pass, function(tof){
 			new com.hiyoko.tofclient.App(tof);
-			serverList.appendListToStorage(initData.url);
+			serverListModule.appendListToStorage(initData.url);
 		});
 	}else{
-		var list = serverList.getList();
 		$("#tofChat-init-url").attr("placeholder", "どどんとふの URL を入力");
-		for(var key in list){
+		for(var key in serverList) {
 			$("#tofChat-init-url-list").append(
-					"<option value=\""+key+"\">"+list[key]+"</option>"
+					"<option value=\""+key+"\">"+serverList[key]+"</option>"
 			);
 		}
 		$("#tofChat-init").show();
