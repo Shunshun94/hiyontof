@@ -1,168 +1,168 @@
-# �Ђ��Ƃӂ��ǂ�ȕ��ɓ����Ă���̂�
+# ひよんとふがどんな風に動いているのか
 
-�Ђ��Ƃӂ��ǂ�ȕ��ɓ����Ă���̂����ȒP�ɐ������Ă��܂��B
+ひよんとふがどんな風に動いているのかを簡単に説明しています。
 
-## .js �t�@�C���̈ꗗ�Ɖ��
+## .js ファイルの一覧と解説
 
-�Ђ��Ƃӂɂ� JavaScript �t�@�C�����傫�������ĎO��ގg���Ă��܂��B
+ひよんとふには JavaScript ファイルが大きく分けて三種類使われています。
 
-- ``main/js/src/`` �ȉ��ɔz�u���ꂽ�A�v���P�[�V�����̂��߂ɏ����ꂽ JavaScript �t�@�C��
-- �ݒ�t�@�C�� ``main/hiyontof.conf.js``
-- ``main/js/lib/`` �ȉ��ɔz�u���ꂽ�A�v���P�[�V���������p���Ă��郉�C�u����
+- ``main/js/src/`` 以下に配置されたアプリケーションのために書かれた JavaScript ファイル
+- 設定ファイル ``main/hiyontof.conf.js``
+- ``main/js/lib/`` 以下に配置されたアプリケーションが利用しているライブラリ
 
-�����ł̓A�v���P�[�V�����̂��߂ɏ����ꂽ JavaScript �t�@�C���� ``hiyontof.conf.js`` �ɂ��Đ������܂��B
+ここではアプリケーションのために書かれた JavaScript ファイルと ``hiyontof.conf.js`` について説明します。
 
 ### hiyokoUtilV1.js
 
- ���[�e�B���e�B�t�@�C���ł��B
-�ŐV�� JavaScript �ł͂��ǂ����������\�ł���A�s�K�v�ȏꍇ������܂����A
-�ꕔ�̃u���E�U�ւ̑Ή��ⓖ�����������̎��̔F���s���Ȃǂɂ���Ďg���Ă�����̂�����܂��B
+ ユーティリティファイルです。
+最新の JavaScript ではより良い書き方が可能であり、不必要な場合もありますが、
+一部のブラウザへの対応や当初書いた時の私の認識不足などによって使われているものがあります。
 
 ### tofClient.js
 
-�ǂǂ�ƂӂɃA�N�Z�X���邽�߂̃t�@�C���ł��B
-���̃t�@�C���ɏ�����Ă���N���X�Ɗ֐��������Ăǂǂ�Ƃӂ̏����擾������A�ǂǂ�Ƃӂɏ��𑗂����肵�Ă��܂��B
+どどんとふにアクセスするためのファイルです。
+このファイルに書かれているクラスと関数をつかってどどんとふの情報を取得したり、どどんとふに情報を送ったりしています。
 
 ### tofServerList.js
 
-���O�C�����ɕ\�������T�[�o�ꗗ���������߂̃t�@�C���ł��B
-�ݒ�t�@�C���ŗp�ӂ��ꂽ�T�[�o�y�сA���[�U���e�X���͂����T�[�o���Ǘ����܂��B
-���[�U����x���͂��A���p�����ǂǂ�ƂӃT�[�o�̓u���E�U�̃��[�J���X�g���[�W�Ɋi�[����A
-����ȍ~�̃A�N�Z�X�ł͈ꗗ�ɕ\�������悤�ɂȂ�܂��B
+ログイン時に表示されるサーバ一覧を扱うためのファイルです。
+設定ファイルで用意されたサーバ及び、ユーザが各々入力したサーバを管理します。
+ユーザが一度入力し、利用したどどんとふサーバはブラウザのローカルストレージに格納され、
+次回以降のアクセスでは一覧に表示されるようになります。
 
 ### tofInit.js
 
-�A�v���P�[�V�����̃G���g���[�|�C���g�ƂȂ�t�@�C���ł��B
-�K�v�ȏ�񂪂��ׂē��͂���Ă��邩���m�F���A
-���͂���Ă���� tofApp.js �̓��e�����s�A
-���͂���Ă��Ȃ���΃��[�U�ɓ��͂𑣂���ʂ�\�����܂��B
+アプリケーションのエントリーポイントとなるファイルです。
+必要な情報がすべて入力されているかを確認し、
+入力されていれば ``tofApp.js`` の内容を実行、
+入力されていなければユーザに入力を促す画面を表示します。
 
 ### tofApp.js
 
-�ǂǂ�Ƃӂ𗘗p���邽�߂̊e�N���X���N�����邽�߂̃t�@�C���ł��B��������e�@�\���Ăяo����܂��B
-tofClient.js �����ǂǂ�Ƃӂ̊e�����փA�N�Z�X���邽�߂̃N���X���e�@�\�ɑ}�����Ă��܂��B
+どどんとふを利用するための各クラスを起動するためのファイルです。ここから各機能が呼び出されます。
+``tofClient.js`` 内に書かれたどどんとふの各部屋へアクセスするためのクラスを各機能に挿入しています。
 
 ### tofChat.js
 
-�ǂǂ�Ƃӂ̃`���b�g�ɃA�N�Z�X���邽�߂̃t�@�C���ł��B
-�ȉ��ɕ�����Ă��܂��B
+どどんとふのチャットにアクセスするためのファイルです。
+以下に分かれています。
 
-- com.hiyoko.tofclient.Chat: tofChat �Ɋ܂܂��N���X�S�̂��Ǘ�����N���X�ł�
-  - com.hiyoko.tofclient.Chat.Display: �ǂǂ�Ƃӂ̃��O��\�����邽�߂̃N���X�ł�
-  - com.hiyoko.tofclient.Chat.Status: �ǂǂ�ƂӂƂ̒ʐM�󋵂�\�����邽�߂̃N���X�ł�
-  - com.hiyoko.tofclient.Chat.InputArea: ���M����`���b�g���b�Z�[�W���󂯕t���邽�߂̃N���X�ł�
-    - com.hiyoko.tofclient.Chat.InputArea.Input: �W���I�ȃ`���b�g���b�Z�[�W�𑗂邽�߂̃N���X�ł�
-    - com.hiyoko.tofclient.Chat.InputArea.Parette: �ߋ��̓��͗����𗘗p���ă`���b�g���b�Z�[�W�𑗂邽�߂̃N���X�ł�
-  - com.hiyoko.tofclient.Chat.SubMenu: ��ʍ���ɕ\�������T�u���j���[�������N���X�ł�
+- ``com.hiyoko.tofclient.Chat: tofChat`` に含まれるクラス全体を管理するクラスです
+  - ``com.hiyoko.tofclient.Chat.Display`` : どどんとふのログを表示するためのクラスです
+  - ``com.hiyoko.tofclient.Chat.Status``: どどんとふとの通信状況を表示するためのクラスです
+  - ``com.hiyoko.tofclient.Chat.InputArea`` : 送信するチャットメッセージを受け付けるためのクラスです
+    - ``com.hiyoko.tofclient.Chat.InputArea.Input`` : 標準的なチャットメッセージを送るためのクラスです
+    - ``com.hiyoko.tofclient.Chat.InputArea.Parette`` : 過去の入力履歴を利用してチャットメッセージを送るためのクラスです
+  - ``com.hiyoko.tofclient.Chat.SubMenu`` : 画面左上に表示されるサブメニューを扱うクラスです
 
-�����Ƃ��āA InputArea �ȉ��̃N���X�� SubMenu ����C�x���g���󂯎��A
-Chat ������ɉ������������s���A�Ƃ���������s���܂��B
+原則として、`` InputArea`` 以下のクラスや ``SubMenu`` からイベントを受け取り、
+``Chat`` がそれに応じた動きを行う、という動作を行います。
 
 ### tofMap.js
 
-�ǂǂ�Ƃӂ� Map �������N���X�ł��B
-jquery.pep.js ���g���A�R�}�̈ړ����T�|�[�g���Ă��܂��B
+どどんとふの Map を扱うクラスです。
+``jquery.pep.js`` を使い、コマの移動をサポートしています。
 
-�w�ǂ̎d���� com.hiyoko.tofclient.Map.MapWriter ���s���Ă��܂��B
+殆どの仕事は ``com.hiyoko.tofclient.Map.MapWriter`` が行っています。
 
-�L�����N�^�[�𓮂����ƃL�����N�^�[����ړ��C�x���g��������A
-com.hiyoko.tofclient.Map ��������L���b�`���Ăǂǂ�Ƃӂɔ��f����A�Ƃ������@�ŃR�}�̔z�u�������Ă��܂��B
+キャラクターを動かすとキャラクターから移動イベントが発され、
+``com.hiyoko.tofclient.Map`` がそれをキャッチしてどどんとふに反映する、という方法でコマの配置を扱っています。
 
 
 ### tofTable.js
 
-�ǂǂ�Ƃӂ̃C�j�V�A�e�B�u�\�������N���X�ł��B
-���\�̎Q�Ƃ݂̂Ȃ炸�A�X�V���ł���悤�ɂȂ��Ă��܂��B
+どどんとふのイニシアティブ表を扱うクラスです。
+同表の参照のみならず、更新もできるようになっています。
 
-�܂��A�L�����N�^�[�̒ǉ��������ōs���Ă��܂��B
+また、キャラクターの追加もここで行っています。
 
 ### tofMemo.js
 
-���L�����̕\���ƍX�V���s�����߂̃N���X�ł��B
-�e�������C�x���g�𔭂��A com.hiyoko.tofclient.Memo ���ǂǂ�Ƃӂւ̔ɉh���s���Ă��܂��B
+共有メモの表示と更新を行うためのクラスです。
+各メモがイベントを発し、`` com.hiyoko.tofclient.Memo`` がどどんとふへの繁栄を行っています。
 
-## �ݒ�t�@�C��
+## 設定ファイル
 
-��q�̒ʂ�A ``main/hiyontof.conf.js`` ���ݒ�t�@�C���ł��B
-���ݑ��݂���ݒ荀�ڂ͈ȉ��̂��̂ł��B
+先述の通り、 ``main/hiyontof.conf.js`` が設定ファイルです。
+現在存在する設定項目は以下のものです。
 
 ### com.hiyoko.tofclient.ServerList.SERVER_LIST
 
-�Ђ��Ƃӂ��J�����Ƃ��A���R�����h�����ǂǂ�ƂӃT�[�o�̈ꗗ�ł��B
-URL �� KEY �Ƃ��A�T�[�o���� VALUE �Ƃ��� json �̌`���ɂȂ��Ă��܂��B
+ひよんとふを開いたとき、レコメンドされるどどんとふサーバの一覧です。
+URL を KEY とし、サーバ名を VALUE とする json の形式になっています。
 
-�����ɂ悭�g����T�[�o��o�^���Ă����΁A���͂̎�Ԃ��Ȃ��y�ɂȂ邩������܂���B
+ここによく使われるサーバを登録しておけば、入力の手間が省け楽になるかもしれません。
 
 ### com.hiyoko.tofclient.ServerList.RESTRICTION
 
-``com.hiyoko.tofclient.ServerList.SERVER_LIST`` �ɓo�^����Ă���T�[�o�ȊO�ւ�
-�A�N�Z�X��F�߂邩�F�߂Ȃ�����ݒ肵�܂��B
-``false`` �ł���΁A�o�^����Ă���T�[�o�ȊO�ɂ��A�N�Z�X�ł���悤�ɂȂ�܂��B
-``true`` �ɂ��Ă����΁A�o�^����Ă���T�[�o�ȊO�ɂ̓A�N�Z�X�ł��Ȃ��Ȃ�܂��B
+``com.hiyoko.tofclient.ServerList.SERVER_LIST`` に登録されているサーバ以外への
+アクセスを認めるか認めないかを設定します。
+``false`` であれば、登録されているサーバ以外にもアクセスできるようになります。
+``true`` にしておけば、登録されているサーバ以外にはアクセスできなくなります。
 
-���I�p�̂Ђ��ƂӂƂ��Đݒu�������̂ł���΁A ``true`` �ɂ������
-``com.hiyoko.tofclient.ServerList.SERVER_LIST`` �Ɏ��I������o�^���Ă����΂悢�ł��傤�B
+自鯖用のひよんとふとして設置したいのであれば、 ``true`` にした上で
+``com.hiyoko.tofclient.ServerList.SERVER_LIST`` に自鯖だけを登録しておけばよいでしょう。
 
-## �Ђ��Ƃӂ� URL
+## ひよんとふの URL
 
-�Ђ��Ƃӂ� URL �� Query �����𗘗p���ă��[�U�̓��͂����ݒ荀�ڂ�ǂݎ���Ă��܂��B
+ひよんとふは URL の Query 部分を利用してユーザの入力した設定項目を読み取っています。
 
-�t�Ɍ����΁A�������ݒ肳�ꂽ URL �����L����΁A���l�ɂЂ��Ƃӂ𑦍��Ɏg�킹�邱�Ƃ��\�ł��B
+逆に言えば、正しく設定された URL を共有すれば、他人にひよんとふを即座に使わせることも可能です。
 
-�ݒ荀�ڂ����m�F���Ă����܂��傤�B
+設定項目を一つ一つ確認していきましょう。
 
-### url (�K�{)
+### url (必須)
 
-�ǂǂ�Ƃӂ� URL �ł��B�Ⴆ�� ``https://www.taruki.com/DodontoF_srv1/DodontoF.swf`` �ł��B
-������x���͂ɑ΂��ď_��ɑΉ��ł���悤�ɂ��Ă͂��܂����A���E������̂� ``DodontoF.swf`` �ŏI�����̂𗘗p���邱�Ƃ������߂��܂��B
+どどんとふの URL です。例えば ``https://www.taruki.com/DodontoF_srv1/DodontoF.swf`` です。
+ある程度入力に対して柔軟に対応できるようにしてはいますが、限界があるので ``DodontoF.swf`` で終わるものを利用することをお勧めします。
 
-### room (�K�{)
+### room (必須)
 
-�ǂǂ�Ƃӂ̕����ԍ��ł��B
+どどんとふの部屋番号です。
 
 ### pass
 
-�ǂǂ�Ƃӂ̕����ɓ��邽�߂̃p�X���[�h�ł��B
+どどんとふの部屋に入るためのパスワードです。
 
 ### reload
 
-�`���b�g�y�уC�j�V�A�e�B�u�\�̍X�V�p�x���~���b�ŋL�q���܂��B
-10,000 (=10�b) �ȏ�łȂ���Ζ����ƂȂ�܂��B
+チャット及びイニシアティブ表の更新頻度をミリ秒で記述します。
+10,000 (=10秒) 以上でなければ無効となります。
 
 ### time
 
-�^�C���X�^���v���`���b�g�ɕ\�����邩�ۂ���ݒ肵�܂��B
+タイムスタンプをチャットに表示するか否かを設定します。
 
-## ���̑��̎g����
+## その他の使い方
 
-### �ǂǂ�Ƃӂ��w�肵�ē�����ʂ�\��
+### どどんとふを指定して入室画面を表示
 
-�Ђ��Ƃӂ� URL �� ``room`` ���w�肹���A ``url`` �������w�肵�ĂЂ��ƂӂɃA�N�Z�X�����ꍇ�A
-�ŏ�����ǂǂ�Ƃӂ� URL ���Ɏw�肵�� URL ���L�q���ꂽ��ԂłЂ��Ƃӂ̓�����ʂ��\������܂��B
+ひよんとふの URL に ``room`` を指定せず、 ``url`` だけを指定してひよんとふにアクセスした場合、
+最初からどどんとふの URL 欄に指定した URL が記述された状態でひよんとふの入室画面が表示されます。
 
-�Ⴆ�΁A�Ђ��Ƃӂ̐ݒu�A�h���X��   
-``http://shunshun94.web.fc2.com/tofChatProto.html`` �ł����   
-``http://shunshun94.web.fc2.com/tofChatProto.html?url=https://www.taruki.com/DodontoF_srv1/DodontoF.swf`` �փ��[�U��U�����Ă݂Ă��������B
+例えば、ひよんとふの設置アドレスが   
+``http://shunshun94.web.fc2.com/tofChatProto.html`` であれば   
+``http://shunshun94.web.fc2.com/tofChatProto.html?url=https://www.taruki.com/DodontoF_srv1/DodontoF.swf`` へユーザを誘導してみてください。
 
-���I�p�Ƃ��ă��[�U�Ɏg�킹�������ɂ͕֗��ł��B
+自鯖用としてユーザに使わせたい時には便利です。
 
-### ���w�\�ȏꍇ
+### 見学可能な場合
 
-���w�\�ȕ����ɓ�������ꍇ�A
-�p�X���[�h���v������Ă����Ƃ��Ă��Ђ��Ƃӂœ����ł��܂��B
+見学可能な部屋に入室する場合、
+パスワードが要求されていたとしてもひよんとふで入室できます。
 
-���̏ꍇ�A�ꌩ�A�C�ӂ̃`���b�g�^�u�Ŕ������\�Ɍ����܂����A
-���ۂɂ͌��w�^�u�ɂ��������ł��Ȃ��悤�ɂȂ��Ă��܂��B
+その場合、一見、任意のチャットタブで発言が可能に見えますが、
+実際には見学タブにしか発言できないようになっています。
 
-���̂�����̋@�\�͋ߓ����ɏC�����A�킩��₷�����邱�Ƃ��l���Ă��܂��B
+このあたりの機能は近日中に修正し、わかりやすくすることを考えています。
 
-### �ނ���͂Ђ��Ƃӂł͖���
+### むせるはひよんとふでは無理
 
-�ǂǂ�ƂӃT�[�o��1�Ƃ��Ēm���Ă��� [�ǂǂ�Ƃӂނ���](https://ddntf.museru.com/) �ł����A
-�Ђ��Ƃӂł̓A�N�Z�X�ł��܂���B
+どどんとふサーバの1つとして知られている [どどんとふむせる](https://ddntf.museru.com/) ですが、
+ひよんとふではアクセスできません。
 
-�Ђ��Ƃӂ͂ǂǂ�Ƃӂ����@�\��1�ł��� WEBIF �𗘗p���č���Ă��܂��B
-�������A�ǂǂ�Ƃӂނ���� WEBIF ���g���Ȃ��悤�ɐݒ肳��Ă��邽�߂ł��B
+ひよんとふはどどんとふが持つ機能の1つである WEBIF を利用して作られています。
+しかし、どどんとふむせるは WEBIF が使えないように設定されているためです。
 
-�܂��A���ɂ� WEBIF ���g���Ȃ��ǂǂ�Ƃӂ�����΁A���̂ǂǂ�Ƃӂɂ��Ђ��Ƃӂł͐ڑ����ł��܂���B
+また、他にも WEBIF が使えないどどんとふがあれば、そのどどんとふにもひよんとふでは接続ができません。
 
