@@ -1,7 +1,5 @@
 # hiyontof
 
-HTML/JavaScript based DodontoF client for smart devices.
-
 HTML/JS で動くスマートフォン向けどどんとふクライアントです。
 
 ## 設置手順
@@ -11,6 +9,18 @@ main ディレクトリの中身をまとめて任意のディレクトリにデ
 
 ``$ git submodule init``   
 ``$ git submodule update``
+
+その後、ユーザを hiyontof.html にアクセスするように誘導してください。
+
+### 何故 git submodule を実行しないといけないの?
+
+jscolor というライブラリをダウンロードしてくるためのコマンドです。
+``main/js/lib/jscolor`` 以下に ``jscolor.min.js`` を手動で設置していただいてもかまいません。
+
+### 他のライブラリはどうするの?
+
+各ライブラリがホストしている CDN 等からアクセスしています。
+``git submodule`` で配置しているものは、その URL が公式に示されていないためにこのようにしています。
 
 ## 利用しているライブラリ類
 
