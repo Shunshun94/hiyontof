@@ -6,21 +6,32 @@
 	};
 	
 	var serverListModule = new com.hiyoko.tofclient.ServerList();
-	var serverList = serverListModule.getList();
+	var serverList = serverListModule.getList(startsWith(document.location.protocol, 'https') ? 'https' : '');
+
+	var alertServerList = '';
+	var singleServerCandidate = {count:0, url: ''};
+	for(var key in serverList) {
+		singleServerCandidate.count++;
+		singleServerCandidate.url = key;
+		alertServerList += '\n＊' + serverList[key];
+	}
 	if (com.hiyoko.tofclient.ServerList.RESTRICTION) {
 		$('#tofChat-init-url').attr('placeholder', 'リストからアクセスするどどんとふを選択');
 		if (initData.url && ! Boolean(serverList[initData.url])) {
-			var alertServerList = '';
-			for(var key in serverList) {
-				alertServerList += '\n＊' + serverList[key];
-			}
 			alert('本ひよんとふは以下のサーバにのみアクセスできます。\nそれ以外のどどんとふにはアクセスできません。\n' + alertServerList);
 			initData.url = '';
 		}
+		if(singleServerCandidate.count === 1) {
+			$("#tofChat-init-url").val(singleServerCandidate.url);
+		}
 	} else {
-		$("#tofChat-init-url").attr("placeholder", "アクセスするどどんとふの URL を入力");
+		if (startsWith(document.location.protocol, 'https')) {
+			$("#tofChat-init-url").attr("placeholder", "[https://～ のみ可] アクセスするどどんとふの URL を入力");
+		} else {
+			$("#tofChat-init-url").attr("placeholder", "アクセスするどどんとふの URL を入力");
+		}
 	}
-	
+
 	if(initData.url && initData.room){
 		var myTofRoom = new com.hiyoko.tof.room(initData.url, initData.room, initData.pass, function(tof){
 			new com.hiyoko.tofclient.App(tof);

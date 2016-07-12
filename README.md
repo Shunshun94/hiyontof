@@ -9,11 +9,16 @@ HTML/JS で動くスマートフォン向けどどんとふクライアントで
 
 ## 設置手順
 
-以下2つのコマンドをリポジトリ内で実行し、
+まずは、任意のディレクトリで以下を実行。
+
+``$ git clone https://github.com/Shunshun94/hiyontof.git``
+
+以下3つのコマンドをリポジトリ内で実行し、
 ``main/hiyontof.conf.js`` を編集した上で
 main ディレクトリの中身をまとめて任意のディレクトリにデプロイしてください。
 
-``$ git submodule init``   
+``$ cd hiyontof``
+``$ git submodule init``
 ``$ git submodule update``
 
 その後、ユーザを hiyontof.html にアクセスするように誘導してください。
@@ -27,6 +32,26 @@ jscolor というライブラリをダウンロードしてくるためのコマ
 
 各ライブラリがホストしている CDN 等からアクセスしています。
 ``git submodule`` で配置しているものは、その URL が公式に示されていないためにこのようにしています。
+
+### 既に設置済みでバージョンアップするにはどうすればいいの?
+
+``$ git pull``
+
+### git コマンドが使えないと導入できないの?
+
+以下の URL から最新版のソースコードをダウンロードできます。
+
+https://github.com/Shunshun94/hiyontof/archive/master.zip
+
+後は、 ``jscolor.min.js`` を ``main/js/lib/jscolor`` 以下にダウンロードしてきて配置するだけ。
+
+更新の際は単純に上書きしましょう。
+
+### ガイド
+
+[簡単 ひよんとふ設置マニュアル | こかげ工房](https://cokage.works/trpg/make-hiyontof/) にさくらのレンタルサーバにおける設置方法が紹介されています。
+謝謝！
+
 
 ## 利用しているライブラリ類
 
