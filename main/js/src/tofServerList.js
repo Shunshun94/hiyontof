@@ -14,8 +14,18 @@ com.hiyoko.tofclient.ServerList = function() {
   }
 };
 
-com.hiyoko.tofclient.ServerList.prototype.getList = function(){
-	return this.list;
+com.hiyoko.tofclient.ServerList.prototype.getList = function(opt_bind_protocol){
+	if(opt_bind_protocol) {
+		var filteredList = {};
+		for(var key in this.list) {
+			if(startsWith(key, opt_bind_protocol)) {
+				filteredList[key] = this.list[key];
+			}
+		}
+		return filteredList;
+	} else {
+		return this.list;
+	}
 };
 
 com.hiyoko.tofclient.ServerList.prototype.loadListFromStorage = function(){
