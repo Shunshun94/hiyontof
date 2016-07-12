@@ -18,7 +18,7 @@ HTML/JS で動くスマートフォン向けどどんとふクライアントで
 main ディレクトリの中身をまとめて任意のディレクトリにデプロイしてください。
 
 ``$ cd hiyontof``
-``$ git submodule init``   
+``$ git submodule init``
 ``$ git submodule update``
 
 その後、ユーザを hiyontof.html にアクセスするように誘導してください。
@@ -33,6 +33,10 @@ jscolor というライブラリをダウンロードしてくるためのコマ
 各ライブラリがホストしている CDN 等からアクセスしています。
 ``git submodule`` で配置しているものは、その URL が公式に示されていないためにこのようにしています。
 
+### 既に設置済みでバージョンアップするにはどうすればいいの?
+
+``$ git pull``
+
 ### git コマンドが使えないと導入できないの?
 
 以下の URL から最新版のソースコードをダウンロードできます。
@@ -40,6 +44,8 @@ jscolor というライブラリをダウンロードしてくるためのコマ
 https://github.com/Shunshun94/hiyontof/archive/master.zip
 
 後は、 ``jscolor.min.js`` を ``main/js/lib/jscolor`` 以下にダウンロードしてきて配置するだけ。
+
+更新の際は単純に上書きしましょう。
 
 ### ガイド
 
