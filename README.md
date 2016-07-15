@@ -11,15 +11,19 @@ HTML/JS で動くスマートフォン向けどどんとふクライアントで
 
 まずは、任意のディレクトリで以下を実行。
 
-``$ git clone https://github.com/Shunshun94/hiyontof.git``
+``` bash
+$ git clone https://github.com/Shunshun94/hiyontof.git
+```
 
 以下3つのコマンドをリポジトリ内で実行し、
 ``main/hiyontof.conf.js`` を編集した上で
 main ディレクトリの中身をまとめて任意のディレクトリにデプロイしてください。
 
-``$ cd hiyontof``
-``$ git submodule init``
-``$ git submodule update``
+``` bash
+$ cd hiyontof
+$ git submodule init
+$ git submodule update
+```
 
 その後、ユーザを hiyontof.html にアクセスするように誘導してください。
 
@@ -35,7 +39,7 @@ jscolor というライブラリをダウンロードしてくるためのコマ
 
 ### 既に設置済みでバージョンアップするにはどうすればいいの?
 
-``$ git pull``
+特に設定を変えていないのであれば ``$ git pull`` が早いです。
 
 ### git コマンドが使えないと導入できないの?
 
