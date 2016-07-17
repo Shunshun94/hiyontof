@@ -52,17 +52,26 @@ com.hiyoko.tof.urlNomalizer = function(url) {
 	var swf = "DodontoF.swf";
 	var rb = "DodontoFServer.rb?";
 	if(url.indexOf(rb) === url.length - rb.length) {
+		// DodontoF/DodontoFServer.rb?
 		return url;
 	}
 	if(url.slice(-3) === ".rb") {
+		// DodontoF/DodontoFServer.rb
 		return url + "?";
 	}
 	if(url.indexOf(swf) === url.length - swf.length ) {
+		// DodontoF/DodontoF.swf
 		return url.replace(swf, rb);
 	}
 	if(url.slice(-1) === "/") {
+		// DodontoF/DodontoF.swf
 		return url + rb;
 	}
+	if(url.indexOf(swf + '?') !== -1) {
+		// DodontoF/DodontoF.swf?loginInfo
+		return url.split(swf)[0] + rb;
+	}
+	// DodontoF
 	return url + "/" + rb;
 };
 

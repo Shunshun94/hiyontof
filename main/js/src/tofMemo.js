@@ -59,17 +59,16 @@ com.hiyoko.tofclient.Memo.Memo = function(data) {
 	};
 	
 	this.rend = function(){
-		var $elem = $("<div class='tofChat-memo-memo'></div>");
-		var $text = $("<textarea class='ui-input-text ui-body-f ui-corner-all ui-shadow-inset'></textarea>");
-		$text.val(text);
-		bindEvent($text);
-		$elem.append($text);
+		var $elem = $("<div class='tofChat-memo-memo' contenteditable='true'></div>");
+		$elem.text(text);
+		$elem.html($elem.html().replace(/[\n\r]/gm, '<br/>'));
+		bindEvent($elem);
 		return $elem;
 	};
 	
 	function bindEvent($tag){
-		$tag.change(function(e){
-			text = $tag.val();
+		$tag.on('focusout', function(e){
+			text = $tag.html().replace(/<br\/?>/gm, '\n').replace(/&lt;/gm, '<').replace(/&gt;/gm, '>');
 			var event = new $.Event("updateMemo", {memo:self});
 			$tag.trigger(event);
 			$tag.css('opacity', '0').animate({opacity:'1'}, 800);
