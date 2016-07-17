@@ -68,27 +68,37 @@ https://github.com/Shunshun94/hiyontof/archive/master.zip
 
 Copyright (c) 2005, 2014 jQuery Foundation, Inc.
 
-MIT ライセンスです。ライセンス情報 https://jquery.org/license/
+MIT ライセンスです。
+
+ライセンス情報:  https://jquery.org/license/
 
 ### jQuery Mobile v1.1.0
 
 Copyright (c) 2010, 2012 jQuery Foundation, Inc.
 
-MIT ライセンスです。ライセンス情報 https://jquery.org/license/
+MIT ライセンスです。
+
+ライセンス情報 : https://jquery.org/license/
 
 ### jquery.pep.js
 
 Copyright (c) 2014 Brian Gonzalez
 
 マップのドラッグアンドドロップの制御に使っています。
-MIT ライセンスです。ライセンス情報 https://github.com/briangonzalez/jquery.pep.js#license
+
+MIT ライセンスです。
+
+ライセンス情報: https://github.com/briangonzalez/jquery.pep.js#license
 
 ### jscolor
 
 Copyright (c) 2010, 2015 East Desire
 
 チャットの文字色選択に使っています。
-GNU GENERAL PUBLIC LICENSE Version 3 です。ライセンス情報 http://jscolor.com/download/
+
+GNU GENERAL PUBLIC LICENSE Version 3 です。
+
+ライセンス情報: http://jscolor.com/download/
 
 ## ライセンス
 
