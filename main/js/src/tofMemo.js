@@ -59,7 +59,6 @@ com.hiyoko.tofclient.Memo.Memo = function(data) {
 	};
 	
 	this.rend = function(){
-		console.log(text);
 		var $elem = $("<div class='tofChat-memo-memo' contenteditable='true'></div>");
 		$elem.text(text);
 		$elem.html($elem.html().replace(/[\n\r]/gm, '<br/>'));
