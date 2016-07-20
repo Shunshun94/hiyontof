@@ -1,7 +1,7 @@
 var com = com || {};
 com.hiyoko = com.hiyoko || {};
 com.hiyoko.tofclient = com.hiyoko.tofclient || {};
-com.hiyoko.tofclient.Memo = function(tof){
+com.hiyoko.tofclient.Memo = function(tof, interval, opt_$html){
 	var $disp = $("#tofChat-memo-display");
 	var $read = $("#tofChat-memo-reload");
 	var $cont = $("#tofChat-memo-content");
@@ -21,6 +21,15 @@ com.hiyoko.tofclient.Memo = function(tof){
 		$disp.on("updateMemo", function(e) {
 			tof.changeMemo(e.memo.getText(), e.memo.getId());
 		});
+
+		if(interval){
+			window.setInterval(function(){
+				if($(document.activeElement).hasClass('tofChat-memo-memo')) {
+					return;
+				}
+				$read.click();
+			}, interval);
+		}
 	};
 	
 	var displayMemos = function(result){
