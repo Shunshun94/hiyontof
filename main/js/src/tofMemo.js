@@ -68,7 +68,7 @@ com.hiyoko.tofclient.Memo.Memo = function(data) {
 	
 	function bindEvent($tag){
 		$tag.on('focusout', function(e){
-			text = $tag.html().replace(/<br\/?>/gm, '\n').replace(/&lt;/gm, '<').replace(/&gt;/gm, '>');
+			text = $tag.html().replace(/<\/?div\/?>/gm, '').replace(/<br\/?>/gm, '\n').replace(/&lt;/gm, '<').replace(/&gt;/gm, '>');
 			var event = new $.Event("updateMemo", {memo:self});
 			$tag.trigger(event);
 			$tag.css('opacity', '0').animate({opacity:'1'}, 800);

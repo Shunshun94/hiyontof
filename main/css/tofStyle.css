@@ -205,7 +205,10 @@ ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block ui-btn-up-f
 }
 
 #tofChat-memo-display>div {
-	border: 3px double black;
+	-moz-box-shadow: inset 0 1px 4px rgba(0,0,0,.2);
+	-webkit-box-shadow: inset 0 1px 4px rgba(0,0,0,.2);
+	box-shadow: inset 0 1px 4px rgba(0,0,0,.2);
+	border: 2px inset gray;
 	border-radius: 5px;
 	padding: 4px;
 	margin-bottom: 1em;
