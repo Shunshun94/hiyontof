@@ -9,7 +9,7 @@ com.hiyoko.tofclient.App = function(tof) {
 	
 	this.chat = new com.hiyoko.tofclient.Chat(tof, interval);
 	this.map = new com.hiyoko.tofclient.Map(tof, true);
-	this.memo = new com.hiyoko.tofclient.Memo(tof);
+	this.memo = new com.hiyoko.tofclient.Memo(tof, interval, $("#tofChat-memo"));
 	this.table = new com.hiyoko.tofclient.Table(tof, interval, $("#tofChat-table"), true, false);
 	this.init = function(){
 		$(".tofChat-button").addClass("ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block ui-btn-up-f");
