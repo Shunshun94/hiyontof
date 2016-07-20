@@ -5,7 +5,7 @@ com.hiyoko.tofclient = com.hiyoko.tofclient || {};
 /**
  * Chat Main Part
  */
-com.hiyoko.tofclient.Chat = function(tof, opt_$html){
+com.hiyoko.tofclient.Chat = function(tof, interval, opt_$html){
 	//TODO ID の直接指定を減らしていく
 	var $html = opt_$html || $("#tofChat-chat");
 	renderChat($html);
@@ -182,8 +182,7 @@ com.hiyoko.tofclient.Chat = function(tof, opt_$html){
 	}
 
 	function setAutoReload_(){
-		var interval = Number(getParam("reload", 0));
-		if(interval >= 10000){
+		if(interval){
 			window.setInterval(getMsg_, interval);
 		}
 	}
