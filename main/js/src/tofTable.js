@@ -4,7 +4,7 @@ com.hiyoko.HiyoLogger = com.hiyoko.HiyoLogger || function(){
 	this.log = function(msg){};
 };
 com.hiyoko.tofclient = com.hiyoko.tofclient || {};
-com.hiyoko.tofclient.Table = function(tof, opt_table, opt_debug){
+com.hiyoko.tofclient.Table = function(tof, interval, opt_$html, opt_table, opt_debug){
 	var table = opt_table ? false : true;
 	var debug = opt_debug ? true : false;
 	var logger = new com.hiyoko.HiyoLogger(debug, debug);
@@ -17,8 +17,7 @@ com.hiyoko.tofclient.Table = function(tof, opt_table, opt_debug){
 		$read.click(function(e){
 			tof.getRefresh(function(result){rend(result.characters)}, true);
 		});
-		var interval = Number(getParam("reload", 0));
-		if(interval >= 10000){
+		if(interval){
 			window.setInterval(function(){
 				$read.click();
 			}, interval);

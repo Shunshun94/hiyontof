@@ -2,10 +2,15 @@ var com = com || {};
 com.hiyoko = com.hiyoko || {};
 com.hiyoko.tofclient = com.hiyoko.tofclient || {};
 com.hiyoko.tofclient.App = function(tof) {
-	this.chat = new com.hiyoko.tofclient.Chat(tof);
+	var interval = Number(getParam("reload", 0));
+	if(interval < 10000) {
+		interval = 0;
+	}
+	
+	this.chat = new com.hiyoko.tofclient.Chat(tof, interval);
 	this.map = new com.hiyoko.tofclient.Map(tof, true);
 	this.memo = new com.hiyoko.tofclient.Memo(tof);
-	this.table = new com.hiyoko.tofclient.Table(tof, true, false);
+	this.table = new com.hiyoko.tofclient.Table(tof, interval, $("#tofChat-table"), true, false);
 	this.init = function(){
 		$(".tofChat-button").addClass("ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block ui-btn-up-f");
 		$(".tofChat-button-heavy").addClass("ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block");
