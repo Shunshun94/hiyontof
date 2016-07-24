@@ -50,7 +50,7 @@ com.hiyoko.tofclient.RoomList = function(serverListModule, opt_$html) {
 	};
 	
 	this.jumpToRoom = function($button) {
-		var roomNumber = Number($button.attr('no'));
+		var roomNumber = $button.attr('no') ? Number($button.attr('no')) : '';
 		var tofUrl = $serverList.val();
 		var pass = '';
 		
@@ -68,6 +68,9 @@ com.hiyoko.tofclient.RoomList = function(serverListModule, opt_$html) {
 	};
 	
 	this.rendRoomList = function(rooms) {
+		var $tof = $('<div class="' + roomClass + '"></div>');
+		$tof.append('<span no="" class="' + roomClass + '-entry">番号を入力して入室</span>');
+		$roomList.append($tof);
 		var roomList = rooms.playRoomStates;
 		$.each(roomList, function(roomNo){
 			var room = roomList[roomNo];
