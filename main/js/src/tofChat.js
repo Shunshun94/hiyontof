@@ -294,7 +294,7 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 		$msg.html($msg.html()
 				.replace(/(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/img,
 						function(url){return "<a href='"+url+"'>"+url+"</a>"})
-				.replace(/\n/, '<br/>'));
+				.replace(/\n/gm, '<br/>'));
 		
 		var msg_class = 'msg';
 
