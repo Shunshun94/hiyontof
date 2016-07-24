@@ -1,0 +1,27 @@
+@CHARSET "UTF-8";
+
+.tofChat-RoomList-Rooms-Room {
+	border: #50FF50 2px outset;
+	margin-top:1ex;
+	padding:5px;
+	border-radius: 4px;
+	background-color: #F0FFF0;
+}
+
+.tofChat-RoomList-Rooms-Room-no {}
+
+.tofChat-RoomList-Rooms-Room-name {}
+
+.tofChat-RoomList-Rooms-Room-bot {}
+
+.tofChat-RoomList-Rooms-Room-member {
+	margin-left:1ex;
+}
+
+.tofChat-RoomList-Rooms-Room-entry {
+	border: #80FF50 2px outset;
+	display:inline-block;
+	background-color: #F0FFB0;
+	padding:3px;
+	border-radius: 5px;
+}

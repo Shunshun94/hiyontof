@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head
+	　prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
+<meta property="og:title" content="ひよんとふルームリスト - ひよこどどんとふクライアント" />
+<meta property="og:type" content="website" />
+<meta property="og:image"
+	content="http://shunshun94.web.fc2.com/material/hiyontof.png" />
+<meta property="og:site_name" content="ひよこどどんとふクライアント" />
+<meta property="og:description"
+	content="スマートフォンでどどんとふを利用できるウェブページです。iPhone / Android 両対応。" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@Shunshun94" />
+
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- 以下 配布テンプレート固有 
+  // 二重に jQuery 読み込みしているのはデザインテンプレートの関係。
+  // CSS も気合い入れて手入れすればバージョン統一できるはず。
+-->
+<link rel="stylesheet" href="https://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.css" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+<script src="https://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.js"></script>
+<!-- 以上 配布テンプレート固有 -->
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/roomList.css" />
+<title>ひよこどどんとふクライアント ルームリスト</title>
+</head>
+
+<body>
+	<div data-role="page" data-theme="f">
+		<div data-role="header" data-theme="f">
+			<h1 id="tofChat-Title">部屋一覧</h1>
+		</div>
+		<div data-role="content" id="tofChat-RoomList">
+			<select id="tofChat-RoomList-Servers" data-toggle="dropdown">
+				<option id="tofChat-RoomList-Servers-default" value="">サーバを選択</option>
+			</select>
+			<div id="tofChat-RoomList-Rooms">
+			</div>
+		</div>
+
+		<div data-role="footer" data-theme="f">
+			<p>
+				<small id="tofChat-version">ひよこどどんとふクライアント Ver. 20160721</small><br/>
+				<small>&copy; <a href="https://twitter.com/Shunshun94" target="_blank">Shunshun94</a></small><br/>
+				<small><a href="http://template-party.com/" target="_blank">Web Design:Template-Party</a></small><br/>
+				<small><a href="https://github.com/Shunshun94/hiyontof" target="_blank">github</a></small>
+			</p>
+		</div>
+	</div>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<script src="js/src/hiyokoUtilV1.js"></script>
+	<script src="js/src/tofServerList.js"></script>
+	<script src="js/src/tofClient.js"></script>
+	<script src="js/src/tofRoomList.js"></script>
+	<script src="hiyontof.conf.js"></script>
+	<script>
+		new com.hiyoko.tofclient.RoomList(new com.hiyoko.tofclient.ServerList(), $('#tofChat-RoomList'));
+	</script>
+
+</body>
+
+</html>

@@ -45,3 +45,10 @@ com.hiyoko.tofclient.ServerList.SERVER_LIST = {
  * true にすると com.hiyoko.tofclient.ServerList.SERVER_LIST に登録されているサーバにしかアクセスできないようになる。
  */
 com.hiyoko.tofclient.ServerList.RESTRICTION = false;
+
+/**
+ * ひよんとふが ./hiyontof.html 以外の場所にある場合はここで指定。
+ * roomList.html からジャンプするときに使う。
+ */
+com.hiyoko.tofclient.URL = './hiyontof.html';
+
