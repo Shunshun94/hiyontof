@@ -84,6 +84,7 @@ com.hiyoko.tof.room = function(urlInput, roomInput, passInput, callback){
 	var name;
 	var tabs;
 	var counters;
+	var visitable = false;
 	var members = [];
 	var userId;
 
@@ -96,6 +97,7 @@ com.hiyoko.tof.room = function(urlInput, roomInput, passInput, callback){
 		name = response.roomName;
 		tabs = response.chatTab;
 		counters = response.counter;
+		visitable = response.canVisit;
 	};
 
 	this.getStatus = function(){
@@ -105,6 +107,53 @@ com.hiyoko.tof.room = function(urlInput, roomInput, passInput, callback){
 	this.setGame = function(gameInput){
 		game = gameInput;
 	}
+	
+	this.changeRoomName = function(newName, opt_callback) {
+		var sendMsg = url + "webif=setRoomInfo&room="+room;
+		if(pass != ""){
+			sendMsg += "&password="+pass;
+		}
+		sendMsg += '&roomName=' + newName;
+		
+		$.ajax({
+			type:'get',
+			url: sendMsg,
+			async:false,
+			statusCode:{
+				105:function(result){alert('どどんとふサーバの確認に失敗しました。URL を再度確認してください。');}
+			},
+			dataType:'jsonp'}
+		).done(function(result){
+			name = newName;
+			if(opt_callback) {
+				opt_callback(result);
+			}
+		});
+	};
+	
+	this.isVisitor = function(callback) {
+		var sendMsg = url + "webif=setRoomInfo&room="+room;
+		if(pass != ""){
+			sendMsg += "&password="+pass;
+		}
+		
+		$.ajax({
+			type:'get',
+			url: sendMsg,
+			async:false,
+			statusCode:{
+				105:function(result){alert('どどんとふサーバの確認に失敗しました。URL を再度確認してください。');}
+			},
+			dataType:'jsonp'}
+		).done(function(result){
+			if(result.result === 'OK') {
+				callback(false);
+			} else {
+				callback(true);
+			}
+		});
+		
+	};
 
 	this.getRoomInfo = function(callback, opt_failCallBack){
 		var sendMsg = url + "webif=getRoomInfo&room="+room;
