@@ -58,6 +58,10 @@
 			$("#tofChat-init-advanced").toggle(500);
 		});
 
+		$("#tofChat-init-roomlist").click(function(event) {
+			document.location = './roomlist.html';
+		});
+		
 		$("#tofChat-init-jump").click(function(event){
 			document.location = document.location.protocol + '//' +
 			document.location.host +
