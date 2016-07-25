@@ -5,12 +5,13 @@ com.hiyoko.tofclient = com.hiyoko.tofclient || {};
 /**
  * Chat Main Part
  */
-com.hiyoko.tofclient.Chat = function(tof, interval, opt_$html){
+com.hiyoko.tofclient.Chat = function(tof, interval, options){
 	//TODO ID の直接指定を減らしていく
-	var $html = opt_$html || $("#tofChat-chat");
+	var $html = options.html || $("#tofChat-chat");
 	renderChat($html);
-
+	
 	var isAsking = false;
+	var isVisitor = Boolean(options.visitor);
 
 	var subMenu = null;
 	var status = null;
@@ -22,18 +23,21 @@ com.hiyoko.tofclient.Chat = function(tof, interval, opt_$html){
 		status = new com.hiyoko.tofclient.Chat.Status($("#tofChat-connection-status"));
 		display = new com.hiyoko.tofclient.Chat.Display($("#tofChat-log"));
 		inputArea = new com.hiyoko.tofclient.Chat.InputArea(
-				$("#tofChat-input"), $("#tofChat-parette"), $("#tofChat-inputArea"));
+				$("#tofChat-input"), $("#tofChat-parette"), $("#tofChat-inputArea"), isVisitor);
 	}
-
 
 	function renderChat($html) {
 		$("#tofChat-chat").append("<div id='tofChat-chat-submenu'></div>");
 	};
+	
+	function nameSuiter(name) {
+		return isVisitor ? name + '@見学' : name;
+	}
 
 	function initializeDisplay(serverInfo){
 		// TODO これらって com.hiyoko.tofclient.Chat.InputArea の持ち物だよね
 		var status = tof.getStatus();
-		$("#tofChat-Title").text(status.name);
+		$("#tofChat-Title").text(isVisitor ? '【見学】' + status.name : status.name);
 		$.each(status.tabs, function(ind, tabName){
 			if(ind === 0) {return; }
 			var newTab = $("<option></option>");
@@ -62,7 +66,7 @@ com.hiyoko.tofclient.Chat = function(tof, interval, opt_$html){
 					function(r){
 						getMsg_("Sending...Done! Getting...")
 					},
-					e.name, e.msg, e.color, e.tab,e.bot);
+					nameSuiter(e.name), e.msg, e.color, e.tab,e.bot);
 		};
 
 		var sendMsgEvent = function(e) {
@@ -83,7 +87,6 @@ com.hiyoko.tofclient.Chat = function(tof, interval, opt_$html){
 			if(e.action === "callroll") {
 				e.msg = '###vote###{"callerId":"nonId","question":"","isCallTheRoll":true,"requiredCount":'+requiredCount+'}';
 			}
-			console.log(e)
 			sendMsg(e);
 		};
 
@@ -125,7 +128,7 @@ com.hiyoko.tofclient.Chat = function(tof, interval, opt_$html){
 			var timerCount = window.prompt("何秒後にアラームを鳴らしますか?", 60);
 			tof.setAlarm({
 				sec:timerCount,
-				name:inputArea.getName()
+				name:nameSuiter(inputArea.getName())
 			});
 		});
 		
@@ -159,7 +162,7 @@ com.hiyoko.tofclient.Chat = function(tof, interval, opt_$html){
 		display.append(response, tabs);
 		status.add("Done!");
 		isAsking = false;
-		tof.getLoginUserInfo(afterBeacon, inputArea.getName());
+		tof.getLoginUserInfo(afterBeacon, nameSuiter(inputArea.getName()));
 	}
 
 	function afterBeacon(response){
@@ -418,8 +421,8 @@ com.hiyoko.tofclient.Chat.Status = function($html){
 /**
  * Chat User Console Part
  */
-com.hiyoko.tofclient.Chat.InputArea = function($input, $parette, $parent){
-	var inputs = [new com.hiyoko.tofclient.Chat.InputArea.Input($input),
+com.hiyoko.tofclient.Chat.InputArea = function($input, $parette, $parent, isVisitor){
+	var inputs = [new com.hiyoko.tofclient.Chat.InputArea.Input($input, isVisitor),
 	              new com.hiyoko.tofclient.Chat.InputArea.Parette($parette)];
 	var current = 0;
 	var self = this;
@@ -450,7 +453,7 @@ com.hiyoko.tofclient.Chat.InputArea = function($input, $parette, $parent){
 	eventBind();
 };
 
-com.hiyoko.tofclient.Chat.InputArea.Input = function($html){
+com.hiyoko.tofclient.Chat.InputArea.Input = function($html, isVisitor){
 	var id = $html.attr('id');
 
 	this.disabled = function(){$html.hide()};
@@ -472,6 +475,13 @@ com.hiyoko.tofclient.Chat.InputArea.Input = function($html){
 
 	if(getParam("newLayout")) {
 		rerendDom();
+	}
+	
+	if(isVisitor) {
+		// See also rerendDom()
+		$('#'+id+'-sendCallRoll').parent().hide();
+		$('#'+id+'-sendQuestion').parent().hide();
+		$('#'+id+'-send').parent().removeClass('tofChat-input-short');		
 	}
 
 
