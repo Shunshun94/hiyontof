@@ -5,7 +5,7 @@ com.hiyoko.tofclient.App = function(tof) {
 	tof.isVisitor(function(isVisitor) {
 		var interval = Number(getParam("reload", 0));
 		if(interval < 10000) {
-			interval = 0;
+			interval = 10000;
 		}
 		
 		this.chat = new com.hiyoko.tofclient.Chat(tof, interval, {visitor: isVisitor});
