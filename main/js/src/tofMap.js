@@ -7,15 +7,18 @@ com.hiyoko.tofclient.Map = function(tof, opt_dragMode){
 	var $reset = $("#tofChat-map-reset");
 	var $reload = $("#tofChat-map-reload");
 	var $switchChar = $("#tofChat-map-char-switch");
+	var $switchLine = $("#tofChat-map-line-switch");
 
 	var mapWriter = new com.hiyoko.tofclient.Map.MapWriter($disp, tof, isDrag);
 
 	this.init = function(){
 		$reload.hide();
 		$switchChar.hide();
+		$switchLine.hide();
 		$reset.click(function(e){
 			$reload.show();
 			$switchChar.show();
+			$switchLine.show();
 			mapWriter.rewriteMap();
 		});
 		$reload.click(function(e){
@@ -25,13 +28,13 @@ com.hiyoko.tofclient.Map = function(tof, opt_dragMode){
 			e.obj.move(e.x, e.y);
 		});
 		$switchChar.click(function(e){
-			mapWriter.displaySwitch();
+			mapWriter.toggleName();
+		});
+		
+		$switchLine.click(function(e){
+			mapWriter.toggleLine();
 		});
 	};
-	
-	function eventBindToChars(){
-		
-	}
 
 	this.init();
 
@@ -44,18 +47,26 @@ com.hiyoko.tofclient.Map.MapWriter = function($disp, tof, opt_dragMode){
 	var boxSize = Math.floor($disp.width()  / (20)) - 2;
 	var $status = $("#tofChat-map-status");
 	
-	this.displaySwitch = function(){
-		if($('.tofChat-map-char-name').css('display') === 'none') {
-			$('.tofChat-map-char-name').show();
-			$('.tofChat-map-box').addClass('tofChat-map-box-lined');
-			$('.tofChat-map-box').css('width', ((Number($('.tofChat-map-box').css('width').replace('px','')) - 2)+'px'));
-			$('.tofChat-map-box').css('height', ((Number($('.tofChat-map-box').css('height').replace('px','')) - 2)+'px'));
-		} else {
-			$('.tofChat-map-char-name').hide();
+	this.toggleName = function() {
+		$('.tofChat-map-char-name').toggle();
+	};
+	
+	this.toggleLine = function() {
+		var $box = $('.tofChat-map-box');
+		if($box.hasClass('tofChat-map-box-lined')) {
 			$('.tofChat-map-box').removeClass('tofChat-map-box-lined');
 			$('.tofChat-map-box').css('width', ((Number($('.tofChat-map-box').css('width').replace('px','')) + 2)+'px'));
 			$('.tofChat-map-box').css('height', ((Number($('.tofChat-map-box').css('height').replace('px','')) + 2)+'px'));
-		}
+		} else {
+			$('.tofChat-map-box').addClass('tofChat-map-box-lined');
+			$('.tofChat-map-box').css('width', ((Number($('.tofChat-map-box').css('width').replace('px','')) - 2)+'px'));
+			$('.tofChat-map-box').css('height', ((Number($('.tofChat-map-box').css('height').replace('px','')) - 2)+'px'));
+		}		
+	}
+	
+	this.displaySwitch = function(){
+		this.toggleName();
+		this.toggleLine();
 	};
 
 	this.rewriteMap = function(){
