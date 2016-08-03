@@ -41,20 +41,20 @@ com.hiyoko.tofclient.Map.MapWriter = function($disp, tof, opt_dragMode){
 	var isDrag = opt_dragMode ? true : false;
 	var tofUrl = tof.getStatus().url;
 	var self = this;
-	var boxSize = Math.floor($disp.width()  / (20)) - 4;
+	var boxSize = Math.floor($disp.width()  / (20)) - 2;
 	var $status = $("#tofChat-map-status");
 	
 	this.displaySwitch = function(){
 		if($('.tofChat-map-char-name').css('display') === 'none') {
 			$('.tofChat-map-char-name').show();
 			$('.tofChat-map-box').addClass('tofChat-map-box-lined');
-			//$('.tofChat-map-box').css('width', ((Number($('.tofChat-map-box').css('width').replace('px','')) - 2)+'px'));
-			//$('.tofChat-map-box').css('width', ((Number($('.tofChat-map-box').css('width').replace('px','')) - 2)+'px'));
+			$('.tofChat-map-box').css('width', ((Number($('.tofChat-map-box').css('width').replace('px','')) - 2)+'px'));
+			$('.tofChat-map-box').css('height', ((Number($('.tofChat-map-box').css('height').replace('px','')) - 2)+'px'));
 		} else {
 			$('.tofChat-map-char-name').hide();
 			$('.tofChat-map-box').removeClass('tofChat-map-box-lined');
-			//$('.tofChat-map-box').css('width', ((Number($('.tofChat-map-box').css('width').replace('px','')) + 2)+'px'));
-			//$('.tofChat-map-box').css('width', ((Number($('.tofChat-map-box').css('width').replace('px','')) + 2)+'px'));
+			$('.tofChat-map-box').css('width', ((Number($('.tofChat-map-box').css('width').replace('px','')) + 2)+'px'));
+			$('.tofChat-map-box').css('height', ((Number($('.tofChat-map-box').css('height').replace('px','')) + 2)+'px'));
 		}
 	};
 
@@ -83,7 +83,7 @@ com.hiyoko.tofclient.Map.MapWriter = function($disp, tof, opt_dragMode){
 		var urlParser = com.hiyoko.tofclient.Map.getPicUrl;
 		var chars = result.characters;
 
-		boxSize = Math.floor($disp.width()  / (result.mapData.xMax)) - 4;
+		boxSize = Math.floor($disp.width()  / (result.mapData.xMax)) - 2;
 
 		clearMap();
 		drawMap(result);
@@ -154,11 +154,11 @@ com.hiyoko.tofclient.Map.MapWriter = function($disp, tof, opt_dragMode){
 		var size = opt_size || boxSize;
 		var $tile = $("<div class='tofChat-map-tile'></div>");
 		$tile.css("position", "absolute");
-		$tile.css("width", (tile.width * (size + 2) - 2) + "px");
-		$tile.css("height", (tile.height * (size + 2) - 2) + "px");
+		$tile.css("width", (tile.width * (size) - 2) + "px");
+		$tile.css("height", (tile.height * (size) - 2) + "px");
 
-		$tile.css("top", (1 + tile.y * (size + 2)) + "px");
-		$tile.css("left", (1 + tile.x * (size + 2)) + "px");
+		$tile.css("top", (1 + tile.y * (size)) + "px");
+		$tile.css("left", (1 + tile.x * (size)) + "px");
 		$tile.css("background-image",
 				"url('" + parseUrl(tile.imageUrl, tofUrl) + "')");
 		return $tile;
@@ -193,8 +193,8 @@ com.hiyoko.tofclient.Map.MapWriter = function($disp, tof, opt_dragMode){
 					var $tag = this.$el;
 					var pos = $tag.position();
 					var half = size / 2;
-					var posY = Math.floor((half + pos.top)  / (size + 2));
-					var posX = Math.floor((half + pos.left) / (size + 2));
+					var posY = Math.floor((half + pos.top)  / (size));
+					var posX = Math.floor((half + pos.left) / (size));
 					var event = new $.Event("moveCharacter",
 							{obj:charList[this.$el.text()],
 							 x: posX, y: posY});
@@ -227,8 +227,8 @@ com.hiyoko.tofclient.Map.MapWriter = function($disp, tof, opt_dragMode){
 	
 	function placeCharacter(x, y, $tag, opt_scale){
 		var size = opt_scale || boxSize;
-		var realX = (1 + x * (size + 2)) - Number($tag.css("left").replace("px", ""));
-		var realY = (1 + y * (size + 2)) - Number($tag.css("top").replace("px", ""));
+		var realX = (1 + x * (size)) - Number($tag.css("left").replace("px", ""));
+		var realY = (1 + y * (size)) - Number($tag.css("top").replace("px", ""));
 		
 		$tag.css("transform", "matrix(1, 0, 0, 1," + realX + "," + realY +")");
 	}
@@ -252,14 +252,14 @@ com.hiyoko.tofclient.Map.MapWriter = function($disp, tof, opt_dragMode){
 	function rendCharacter(char, opt_size){
 		var size = opt_size || boxSize;
 		var $char = $("<div class='tofChat-map-char'></div>");
-		var $name = $("<div class='tofChat-map-char-name' style='height:"+(char.size * (size + 2) - 2)+"px'></div>");
+		var $name = $("<div class='tofChat-map-char-name' style='height:"+(char.size * (size) - 2)+"px'></div>");
 		$name.text(char.name);
 		
-		$char.css("width", (char.size * (size + 2) - 2) + "px");
-		$char.css("height", (char.size * (size + 2) - 2) + "px");
+		$char.css("width", (char.size * (size) - 2) + "px");
+		$char.css("height", (char.size * (size) - 2) + "px");
 
-		$char.css("top", (1 + char.y * (size + 2)) + "px");
-		$char.css("left", (1 + char.x * (size + 2)) + "px");
+		$char.css("top", (1 + char.y * (size)) + "px");
+		$char.css("left", (1 + char.x * (size)) + "px");
 		$char.css("background-image",
 				"url('" + parseUrl(char.imageName, tofUrl) + "')");
 		$char.append($name);
