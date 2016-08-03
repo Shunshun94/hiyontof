@@ -25,7 +25,7 @@ com.hiyoko.tofclient.Map = function(tof, opt_dragMode){
 			e.obj.move(e.x, e.y);
 		});
 		$switchChar.click(function(e){
-			$name = $(".tofChat-map-char-name").toggle();
+			mapWriter.displaySwitch();
 		});
 	};
 	
@@ -43,6 +43,20 @@ com.hiyoko.tofclient.Map.MapWriter = function($disp, tof, opt_dragMode){
 	var self = this;
 	var boxSize = Math.floor($disp.width()  / (20)) - 4;
 	var $status = $("#tofChat-map-status");
+	
+	this.displaySwitch = function(){
+		if($('.tofChat-map-char-name').css('display') === 'none') {
+			$('.tofChat-map-char-name').show();
+			$('.tofChat-map-box').addClass('tofChat-map-box-lined');
+			//$('.tofChat-map-box').css('width', ((Number($('.tofChat-map-box').css('width').replace('px','')) - 2)+'px'));
+			//$('.tofChat-map-box').css('width', ((Number($('.tofChat-map-box').css('width').replace('px','')) - 2)+'px'));
+		} else {
+			$('.tofChat-map-char-name').hide();
+			$('.tofChat-map-box').removeClass('tofChat-map-box-lined');
+			//$('.tofChat-map-box').css('width', ((Number($('.tofChat-map-box').css('width').replace('px','')) + 2)+'px'));
+			//$('.tofChat-map-box').css('width', ((Number($('.tofChat-map-box').css('width').replace('px','')) + 2)+'px'));
+		}
+	};
 
 	this.rewriteMap = function(){
 		tof.getRefresh(rewriteMapAll_,true, true);
