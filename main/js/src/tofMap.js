@@ -1,8 +1,8 @@
 var com = com || {};
 com.hiyoko = com.hiyoko || {};
 com.hiyoko.tofclient = com.hiyoko.tofclient || {};
-com.hiyoko.tofclient.Map = function(tof, opt_dragMode){
-	var isDrag = opt_dragMode ? true : false;
+com.hiyoko.tofclient.Map = function(tof, interval, options){
+	var isDrag = options.isDraggable ? true : false;
 	var $disp = $("#tofChat-map-display");
 	var $reset = $("#tofChat-map-reset");
 	var $reload = $("#tofChat-map-reload");
@@ -15,12 +15,7 @@ com.hiyoko.tofclient.Map = function(tof, opt_dragMode){
 		$reload.hide();
 		$switchChar.hide();
 		$switchLine.hide();
-		$reset.click(function(e){
-			$reload.show();
-			$switchChar.show();
-			$switchLine.show();
-			mapWriter.rewriteMap();
-		});
+
 		$reload.click(function(e){
 			mapWriter.rewriteCharacters();
 		});
@@ -34,6 +29,19 @@ com.hiyoko.tofclient.Map = function(tof, opt_dragMode){
 		$switchLine.click(function(e){
 			mapWriter.toggleLine();
 		});
+		
+		$reset.click(function(e){
+			$reload.show();
+			$switchChar.show();
+			$switchLine.show();
+			mapWriter.rewriteMap();
+		});
+		
+		if(interval){
+			window.setInterval(function(){
+				$reload.click();
+			}, interval);
+		}
 	};
 
 	this.init();
