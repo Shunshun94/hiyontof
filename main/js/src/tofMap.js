@@ -1,23 +1,21 @@
 var com = com || {};
 com.hiyoko = com.hiyoko || {};
 com.hiyoko.tofclient = com.hiyoko.tofclient || {};
-com.hiyoko.tofclient.Map = function(tof, opt_dragMode){
-	var isDrag = opt_dragMode ? true : false;
+com.hiyoko.tofclient.Map = function(tof, interval, options){
+	var isDrag = options.isDraggable ? true : false;
 	var $disp = $("#tofChat-map-display");
 	var $reset = $("#tofChat-map-reset");
 	var $reload = $("#tofChat-map-reload");
 	var $switchChar = $("#tofChat-map-char-switch");
+	var $switchLine = $("#tofChat-map-line-switch");
 
 	var mapWriter = new com.hiyoko.tofclient.Map.MapWriter($disp, tof, isDrag);
 
 	this.init = function(){
 		$reload.hide();
 		$switchChar.hide();
-		$reset.click(function(e){
-			$reload.show();
-			$switchChar.show();
-			mapWriter.rewriteMap();
-		});
+		$switchLine.hide();
+
 		$reload.click(function(e){
 			mapWriter.rewriteCharacters();
 		});
@@ -25,13 +23,26 @@ com.hiyoko.tofclient.Map = function(tof, opt_dragMode){
 			e.obj.move(e.x, e.y);
 		});
 		$switchChar.click(function(e){
-			$name = $(".tofChat-map-char-name").toggle();
+			mapWriter.toggleName();
 		});
-	};
-	
-	function eventBindToChars(){
 		
-	}
+		$switchLine.click(function(e){
+			mapWriter.toggleLine();
+		});
+		
+		$reset.click(function(e){
+			$reload.show();
+			$switchChar.show();
+			$switchLine.show();
+			mapWriter.rewriteMap();
+		});
+		
+		if(interval){
+			window.setInterval(function(){
+				$reload.click();
+			}, interval);
+		}
+	};
 
 	this.init();
 
@@ -41,8 +52,30 @@ com.hiyoko.tofclient.Map.MapWriter = function($disp, tof, opt_dragMode){
 	var isDrag = opt_dragMode ? true : false;
 	var tofUrl = tof.getStatus().url;
 	var self = this;
-	var boxSize = Math.floor($disp.width()  / (20)) - 4;
+	var boxSize = Math.floor($disp.width()  / (20)) - 2;
 	var $status = $("#tofChat-map-status");
+	
+	this.toggleName = function() {
+		$('.tofChat-map-char-name').toggle();
+	};
+	
+	this.toggleLine = function() {
+		var $box = $('.tofChat-map-box');
+		if($box.hasClass('tofChat-map-box-lined')) {
+			$('.tofChat-map-box').removeClass('tofChat-map-box-lined');
+			$('.tofChat-map-box').css('width', ((Number($('.tofChat-map-box').css('width').replace('px','')) + 2)+'px'));
+			$('.tofChat-map-box').css('height', ((Number($('.tofChat-map-box').css('height').replace('px','')) + 2)+'px'));
+		} else {
+			$('.tofChat-map-box').addClass('tofChat-map-box-lined');
+			$('.tofChat-map-box').css('width', ((Number($('.tofChat-map-box').css('width').replace('px','')) - 2)+'px'));
+			$('.tofChat-map-box').css('height', ((Number($('.tofChat-map-box').css('height').replace('px','')) - 2)+'px'));
+		}		
+	}
+	
+	this.displaySwitch = function(){
+		this.toggleName();
+		this.toggleLine();
+	};
 
 	this.rewriteMap = function(){
 		tof.getRefresh(rewriteMapAll_,true, true);
@@ -69,7 +102,7 @@ com.hiyoko.tofclient.Map.MapWriter = function($disp, tof, opt_dragMode){
 		var urlParser = com.hiyoko.tofclient.Map.getPicUrl;
 		var chars = result.characters;
 
-		boxSize = Math.floor($disp.width()  / (result.mapData.xMax)) - 4;
+		boxSize = Math.floor($disp.width()  / (result.mapData.xMax)) - 2;
 
 		clearMap();
 		drawMap(result);
@@ -140,11 +173,11 @@ com.hiyoko.tofclient.Map.MapWriter = function($disp, tof, opt_dragMode){
 		var size = opt_size || boxSize;
 		var $tile = $("<div class='tofChat-map-tile'></div>");
 		$tile.css("position", "absolute");
-		$tile.css("width", (tile.width * (size + 2) - 2) + "px");
-		$tile.css("height", (tile.height * (size + 2) - 2) + "px");
+		$tile.css("width", (tile.width * (size) - 2) + "px");
+		$tile.css("height", (tile.height * (size) - 2) + "px");
 
-		$tile.css("top", (1 + tile.y * (size + 2)) + "px");
-		$tile.css("left", (1 + tile.x * (size + 2)) + "px");
+		$tile.css("top", (1 + tile.y * (size)) + "px");
+		$tile.css("left", (1 + tile.x * (size)) + "px");
 		$tile.css("background-image",
 				"url('" + parseUrl(tile.imageUrl, tofUrl) + "')");
 		return $tile;
@@ -179,8 +212,8 @@ com.hiyoko.tofclient.Map.MapWriter = function($disp, tof, opt_dragMode){
 					var $tag = this.$el;
 					var pos = $tag.position();
 					var half = size / 2;
-					var posY = Math.floor((half + pos.top)  / (size + 2));
-					var posX = Math.floor((half + pos.left) / (size + 2));
+					var posY = Math.floor((half + pos.top)  / (size));
+					var posX = Math.floor((half + pos.left) / (size));
 					var event = new $.Event("moveCharacter",
 							{obj:charList[this.$el.text()],
 							 x: posX, y: posY});
@@ -213,8 +246,8 @@ com.hiyoko.tofclient.Map.MapWriter = function($disp, tof, opt_dragMode){
 	
 	function placeCharacter(x, y, $tag, opt_scale){
 		var size = opt_scale || boxSize;
-		var realX = (1 + x * (size + 2)) - Number($tag.css("left").replace("px", ""));
-		var realY = (1 + y * (size + 2)) - Number($tag.css("top").replace("px", ""));
+		var realX = (1 + x * (size)) - Number($tag.css("left").replace("px", ""));
+		var realY = (1 + y * (size)) - Number($tag.css("top").replace("px", ""));
 		
 		$tag.css("transform", "matrix(1, 0, 0, 1," + realX + "," + realY +")");
 	}
@@ -238,14 +271,14 @@ com.hiyoko.tofclient.Map.MapWriter = function($disp, tof, opt_dragMode){
 	function rendCharacter(char, opt_size){
 		var size = opt_size || boxSize;
 		var $char = $("<div class='tofChat-map-char'></div>");
-		var $name = $("<div class='tofChat-map-char-name' style='height:"+(char.size * (size + 2) - 2)+"px'></div>");
+		var $name = $("<div class='tofChat-map-char-name' style='height:"+(char.size * (size) - 2)+"px'></div>");
 		$name.text(char.name);
 		
-		$char.css("width", (char.size * (size + 2) - 2) + "px");
-		$char.css("height", (char.size * (size + 2) - 2) + "px");
+		$char.css("width", (char.size * (size) - 2) + "px");
+		$char.css("height", (char.size * (size) - 2) + "px");
 
-		$char.css("top", (1 + char.y * (size + 2)) + "px");
-		$char.css("left", (1 + char.x * (size + 2)) + "px");
+		$char.css("top", (1 + char.y * (size)) + "px");
+		$char.css("left", (1 + char.x * (size)) + "px");
 		$char.css("background-image",
 				"url('" + parseUrl(char.imageName, tofUrl) + "')");
 		$char.append($name);
