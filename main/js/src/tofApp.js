@@ -9,7 +9,7 @@ com.hiyoko.tofclient.App = function(tof) {
 		}
 		
 		this.chat = new com.hiyoko.tofclient.Chat(tof, interval, {visitor: isVisitor});
-		this.map = new com.hiyoko.tofclient.Map(tof, true);
+		this.map = new com.hiyoko.tofclient.Map(tof, interval, {isDraggable: true});
 		this.memo = new com.hiyoko.tofclient.Memo(tof, interval, $("#tofChat-memo"));
 		this.table = new com.hiyoko.tofclient.Table(tof, interval, $("#tofChat-table"), true, false);
 		this.init = function(){
