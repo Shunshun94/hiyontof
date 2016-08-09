@@ -78,6 +78,16 @@ ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block ui-btn-up-f
 	padding:5px;
 }
 
+.tofChat-chat-submenu-list-item>a {
+	text-decoration :none;
+	color:black;
+}
+
+.tofChat-chat-submenu-list-item>a:visited {
+	text-decoration :none;
+	color:black;
+}
+
 #tofChat-input {
 	padding: 2px;
 }

@@ -815,7 +815,6 @@ com.hiyoko.tofclient.Chat.SubMenu = function($html){
 				$dom = $('<span></span>');
 				$dom.addClass(menuItemClass);
 				$dom.text(v.label);
-				
 				$menu.append($dom);
 				$("."+menuItemClass+":last").click(v.click);
 				v.index = index;
@@ -826,6 +825,21 @@ com.hiyoko.tofclient.Chat.SubMenu = function($html){
 				$dom = "<hr/>";
 				$menu.append($dom);
 			}
+			if(v.type === 'link') {
+				$dom = $('<span></span>');
+				$dom.addClass(menuItemClass);
+				
+				var link = $('<a></a>');
+				link.attr({
+					href:v.url,
+					target:'_blank'
+				});
+				link.text(v.label);
+				
+				$dom.append(link);
+				$menu.append($dom);
+			}
+			
 		});
 	}
 
@@ -879,7 +893,10 @@ com.hiyoko.tofclient.Chat.SubMenu.List = [
 	  click:function(e){
 		  $(e.target).trigger(new $.Event("sendAlarm"))
 		  com.hiyoko.tofclient.Chat.SubMenu.List.fireCloseEvent(e.target);
-	  }}
+	  }},
+  {code: 'bar3', type:'bar'},
+  {code: 'lineshare', type:'link', label:'LINE で招待する',
+   url:'http://line.me/R/msg/text/?' + encodeURIComponent('ここからどどんとふにアクセス! ' + location.toString())}
                                         	  ];
 
 com.hiyoko.tofclient.Chat.SubMenu.List.fireCloseEvent = function($html) {
