@@ -7,6 +7,7 @@ com.hiyoko.tofclient.Memo = function(tof, interval, opt_$html){
 	var $read = $("#tofChat-memo-reload");
 	var $cont = $("#tofChat-memo-content");
 	var $send = $("#tofChat-memo-append");
+	var $update = $("#tofChat-memo-lastupdate");
 	
 	var list = [];
 	
@@ -54,6 +55,8 @@ com.hiyoko.tofclient.Memo = function(tof, interval, opt_$html){
 	
 	var loadMemo = function(){
 		tof.getRefresh(function(result){displayMemos(result)}, true);
+		var now = new Date();
+		$update.text('Memo Last Update： ' + now.getHours() + '：' + now.getMinutes() + '：' + now.getSeconds());
 	};
 	
 	init();

@@ -11,6 +11,7 @@ com.hiyoko.tofclient.Table = function(tof, interval, options){
 	var logger = new com.hiyoko.HiyoLogger(debug, debug);
 	var $disp = $("#tofChat-table-display");
 	var $read = $("#tofChat-table-reload");
+	var $update = $("#tofChat-table-lastupdate");
 	
 	var chars = [];
 	
@@ -57,6 +58,8 @@ com.hiyoko.tofclient.Table = function(tof, interval, options){
 		$disp.empty();
 		rendCharacterTable(charCandidates);
 		appendAddButton();
+		var now = new Date();
+		$update.text('Table Last Update： ' + now.getHours() + '：' + now.getMinutes() + '：' + now.getSeconds());
 	};
 	
 	var addCharacter = function(){

@@ -155,6 +155,10 @@ ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block ui-btn-up-f
 	width: 100%;
 }
 
+#tofChat-map-lastupdate {
+	text-align:right;
+}
+
 #tofChat-map-map {
 	background-size: 100% 100%;
 	display: inline-block;
@@ -209,6 +213,10 @@ ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block ui-btn-up-f
 	overflow:hidden;
 }
 
+#tofChat-memo-lastupdate {
+	text-align:right;
+}
+
 #tofChat-memo-display>div {
 	-moz-box-shadow: inset 0 1px 4px rgba(0,0,0,.2);
 	-webkit-box-shadow: inset 0 1px 4px rgba(0,0,0,.2);
@@ -217,6 +225,10 @@ ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block ui-btn-up-f
 	border-radius: 5px;
 	padding: 4px;
 	margin-bottom: 1em;
+}
+
+#tofChat-table-lastupdate {
+	text-align:right;
 }
 
 #tofChat-table-display>table>tbody>tr>td {

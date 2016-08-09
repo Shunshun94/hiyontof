@@ -8,6 +8,7 @@ com.hiyoko.tofclient.Map = function(tof, interval, options){
 	var $disp = $("#tofChat-map-display");
 	var $reset = $("#tofChat-map-reset");
 	var $reload = $("#tofChat-map-reload");
+	var $update = $("#tofChat-map-lastupdate");
 	var $switchChar = $("#tofChat-map-char-switch");
 	var $switchLine = $("#tofChat-map-line-switch");
 
@@ -21,6 +22,7 @@ com.hiyoko.tofclient.Map = function(tof, interval, options){
 		$reload.hide();
 		$switchChar.hide();
 		$switchLine.hide();
+		$update.hide();
 
 		$reload.click(function(e){
 			mapWriter.rewriteCharacters();
@@ -40,6 +42,7 @@ com.hiyoko.tofclient.Map = function(tof, interval, options){
 			$reload.show();
 			$switchChar.show();
 			$switchLine.show();
+			$update.show();
 			mapWriter.rewriteMap();
 		});
 		
@@ -62,6 +65,7 @@ com.hiyoko.tofclient.Map.MapWriter = function($disp, tof, opt_dragMode){
 	var self = this;
 	var boxSize = Math.floor($disp.width()  / (20)) - 2;
 	var $status = $("#tofChat-map-status");
+	var $update = $("#tofChat-map-lastupdate");
 	
 	this.toggleName = function() {
 		$('.tofChat-map-char-name').toggle();
@@ -250,6 +254,9 @@ com.hiyoko.tofclient.Map.MapWriter = function($disp, tof, opt_dragMode){
 				openSamePlaceCharacters(samePlaceList);
 			});
 		}
+		
+		var now = new Date();
+		$update.text('Map Last Update： ' + now.getHours() + '：' + now.getMinutes() + '：' + now.getSeconds());
 	}
 	
 	function placeCharacter(x, y, $tag, opt_scale){

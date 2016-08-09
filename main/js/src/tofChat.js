@@ -169,7 +169,6 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 	}
 
 	function afterBeacon(response){
-		console.log('afterBeacon');
 		subMenu.updateItem("members", {count:response.length})
 	}
 
