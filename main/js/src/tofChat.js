@@ -17,7 +17,11 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 	var status = null;
 	var display = null;
 	var inputArea = null;
-
+	
+	function isActive() {
+		return $html.css('display') !== 'none';
+	}
+	
 	function buildChildComponents() {
 		subMenu = new com.hiyoko.tofclient.Chat.SubMenu($("#tofChat-chat-submenu"));
 		status = new com.hiyoko.tofclient.Chat.Status($("#tofChat-connection-status"));
@@ -27,7 +31,7 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 	}
 
 	function renderChat($html) {
-		$("#tofChat-chat").append("<div id='tofChat-chat-submenu'></div>");
+		$html.append("<div id='tofChat-chat-submenu'></div>");
 	};
 	
 	function nameSuiter(name) {
@@ -162,10 +166,10 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 		display.append(response, tabs);
 		status.add("Done!");
 		isAsking = false;
-		tof.getLoginUserInfo(afterBeacon, nameSuiter(inputArea.getName()));
 	}
 
 	function afterBeacon(response){
+		console.log('afterBeacon');
 		subMenu.updateItem("members", {count:response.length})
 	}
 
@@ -186,7 +190,10 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 
 	function setAutoReload_(){
 		if(interval){
-			window.setInterval(getMsg_, interval);
+			window.setInterval(function(){
+				if(isActive()){getMsg_();}
+				tof.getLoginUserInfo(afterBeacon, nameSuiter(inputArea.getName()));
+			}, interval);
 		}
 	}
 };

@@ -3,6 +3,8 @@ com.hiyoko = com.hiyoko || {};
 com.hiyoko.tofclient = com.hiyoko.tofclient || {};
 com.hiyoko.tofclient.Map = function(tof, interval, options){
 	var isDrag = options.isDraggable ? true : false;
+	var $html = options.html ? options.html : $("#tofChat-map");
+	
 	var $disp = $("#tofChat-map-display");
 	var $reset = $("#tofChat-map-reset");
 	var $reload = $("#tofChat-map-reload");
@@ -11,6 +13,10 @@ com.hiyoko.tofclient.Map = function(tof, interval, options){
 
 	var mapWriter = new com.hiyoko.tofclient.Map.MapWriter($disp, tof, isDrag);
 
+	function isActive() {
+		return $html.css('display') !== 'none';
+	}
+	
 	this.init = function(){
 		$reload.hide();
 		$switchChar.hide();
@@ -39,7 +45,9 @@ com.hiyoko.tofclient.Map = function(tof, interval, options){
 		
 		if(interval){
 			window.setInterval(function(){
-				$reload.click();
+				if(isActive()){
+					$reload.click();
+				}
 			}, interval);
 		}
 	};
