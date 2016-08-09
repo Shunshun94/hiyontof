@@ -2,12 +2,18 @@ var com = com || {};
 com.hiyoko = com.hiyoko || {};
 com.hiyoko.tofclient = com.hiyoko.tofclient || {};
 com.hiyoko.tofclient.Memo = function(tof, interval, opt_$html){
+	var $html = opt_$html ? opt_$html : $("#tofChat-memo");
 	var $disp = $("#tofChat-memo-display");
 	var $read = $("#tofChat-memo-reload");
 	var $cont = $("#tofChat-memo-content");
 	var $send = $("#tofChat-memo-append");
+	var $update = $("#tofChat-memo-lastupdate");
 	
 	var list = [];
+	
+	function isActive() {
+		return $html.css('display') !== 'none';
+	}
 	
 	var init = function(){
 		$read.click(function(e){
@@ -24,7 +30,7 @@ com.hiyoko.tofclient.Memo = function(tof, interval, opt_$html){
 
 		if(interval){
 			window.setInterval(function(){
-				if($(document.activeElement).hasClass('tofChat-memo-memo')) {
+				if(!isActive() || $(document.activeElement).hasClass('tofChat-memo-memo')) {
 					return;
 				}
 				$read.click();
@@ -49,6 +55,8 @@ com.hiyoko.tofclient.Memo = function(tof, interval, opt_$html){
 	
 	var loadMemo = function(){
 		tof.getRefresh(function(result){displayMemos(result)}, true);
+		var now = new Date();
+		$update.text('Memo Last Update： ' + now.getHours() + '：' + now.getMinutes() + '：' + now.getSeconds());
 	};
 	
 	init();
