@@ -815,7 +815,7 @@ com.hiyoko.tofclient.Chat.SubMenu = function($html){
 				$dom = $('<span></span>');
 				$dom.addClass(menuItemClass);
 				$dom.text(v.label);
-				
+				$menu.append($dom);
 				$("."+menuItemClass+":last").click(v.click);
 				v.index = index;
 				index++;
@@ -823,6 +823,7 @@ com.hiyoko.tofclient.Chat.SubMenu = function($html){
 			}
 			if(v.type === 'bar') {
 				$dom = "<hr/>";
+				$menu.append($dom);
 			}
 			if(v.type === 'link') {
 				$dom = $('<span></span>');
@@ -836,8 +837,9 @@ com.hiyoko.tofclient.Chat.SubMenu = function($html){
 				link.text(v.label);
 				
 				$dom.append(link);
+				$menu.append($dom);
 			}
-			$menu.append($dom);
+			
 		});
 	}
 
