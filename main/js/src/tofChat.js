@@ -189,11 +189,11 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 
 	function setAutoReload_(){
 		if(interval){
-			window.setInterval(function(){
-				if(isActive()){getMsg_();}
-				tof.getLoginUserInfo(afterBeacon, nameSuiter(inputArea.getName()));
-			}, interval);
+			window.setInterval(function(){if(isActive()){getMsg_();}}, interval);
 		}
+		window.setInterval(function(){
+			tof.getLoginUserInfo(afterBeacon, nameSuiter(inputArea.getName()));
+		}, 12500);
 	}
 };
 
