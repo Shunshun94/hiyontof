@@ -896,7 +896,10 @@ com.hiyoko.tofclient.Chat.SubMenu.List = [
 	  }},
   {code: 'bar3', type:'bar'},
   {code: 'lineshare', type:'link', label:'LINE で招待する',
-   url:'http://line.me/R/msg/text/?' + encodeURIComponent('ここからどどんとふにアクセス! ' + location.toString())}
+   url:'http://line.me/R/msg/text/?' + encodeURIComponent('ここからどどんとふにアクセス! ' + location.toString())},
+  {code: 'bar4', type:'bar'},
+  {code: 'twittershare', type:'link', label:'Twitter で招待する',
+   url:'https://twitter.com/intent/tweet?text=' + encodeURIComponent('ここからどどんとふにアクセス! ' + location.toString())}
                                         	  ];
 
 com.hiyoko.tofclient.Chat.SubMenu.List.fireCloseEvent = function($html) {
