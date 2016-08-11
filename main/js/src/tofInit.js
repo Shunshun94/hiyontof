@@ -15,22 +15,30 @@
 		singleServerCandidate.url = key;
 		alertServerList += '\n＊' + serverList[key];
 	}
-	if (com.hiyoko.tofclient.ServerList.RESTRICTION) {
-		$('#tofChat-init-url').attr('placeholder', 'リストからアクセスするどどんとふを選択');
-		if (initData.url && ! Boolean(serverList[initData.url])) {
+
+	if (initData.url) {
+		if (! Boolean(serverList[initData.url]) && com.hiyoko.tofclient.ServerList.RESTRICTION) {
 			alert('本ひよんとふは以下のサーバにのみアクセスできます。\nそれ以外のどどんとふにはアクセスできません。\n' + alertServerList);
 			initData.url = '';
-		}
-		if(singleServerCandidate.count === 1) {
-			$("#tofChat-init-url").val(singleServerCandidate.url);
-		}
-	} else {
-		if (startsWith(document.location.protocol, 'https')) {
-			$("#tofChat-init-url").attr("placeholder", "[https://～ のみ可] アクセスするどどんとふの URL を入力");
-		} else {
-			$("#tofChat-init-url").attr("placeholder", "アクセスするどどんとふの URL を入力");
+		} else if (initData.url.indexOf('ddntf.museru.com') !== -1) {
+			alert('ひよんとふはどどんとふむせるにはアクセスできません');
+			initData.url = '';
+		}　else if (startsWith(document.location.protocol, 'https') && startsWith(initData.url, 'http://')) {
+			alert('本ひよんとふは  URL が https で始まるどどんとふにのみアクセスできます');
+			initData.url = '';
 		}
 	}
+	if(com.hiyoko.tofclient.ServerList.RESTRICTION && singleServerCandidate.count === 1) {
+		$("#tofChat-init-url").val(singleServerCandidate.url);
+	}
+	if (com.hiyoko.tofclient.ServerList.RESTRICTION) {
+		$('#tofChat-init-url').attr('placeholder', 'リストからアクセスするどどんとふを選択');
+	} else if (startsWith(document.location.protocol, 'https')) {
+		$("#tofChat-init-url").attr("placeholder", "[https://～ のみ可] アクセスするどどんとふの URL を入力");
+	} else {
+		$("#tofChat-init-url").attr("placeholder", "アクセスするどどんとふの URL を入力");
+	}
+
 
 	if(initData.url && initData.room){
 		var myTofRoom = new com.hiyoko.tof.room(initData.url, initData.room, initData.pass, function(tof){
