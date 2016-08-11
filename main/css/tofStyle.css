@@ -65,6 +65,12 @@ ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block ui-btn-up-f
 	border-radius: 3px;
 }
 
+#tofChat-chat-submenu-button {
+	padding:5px;
+	padding-bottom:3px;
+	display:block;
+}
+
 #tofChat-chat-submenu-list {
 	padding:12px;
 	display:none;
