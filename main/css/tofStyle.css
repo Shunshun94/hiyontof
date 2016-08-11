@@ -169,6 +169,7 @@ ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block ui-btn-up-f
 #tofChat-map-display {
 	oveflow: scroll;
 	width: 100%;
+	margin:auto;
 }
 
 #tofChat-map-lastupdate {
