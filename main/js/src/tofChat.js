@@ -23,7 +23,7 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 	}
 	
 	function buildChildComponents() {
-		subMenu = new com.hiyoko.tofclient.Chat.SubMenu($("#tofChat-chat-submenu"));
+		subMenu = new com.hiyoko.tofclient.Chat.SubMenu($("#tofChat-chat-submenu"), tof.getStatus());
 		status = new com.hiyoko.tofclient.Chat.Status($("#tofChat-connection-status"));
 		display = new com.hiyoko.tofclient.Chat.Display($("#tofChat-log"));
 		inputArea = new com.hiyoko.tofclient.Chat.InputArea(
@@ -798,7 +798,7 @@ com.hiyoko.tofclient.Chat.InputArea.Parette = function($html){
 /**
  * Chat Submenu Part
  */
-com.hiyoko.tofclient.Chat.SubMenu = function($html){
+com.hiyoko.tofclient.Chat.SubMenu = function($html, tofStatus){
 	var idBase = $html.attr('id');
 	var menuItemClass = idBase + "-list-item";
 	var items = {};
@@ -810,6 +810,9 @@ com.hiyoko.tofclient.Chat.SubMenu = function($html){
 	function initializeList() {
 		var index = 0;
 		$.each(com.hiyoko.tofclient.Chat.SubMenu.List, function(i, v){
+			if(Boolean(v.disabled) && v.disabled(tofStatus)){
+				return;
+			}
 			var $dom = '';
 			if(v.type === 'item') {
 				$dom = $('<span></span>');
@@ -897,9 +900,10 @@ com.hiyoko.tofclient.Chat.SubMenu.List = [
   {code: 'bar3', type:'bar'},
   {code: 'lineshare', type:'link', label:'LINE で招待する',
    url:'http://line.me/R/msg/text/?' + encodeURIComponent('ここからどどんとふにアクセス! ' + location.toString())},
-  {code: 'bar4', type:'bar'},
+  {code: 'bar4', type:'bar', disabled:function(status){return Boolean(status.pass);}},
   {code: 'twittershare', type:'link', label:'Twitter で招待する',
-   url:'https://twitter.com/intent/tweet?text=' + encodeURIComponent('ここからどどんとふにアクセス! ' + location.toString())}
+   url:'https://twitter.com/intent/tweet?text=' + encodeURIComponent('ここからどどんとふにアクセス! ' + location.toString()),
+      disabled:function(status){return Boolean(status.pass);}}
                                         	  ];
 
 com.hiyoko.tofclient.Chat.SubMenu.List.fireCloseEvent = function($html) {
