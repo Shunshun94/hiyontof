@@ -803,7 +803,7 @@ com.hiyoko.tofclient.Chat.SubMenu = function($html, tofStatus){
 	var menuItemClass = idBase + "-list-item";
 	var items = {};
 
-	$html.append("<span id='"+idBase + "-button"+"'>≡</span>" +
+	$html.append("<span id='"+idBase + "-button"+"'>MENU</span>" +
 			"<div id='"+idBase + "-list"+"'></div>");
 	var $menu = $("#" + idBase + "-list");
 
