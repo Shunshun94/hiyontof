@@ -35,8 +35,8 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 	};
 	
 	function nameSuiter(name) {
-		var name = name ? name : 'ななしのひよこ';
-		return isVisitor ? name + '@見学' : name;
+		var newName = name ? name : 'ななしのひよこ';
+		return isVisitor ? newName + '@見学' : newName;
 	}
 
 	function initializeDisplay(serverInfo){
