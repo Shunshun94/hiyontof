@@ -158,7 +158,7 @@ com.hiyoko.tofclient.Table = function(tof, interval, options){
 				$ct.append($tr);
 			});
 			$ct.append("<tr><th>その他</th>"
-						+ "<td><textarea name='info' class='ui-input-text ui-body-f ui-corner-all ui-shadow-inset'>" + c.info + "</textarea></td></tr>");
+						+ "<td><textarea name='info'>" + c.info + "</textarea></td></tr>");
 			$ct.change(function(e){
 				var $tag = $(e.target);
 				if($tag.attr("type") !== "checkbox"){
