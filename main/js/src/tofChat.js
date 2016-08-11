@@ -17,9 +17,13 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 	var status = null;
 	var display = null;
 	var inputArea = null;
-
+	
+	function isActive() {
+		return $html.css('display') !== 'none';
+	}
+	
 	function buildChildComponents() {
-		subMenu = new com.hiyoko.tofclient.Chat.SubMenu($("#tofChat-chat-submenu"));
+		subMenu = new com.hiyoko.tofclient.Chat.SubMenu($("#tofChat-chat-submenu"), tof.getStatus());
 		status = new com.hiyoko.tofclient.Chat.Status($("#tofChat-connection-status"));
 		display = new com.hiyoko.tofclient.Chat.Display($("#tofChat-log"));
 		inputArea = new com.hiyoko.tofclient.Chat.InputArea(
@@ -27,11 +31,12 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 	}
 
 	function renderChat($html) {
-		$("#tofChat-chat").append("<div id='tofChat-chat-submenu'></div>");
+		$html.append("<div id='tofChat-chat-submenu'></div>");
 	};
 	
 	function nameSuiter(name) {
-		return isVisitor ? name + '@見学' : name;
+		var newName = name ? name : 'ななしのひよこ';
+		return isVisitor ? newName + '@見学' : newName;
 	}
 
 	function initializeDisplay(serverInfo){
@@ -148,6 +153,7 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 		buildChildComponents();
 		eventBinds(serverInfo);	
 		getMsg_();
+		tof.getLoginUserInfo(afterBeacon, nameSuiter(inputArea.getName()));
 	}, true);
 
 	function getMsg_(msg){
@@ -162,7 +168,6 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 		display.append(response, tabs);
 		status.add("Done!");
 		isAsking = false;
-		tof.getLoginUserInfo(afterBeacon, nameSuiter(inputArea.getName()));
 	}
 
 	function afterBeacon(response){
@@ -186,8 +191,11 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 
 	function setAutoReload_(){
 		if(interval){
-			window.setInterval(getMsg_, interval);
+			window.setInterval(function(){if(isActive()){getMsg_();}}, interval);
 		}
+		window.setInterval(function(){
+			tof.getLoginUserInfo(afterBeacon, nameSuiter(inputArea.getName()));
+		}, 12500);
 	}
 };
 
@@ -792,24 +800,26 @@ com.hiyoko.tofclient.Chat.InputArea.Parette = function($html){
 /**
  * Chat Submenu Part
  */
-com.hiyoko.tofclient.Chat.SubMenu = function($html){
+com.hiyoko.tofclient.Chat.SubMenu = function($html, tofStatus){
 	var idBase = $html.attr('id');
 	var menuItemClass = idBase + "-list-item";
 	var items = {};
 
-	$html.append("<span id='"+idBase + "-button"+"'>≡</span>" +
+	$html.append("<span id='"+idBase + "-button"+"'>MENU</span>" +
 			"<div id='"+idBase + "-list"+"'></div>");
 	var $menu = $("#" + idBase + "-list");
 
 	function initializeList() {
 		var index = 0;
 		$.each(com.hiyoko.tofclient.Chat.SubMenu.List, function(i, v){
+			if(Boolean(v.disabled) && v.disabled(tofStatus)){
+				return;
+			}
 			var $dom = '';
 			if(v.type === 'item') {
 				$dom = $('<span></span>');
 				$dom.addClass(menuItemClass);
 				$dom.text(v.label);
-				
 				$menu.append($dom);
 				$("."+menuItemClass+":last").click(v.click);
 				v.index = index;
@@ -820,6 +830,21 @@ com.hiyoko.tofclient.Chat.SubMenu = function($html){
 				$dom = "<hr/>";
 				$menu.append($dom);
 			}
+			if(v.type === 'link') {
+				$dom = $('<span></span>');
+				$dom.addClass(menuItemClass);
+				
+				var link = $('<a></a>');
+				link.attr({
+					href:v.url,
+					target:'_blank'
+				});
+				link.text(v.label);
+				
+				$dom.append(link);
+				$menu.append($dom);
+			}
+			
 		});
 	}
 
@@ -873,7 +898,14 @@ com.hiyoko.tofclient.Chat.SubMenu.List = [
 	  click:function(e){
 		  $(e.target).trigger(new $.Event("sendAlarm"))
 		  com.hiyoko.tofclient.Chat.SubMenu.List.fireCloseEvent(e.target);
-	  }}
+	  }},
+  {code: 'bar3', type:'bar'},
+  {code: 'lineshare', type:'link', label:'LINE で招待する',
+   url:'http://line.me/R/msg/text/?' + encodeURIComponent('ここからどどんとふにアクセス! ' + location.toString())},
+  {code: 'bar4', type:'bar', disabled:function(status){return Boolean(status.pass);}},
+  {code: 'twittershare', type:'link', label:'Twitter で招待する',
+   url:'https://twitter.com/intent/tweet?text=' + encodeURIComponent('ここからどどんとふにアクセス! ' + location.toString()),
+      disabled:function(status){return Boolean(status.pass);}}
                                         	  ];
 
 com.hiyoko.tofclient.Chat.SubMenu.List.fireCloseEvent = function($html) {

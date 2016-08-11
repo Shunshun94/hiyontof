@@ -65,6 +65,12 @@ ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block ui-btn-up-f
 	border-radius: 3px;
 }
 
+#tofChat-chat-submenu-button {
+	padding:5px;
+	padding-bottom:3px;
+	display:block;
+}
+
 #tofChat-chat-submenu-list {
 	padding:12px;
 	display:none;
@@ -76,6 +82,16 @@ ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block ui-btn-up-f
 	background-color: #C0FFC0;
 	border-radius: 12px;
 	padding:5px;
+}
+
+.tofChat-chat-submenu-list-item>a {
+	text-decoration :none;
+	color:black;
+}
+
+.tofChat-chat-submenu-list-item>a:visited {
+	text-decoration :none;
+	color:black;
 }
 
 #tofChat-input {
@@ -153,6 +169,11 @@ ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block ui-btn-up-f
 #tofChat-map-display {
 	oveflow: scroll;
 	width: 100%;
+	margin:auto;
+}
+
+#tofChat-map-lastupdate {
+	text-align:right;
 }
 
 #tofChat-map-map {
@@ -209,6 +230,10 @@ ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block ui-btn-up-f
 	overflow:hidden;
 }
 
+#tofChat-memo-lastupdate {
+	text-align:right;
+}
+
 #tofChat-memo-display>div {
 	-moz-box-shadow: inset 0 1px 4px rgba(0,0,0,.2);
 	-webkit-box-shadow: inset 0 1px 4px rgba(0,0,0,.2);
@@ -217,6 +242,10 @@ ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block ui-btn-up-f
 	border-radius: 5px;
 	padding: 4px;
 	margin-bottom: 1em;
+}
+
+#tofChat-table-lastupdate {
+	text-align:right;
 }
 
 #tofChat-table-display>table>tbody>tr>td {

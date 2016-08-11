@@ -4,14 +4,20 @@ com.hiyoko.HiyoLogger = com.hiyoko.HiyoLogger || function(){
 	this.log = function(msg){};
 };
 com.hiyoko.tofclient = com.hiyoko.tofclient || {};
-com.hiyoko.tofclient.Table = function(tof, interval, opt_$html, opt_table, opt_debug){
-	var table = opt_table ? false : true;
-	var debug = opt_debug ? true : false;
+com.hiyoko.tofclient.Table = function(tof, interval, options){
+	var $html = options.html ? options.html : $("#tofChat-table");
+	var table = options.table ? false : true;
+	var debug = options.debug ? true : false;
 	var logger = new com.hiyoko.HiyoLogger(debug, debug);
 	var $disp = $("#tofChat-table-display");
 	var $read = $("#tofChat-table-reload");
+	var $update = $("#tofChat-table-lastupdate");
 	
 	var chars = [];
+	
+	function isActive() {
+		return $html.css('display') !== 'none';
+	}
 	
 	this.init = function(){
 		$read.click(function(e){
@@ -19,7 +25,9 @@ com.hiyoko.tofclient.Table = function(tof, interval, opt_$html, opt_table, opt_d
 		});
 		if(interval){
 			window.setInterval(function(){
-				$read.click();
+				if(isActive()){
+					$read.click();
+				}
 			}, interval);
 		}
 		// 少し時間をおいてロードしないと先頭項目のチェックボックスが変になる
@@ -50,6 +58,8 @@ com.hiyoko.tofclient.Table = function(tof, interval, opt_$html, opt_table, opt_d
 		$disp.empty();
 		rendCharacterTable(charCandidates);
 		appendAddButton();
+		var now = new Date();
+		$update.text('Table Last Update： ' + now.getHours() + '：' + now.getMinutes() + '：' + now.getSeconds());
 	};
 	
 	var addCharacter = function(){
@@ -148,7 +158,7 @@ com.hiyoko.tofclient.Table = function(tof, interval, opt_$html, opt_table, opt_d
 				$ct.append($tr);
 			});
 			$ct.append("<tr><th>その他</th>"
-						+ "<td><textarea name='info' class='ui-input-text ui-body-f ui-corner-all ui-shadow-inset'>" + c.info + "</textarea></td></tr>");
+						+ "<td><textarea name='info'>" + c.info + "</textarea></td></tr>");
 			$ct.change(function(e){
 				var $tag = $(e.target);
 				if($tag.attr("type") !== "checkbox"){

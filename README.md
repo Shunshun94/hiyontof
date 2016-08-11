@@ -109,6 +109,40 @@ GNU GENERAL PUBLIC LICENSE Version 3 です。
 
 ## ライセンス
 
-hiyontof は GNU GENERAL PUBLIC LICENSE Version 3 でライセンスします。
+ひよんとふは GNU GENERAL PUBLIC LICENSE Version 3 でライセンスします。
 詳細は LICENSE ファイルを参照してください。
+
+## お世話になっている方々
+
+### 個人
+
+ひよんとふの開発に際しては多くの人にお世話になりました。幾人かを紹介したいと思います。
+
+まず、どどんとふを開発なさった [たいたい竹流](https://twitter.com/torgtaitai) さん。
+そもそも、どどんとふが無ければひよんとふを開発しようとは考えませんでした。
+また、どどんとふに WEBIF の機能があった、というのも開発のきっかけでした。
+
+ひよんとふのソースコード公開のきっかけを作ってくださった [大ちゃん](https://twitter.com/DoDontoF_Srv) さんと [弓路](https://twitter.com/yumiji3156) さん。
+2人のディスカッションをきっかけにひよんとふを github に公開しようと考えました。
+また、2人はひよんとふを各々のサーバに設置してくださっています。
+
+ひよんとふを最初に設置するサーバを貸してくださった [シン](http://www.pixiv.net/member.php?id=10771780) さん。
+ひよんとふの設置場所に困っていた際に、快くサーバを貸してくださいました。
+また、動作状況のフィードバックも頻繁にくださっています。
+
+インタフェース周りの改善に知恵を貸してくれた [かなひつじ](https://twitter.com/kana_1173) さん。
+インタフェースに関する更新は大体彼女の指摘がかかわっています。
+
+<!-- 他にも載せたい人がたくさんいるのだけれども、文面がうまく書けなかったから次回以降の更新で。主にフィードバックコメントくださった方々とか。 -->
+
+### 紹介記事 (既知のもののみ)
+
+- 2016年03月26日 [スマホでどどんとふ！: セッションもぐもぐ](http://nomit.seesaa.net/article/435670815.html)
+- 2016年05月08日 [スマホでTRPG「 ひよこどどんとふクライアント」 | こかげ工房](https://cokage.works/trpg/hiyoco-dodontof/)
+
+### 設置サーバ (直接連絡を頂いたもののみ)
+
+- [http://sy17.sakura.ne.jp/shunshun/tofChatProto.html](http://sy17.sakura.ne.jp/shunshun/tofChatProto.html)
+- [https://www.taruki.com/](https://www.taruki.com/)
+- [https://cokage.works/](https://cokage.works/)
 
