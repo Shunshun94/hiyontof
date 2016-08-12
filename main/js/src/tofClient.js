@@ -198,7 +198,7 @@ com.hiyoko.tof.room = function(urlInput, roomInput, passInput, callback){
 			if(opt_failCallBack){
 				opt_failCallBack(result);
 			} else {
-				alert(result.statusText);
+				alert("どどんとふへの接続に失敗しました。\nURL を再度ご確認ください");
 			}
 		});
 	};

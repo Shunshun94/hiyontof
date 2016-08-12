@@ -46,6 +46,7 @@ com.hiyoko.tofclient.Map = function(tof, interval, options){
 			}, interval);
 		}
 		
+		// 少し時間をおいてロードしないと横幅がうまくとれない
 		window.setTimeout(function(){
 			$reset.click();
 		}, 100);
