@@ -45,7 +45,11 @@ com.hiyoko.tofclient.Map = function(tof, interval, options){
 				}
 			}, interval);
 		}
-		$reset.click();
+		
+		window.setTimeout(function(){
+			$reset.click();
+		}, 100);
+		
 	};
 
 	this.init();
@@ -56,7 +60,7 @@ com.hiyoko.tofclient.Map.MapWriter = function($disp, tof, opt_dragMode){
 	var isDrag = opt_dragMode ? true : false;
 	var tofUrl = tof.getStatus().url;
 	var self = this;
-	var boxSize = Math.floor($disp.parent().width()  / (20)) - 1;
+	var boxSize = Math.floor($disp.parent().parent().width()  / (20)) - 1;
 	var $status = $("#tofChat-map-status");
 	var $update = $("#tofChat-map-lastupdate");
 	

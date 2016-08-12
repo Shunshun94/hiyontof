@@ -36,6 +36,7 @@ com.hiyoko.tofclient.Memo = function(tof, interval, opt_$html){
 				$read.click();
 			}, interval);
 		}
+		$read.click();
 	};
 	
 	var displayMemos = function(result){
