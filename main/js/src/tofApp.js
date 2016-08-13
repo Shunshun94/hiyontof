@@ -9,7 +9,7 @@ com.hiyoko.tofclient.App = function(tof) {
 		}
 		
 		this.chat = new com.hiyoko.tofclient.Chat(tof, interval, {visitor: isVisitor, html:$("#tofChat-chat")});
-		this.map = new com.hiyoko.tofclient.Map(tof, interval, {isDraggable: true, html:$("#tofChat-map")});
+		this.map = new com.hiyoko.tofclient.Map(tof, interval, {isDraggable: true, html:$("#tofChat-map"), debug:getParam("debug", false)});
 		this.memo = new com.hiyoko.tofclient.Memo(tof, interval, $("#tofChat-memo"));
 		this.table = new com.hiyoko.tofclient.Table(tof, interval, {html:$("#tofChat-table"), table:true, debug:false});
 		this.init = function(){
@@ -23,7 +23,7 @@ com.hiyoko.tofclient.App = function(tof) {
 					$(this).addClass("active");
 					$("#" + $(this).attr("title")).show();
 				}catch(e){
-					alert("ERROR @Shunshun94 にこの文字列 (ないし画面) を送ってください: " + e.stack);
+					alert("ERROR @Shunshun94 にこの文字列 (ないし画面) を送ってください\n" + e.stack);
 				}
 			});
 	
