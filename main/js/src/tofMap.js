@@ -67,7 +67,10 @@ com.hiyoko.tofclient.Map.MapWriter = function($disp, tof, opt_dragMode, opt_debu
 	var debugMode = opt_debugMode;
 	var tofUrl = tof.getStatus().url;
 	var self = this;
-	var boxSize = Math.floor($disp.parent().parent().width()  / (20)) - 1;
+	
+	// $(window).width() - 30 = $disp().parent().parent().width() (means $disp.width()) 
+	// Because of unknown reason, $disp().parent().parent().width() couldn't be get from Safari.
+	var boxSize = Math.floor(($(window).width() - 30)  / (20)) - 1;
 	var $status = $("#tofChat-map-status");
 	var $update = $("#tofChat-map-lastupdate");
 	
@@ -120,8 +123,7 @@ com.hiyoko.tofclient.Map.MapWriter = function($disp, tof, opt_dragMode, opt_debu
 		try{		
 			var urlParser = com.hiyoko.tofclient.Map.getPicUrl;
 			var chars = result.characters;
-			boxSize = Math.floor($disp.parent().parent().width()  / (result.mapData.xMax)) - 1;
-			debugLog("Map tile size = " + boxSize + "\nMap width = " + $disp.parent().parent().width() + "\nWindow width = " + $(window).width());
+			boxSize = Math.floor(($(window).width() - 30)  / (result.mapData.xMax)) - 1;
 			clearMap();
 			drawMap(result);
 	
