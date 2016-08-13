@@ -3,6 +3,7 @@ com.hiyoko = com.hiyoko || {};
 com.hiyoko.tofclient = com.hiyoko.tofclient || {};
 com.hiyoko.tofclient.Map = function(tof, interval, options){
 	var isDrag = options.isDraggable ? true : false;
+	var debugMode = options.debug;
 	var $html = options.html ? options.html : $("#tofChat-map");
 	
 	var $disp = $("#tofChat-map-display");
@@ -12,7 +13,7 @@ com.hiyoko.tofclient.Map = function(tof, interval, options){
 	var $switchChar = $("#tofChat-map-char-switch");
 	var $switchLine = $("#tofChat-map-line-switch");
 
-	var mapWriter = new com.hiyoko.tofclient.Map.MapWriter($disp, tof, isDrag);
+	var mapWriter = new com.hiyoko.tofclient.Map.MapWriter($disp, tof, isDrag, debugMode);
 
 	function isActive() {
 		return $html.css('display') !== 'none';
@@ -48,7 +49,11 @@ com.hiyoko.tofclient.Map = function(tof, interval, options){
 		
 		// 少し時間をおいてロードしないと横幅がうまくとれない
 		window.setTimeout(function(){
-			$reset.click();
+			try{
+				$reset.click();
+			} catch(e) {
+				alert(e);
+			}
 		}, 100);
 		
 	};
@@ -57,13 +62,19 @@ com.hiyoko.tofclient.Map = function(tof, interval, options){
 
 };
 
-com.hiyoko.tofclient.Map.MapWriter = function($disp, tof, opt_dragMode){
+com.hiyoko.tofclient.Map.MapWriter = function($disp, tof, opt_dragMode, opt_debugMode){
 	var isDrag = opt_dragMode ? true : false;
+	var debugMode = opt_debugMode;
 	var tofUrl = tof.getStatus().url;
 	var self = this;
-	var boxSize = Math.floor($disp.parent().parent().width()  / (20)) - 1;
+	
+	// $(window).width() - 30 = $disp().parent().parent().width() (means $disp.width()) 
+	// Because of unknown reason, $disp().parent().parent().width() couldn't be get from Safari.
+	var boxSize = Math.floor(($(window).width() - 30)  / (20)) - 1;
 	var $status = $("#tofChat-map-status");
 	var $update = $("#tofChat-map-lastupdate");
+	
+	var debugLog = debugMode ? function(str){alert(str)} : function(str){};
 	
 	this.toggleName = function() {
 		$('.tofChat-map-char-name').toggle();
@@ -109,18 +120,21 @@ com.hiyoko.tofclient.Map.MapWriter = function($disp, tof, opt_dragMode){
 	}
 
 	function rewriteMapAll_(result){
-		var urlParser = com.hiyoko.tofclient.Map.getPicUrl;
-		var chars = result.characters;
-		boxSize = Math.floor($disp.parent().parent().width()  / (result.mapData.xMax)) - 1;
-
-		clearMap();
-		drawMap(result);
-
-
-		$(".tofChat-map-box").css("width", boxSize + "px");
-		$(".tofChat-map-box").css("height", boxSize + "px");
-
-		rendCharacters(chars, boxSize);
+		try{		
+			var urlParser = com.hiyoko.tofclient.Map.getPicUrl;
+			var chars = result.characters;
+			boxSize = Math.floor(($(window).width() - 30)  / (result.mapData.xMax)) - 1;
+			clearMap();
+			drawMap(result);
+	
+	
+			$(".tofChat-map-box").css("width", boxSize + "px");
+			$(".tofChat-map-box").css("height", boxSize + "px");
+	
+			rendCharacters(chars, boxSize);
+		} catch (e) {
+			alert("ERROR @Shunshun94 にこの文字列 (ないし画面) を送ってください\n" + e.stack);
+		}
 	}
 
 	function clearMap(){
