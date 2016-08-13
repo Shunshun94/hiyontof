@@ -3,6 +3,7 @@ com.hiyoko = com.hiyoko || {};
 com.hiyoko.tofclient = com.hiyoko.tofclient || {};
 com.hiyoko.tofclient.Map = function(tof, interval, options){
 	var isDrag = options.isDraggable ? true : false;
+	var debugMode = options.debug;
 	var $html = options.html ? options.html : $("#tofChat-map");
 	
 	var $disp = $("#tofChat-map-display");
@@ -12,7 +13,7 @@ com.hiyoko.tofclient.Map = function(tof, interval, options){
 	var $switchChar = $("#tofChat-map-char-switch");
 	var $switchLine = $("#tofChat-map-line-switch");
 
-	var mapWriter = new com.hiyoko.tofclient.Map.MapWriter($disp, tof, isDrag);
+	var mapWriter = new com.hiyoko.tofclient.Map.MapWriter($disp, tof, isDrag, debugMode);
 
 	function isActive() {
 		return $html.css('display') !== 'none';
@@ -61,13 +62,16 @@ com.hiyoko.tofclient.Map = function(tof, interval, options){
 
 };
 
-com.hiyoko.tofclient.Map.MapWriter = function($disp, tof, opt_dragMode){
+com.hiyoko.tofclient.Map.MapWriter = function($disp, tof, opt_dragMode, opt_debugMode){
 	var isDrag = opt_dragMode ? true : false;
+	var debugMode = opt_debugMode;
 	var tofUrl = tof.getStatus().url;
 	var self = this;
 	var boxSize = Math.floor($disp.parent().parent().width()  / (20)) - 1;
 	var $status = $("#tofChat-map-status");
 	var $update = $("#tofChat-map-lastupdate");
+	
+	var debugLog = debugMode ? function(str){alert(str)} : function(str){};
 	
 	this.toggleName = function() {
 		$('.tofChat-map-char-name').toggle();
@@ -117,7 +121,7 @@ com.hiyoko.tofclient.Map.MapWriter = function($disp, tof, opt_dragMode){
 			var urlParser = com.hiyoko.tofclient.Map.getPicUrl;
 			var chars = result.characters;
 			boxSize = Math.floor($disp.parent().parent().width()  / (result.mapData.xMax)) - 1;
-	
+			debugLog("Map tile size = " + boxSize + "\nMap Width = " + $disp.parent().parent().width());
 			clearMap();
 			drawMap(result);
 	
