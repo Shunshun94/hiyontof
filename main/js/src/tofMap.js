@@ -48,7 +48,11 @@ com.hiyoko.tofclient.Map = function(tof, interval, options){
 		
 		// 少し時間をおいてロードしないと横幅がうまくとれない
 		window.setTimeout(function(){
-			$reset.click();
+			try{
+				$reset.click();
+			} catch(e) {
+				alert(e);
+			}
 		}, 100);
 		
 	};
@@ -109,18 +113,22 @@ com.hiyoko.tofclient.Map.MapWriter = function($disp, tof, opt_dragMode){
 	}
 
 	function rewriteMapAll_(result){
-		var urlParser = com.hiyoko.tofclient.Map.getPicUrl;
-		var chars = result.characters;
-		boxSize = Math.floor($disp.parent().parent().width()  / (result.mapData.xMax)) - 1;
-
-		clearMap();
-		drawMap(result);
-
-
-		$(".tofChat-map-box").css("width", boxSize + "px");
-		$(".tofChat-map-box").css("height", boxSize + "px");
-
-		rendCharacters(chars, boxSize);
+		try{		
+			var urlParser = com.hiyoko.tofclient.Map.getPicUrl;
+			var chars = result.characters;
+			boxSize = Math.floor($disp.parent().parent().width()  / (result.mapData.xMax)) - 1;
+	
+			clearMap();
+			drawMap(result);
+	
+	
+			$(".tofChat-map-box").css("width", boxSize + "px");
+			$(".tofChat-map-box").css("height", boxSize + "px");
+	
+			rendCharacters(chars, boxSize);
+		} catch (e) {
+			alert("ERROR @Shunshun94 にこの文字列 (ないし画面) を送ってください\n" + e.stack);
+		}
 	}
 
 	function clearMap(){
