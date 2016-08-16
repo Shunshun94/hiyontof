@@ -736,7 +736,7 @@ com.hiyoko.tofclient.Chat.InputArea.History = function($html){
 
 		if(index.c === -1){
 			index.c = store.length;
-			store.push({name: e.name, msgs:[]});
+			store.push({name: e.name ? e.name : 'ななしのひよこ', msgs:[]});
 		}
 
 		store[index.c].color = e.color;
