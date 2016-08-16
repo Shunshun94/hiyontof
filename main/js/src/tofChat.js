@@ -661,7 +661,7 @@ com.hiyoko.tofclient.Chat.InputArea.History = function($html){
 		for(var i = 0; i < storeLength; i++){
 			$tab = $('<span></span>');
 			$tab.addClass('tofChat-chat-input-history-tab');
-			$tab.text(store[i].name);
+			$tab.text(store[i].name + '　');
 			$tabs.append($tab);
 		}
 		$("#tofChat-chat-input-history-tabs").append($tabs.html());
@@ -736,7 +736,7 @@ com.hiyoko.tofclient.Chat.InputArea.History = function($html){
 
 		if(index.c === -1){
 			index.c = store.length;
-			store.push({name: e.name, msgs:[]});
+			store.push({name: e.name ? e.name : 'ななしのひよこ', msgs:[]});
 		}
 
 		store[index.c].color = e.color;

@@ -133,6 +133,7 @@ ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block ui-btn-up-f
 	width: 15%;
 	border: solid 1px black;
 	word-break:keep-all;
+	overflow:hidden;
 }
 
 .tof-chat-radio-base>span {
