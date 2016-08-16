@@ -661,7 +661,7 @@ com.hiyoko.tofclient.Chat.InputArea.History = function($html){
 		for(var i = 0; i < storeLength; i++){
 			$tab = $('<span></span>');
 			$tab.addClass('tofChat-chat-input-history-tab');
-			$tab.text(store[i].name);
+			$tab.text(store[i].name + '　');
 			$tabs.append($tab);
 		}
 		$("#tofChat-chat-input-history-tabs").append($tabs.html());
