@@ -27,7 +27,7 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 		status = new com.hiyoko.tofclient.Chat.Status($("#tofChat-connection-status"));
 		display = new com.hiyoko.tofclient.Chat.Display($("#tofChat-log"));
 		inputArea = new com.hiyoko.tofclient.Chat.InputArea(
-				$("#tofChat-input"), $("#tofChat-parette"), $("#tofChat-inputArea"), isVisitor);
+				$("#tofChat-input"), $("#tofChat-chat-input-history"), $("#tofChat-inputArea"), isVisitor);
 	}
 
 	function renderChat($html) {
@@ -430,35 +430,50 @@ com.hiyoko.tofclient.Chat.Status = function($html){
  * Chat User Console Part
  */
 com.hiyoko.tofclient.Chat.InputArea = function($input, $parette, $parent, isVisitor){
-	var inputs = [new com.hiyoko.tofclient.Chat.InputArea.Input($input, isVisitor),
-	              new com.hiyoko.tofclient.Chat.InputArea.Parette($parette)];
+	var inputs = {talk:new com.hiyoko.tofclient.Chat.InputArea.Input($input, isVisitor),
+	              history:new com.hiyoko.tofclient.Chat.InputArea.History($parette)};
 	var current = 0;
 	var self = this;
 
+	var $switcher = $('#tofChat-chat-input-switch');
+	
 	function eventBind(){
 		$parette.on("EditMessage", function(e){
-			self.switchMode();
-			inputs[0].setMessage(e);
+			inputs.talk.setMessage(e);
+			self.hideAll();
+			inputs.talk.enabled();
+			self.changeSwitcherEventless('talk');
 		});
 
 		$input.on("sendMessage", function(e){
-			inputs[1].stackMsg(e);
+			inputs.history.stackMsg(e);
 		});
-
-		$input.on("switch", function(e){self.switchMode();});
-		$parette.on("switch", function(e){self.switchMode();});
+		
+		$switcher.change(function(e){
+			self.hideAll();
+			inputs[$(e.target).val()].enabled();
+		});
 	}
+	
+	this.changeSwitcherEventless = function(key){
+		var $selected = $switcher.children('[value="'+ key +'"]');
+		var caption = $selected.text();
+		$switcher.children('[value="'+ key +'"]')[0].selected = true;
+		$($switcher.parent().find('span>span')[0]).text(caption);
+	};
 
 	this.getName = function(){
-		return inputs[0].getName();
+		return inputs.talk.getName();
 	};
 
-	this.switchMode = function(){
-		inputs[current].disabled();
-		current = 1 - current;
-		inputs[current].enabled();
+	this.hideAll = function(){
+		for(var key in inputs) {
+			inputs[key].disabled();
+		}
 	};
 	eventBind();
+	this.hideAll();
+	inputs['talk'].enabled();
 };
 
 com.hiyoko.tofclient.Chat.InputArea.Input = function($html, isVisitor){
@@ -561,10 +576,11 @@ com.hiyoko.tofclient.Chat.InputArea.Input = function($html, isVisitor){
 			});
 			$html.trigger(event);
 		});
-
+		/**
 		$("#"+id+"-switch").click(function(e){
 			$html.trigger(new $.Event("switch"));
 		});
+		*/
 	}
 
 	$("#"+id+"-color").val(localStorage.getItem("color"));
@@ -583,7 +599,7 @@ com.hiyoko.tofclient.Chat.InputArea.Input = function($html, isVisitor){
 	eventBind();
 };
 
-com.hiyoko.tofclient.Chat.InputArea.Parette = function($html){
+com.hiyoko.tofclient.Chat.InputArea.History = function($html){
 	var store = getStore();
 	this.disabled = function(){$html.hide()};
 	this.enabled = function(){
@@ -592,7 +608,7 @@ com.hiyoko.tofclient.Chat.InputArea.Parette = function($html){
 			alert("発言履歴が未登録です。何らかの発言をしたうえで再度開いてください");
 			return;
 		}
-		if($(".tofChat-parette-tab").length === 0){
+		if($(".tofChat-chat-input-history-tab").length === 0){
 			self.sortMsg();
 			drawTabs();
 			drawMsgs(0);
@@ -600,12 +616,13 @@ com.hiyoko.tofclient.Chat.InputArea.Parette = function($html){
 		$html.show()
 	};
 
-	var $list = $("#tofChat-parette-list");
-	var $edit = $("#tofChat-parette-action-edit");
-	var $send = $("#tofChat-parette-action-send");
+	var $list = $("#tofChat-chat-input-history-list");
+	var $edit = $("#tofChat-chat-input-history-action-edit");
+	var $send = $("#tofChat-chat-input-history-action-send");
 	var self = this;
 
 	function getStore(){
+		// 歴史的経緯の localStorage Key
 		var tmp = localStorage.getItem("com.hiyoko.tofclient.Chat.InputArea.Parette.Store");
 		if(tmp === null){
 			return [];
@@ -627,8 +644,8 @@ com.hiyoko.tofclient.Chat.InputArea.Parette = function($html){
 
 	function getSelectedNumber(e){
 		var result = {c:0, m:-1};
-		result.m = $("#tofChat-parette-list").val();
-		$.each($(".tofChat-parette-tab"), function(i, elem){
+		result.m = $("#tofChat-chat-input-history-list").val();
+		$.each($(".tofChat-chat-input-history-tab"), function(i, elem){
 			if($(elem).hasClass("active")){
 				result.c = i;
 			}
@@ -639,20 +656,20 @@ com.hiyoko.tofclient.Chat.InputArea.Parette = function($html){
 	function drawTabs(){
 		var $tabs = $('<div></div>');
 		var $tab;
-		$("#tofChat-parette-tabs").empty();
+		$("#tofChat-chat-input-history-tabs").empty();
 		var storeLength = Math.min(store.length, 6);
 		for(var i = 0; i < storeLength; i++){
 			$tab = $('<span></span>');
-			$tab.addClass('tofChat-parette-tab');
+			$tab.addClass('tofChat-chat-input-history-tab');
 			$tab.text(store[i].name);
 			$tabs.append($tab);
 		}
-		$("#tofChat-parette-tabs").append($tabs.html());
-		$(".tofChat-parette-tab:first").addClass("active");
+		$("#tofChat-chat-input-history-tabs").append($tabs.html());
+		$(".tofChat-chat-input-history-tab:first").addClass("active");
 
 
-		$(".tofChat-parette-tab").click(function(e){
-			$(".tofChat-parette-tab").removeClass("active");
+		$(".tofChat-chat-input-history-tab").click(function(e){
+			$(".tofChat-chat-input-history-tab").removeClass("active");
 			$(this).addClass("active");
 			drawMsgs((getSelectedNumber()).c);
 		});
@@ -666,10 +683,10 @@ com.hiyoko.tofclient.Chat.InputArea.Parette = function($html){
 			$option.text(v.msg);
 			msgList.append($option)
 		});
-		$("#tofChat-parette-list").empty();
-		$("#tofChat-parette-list").append(msgList.html());
-		$("#tofChat-parette-list > option:first").select();
-		$("#tofChat-parette-list").parent().find(".ui-btn-text").text($("#tofChat-parette-list > option:first").text());
+		$("#tofChat-chat-input-history-list").empty();
+		$("#tofChat-chat-input-history-list").append(msgList.html());
+		$("#tofChat-chat-input-history-list > option:first").select();
+		$("#tofChat-chat-input-history-list").parent().find(".ui-btn-text").text($("#tofChat-chat-input-history-list > option:first").text());
 	}
 
 	function eventBind(){
@@ -686,13 +703,14 @@ com.hiyoko.tofclient.Chat.InputArea.Parette = function($html){
 			$html.trigger(new $.Event("sendMessage", msg));
 			self.updateMsg(num.c, num.m);
 		});
-
-		$("#tofChat-parette-switch").click(function(e){
+		/**
+		$("#tofChat-chat-input-history-switch").click(function(e){
 			$html.trigger(new $.Event("switch"));
 		});
+		*/
 
-		$("#tofChat-parette-delete").click(function(e){
-			if($("#tofChat-parette-list > option").length < 2){
+		$("#tofChat-chat-input-history-delete").click(function(e){
+			if($("#tofChat-chat-input-history-list > option").length < 2){
 				alert("発言が1つしか登録されていない場合、削除はできません");
 				return;
 			}
@@ -703,7 +721,7 @@ com.hiyoko.tofclient.Chat.InputArea.Parette = function($html){
 			}
 		});
 
-		$("#tofChat-parette-reload").click(function(e){
+		$("#tofChat-chat-input-history-reload").click(function(e){
 			self.sortMsg();
 			drawTabs();
 			drawMsgs(0);

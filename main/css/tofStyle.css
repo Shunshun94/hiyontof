@@ -115,14 +115,14 @@ ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block ui-btn-up-f
 	margin-right: 0px;
 }
 
-#tofChat-parette {
+#tofChat-chat-input-history {
 	background-color:#F0FFF0;
 	border-radius: 12px;
 	border-bottom: solid 1px black;
 	display:none;
 }
 
-.tofChat-parette-tab {
+.tofChat-chat-input-history-tab {
 	padding-left: 2px;
 	padding-right: 2px;
 	padding-top: 10px;

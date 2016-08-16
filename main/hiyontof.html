@@ -79,32 +79,42 @@
 									<div class="tofChat-button-heavy" id="tofChat-input-send">送信</div>
 								</div>
 							</div>
-							<div class="tofChat-input-short">
-								<input type="button" id="tofChat-input-switch" value="履歴" />
-							</div>
-							<div class="tofChat-input-long">
-								<select id="tofChat-input-dicebot"><option
-										value="default" label="デフォルト">部屋指定のダイスボット</option></select>
-							</div>
+
 						</div>
-						<div id="tofChat-parette">
-							<p id="tofChat-parette-tabs"></p>
-							<select id="tofChat-parette-list"><option>-</option></select>
+						<div id="tofChat-chat-input-history">
+							<p id="tofChat-chat-input-history-tabs"></p>
+							<select id="tofChat-chat-input-history-list"><option>-</option></select>
 							<div class="tofChat-input-half">
-								<input type="button" id="tofChat-parette-action-edit"
+								<input type="button" id="tofChat-chat-input-history-action-edit"
 									value="編集して送信" />
 							</div>
 							<div class="tofChat-input-half">
-								<input type="button" id="tofChat-parette-action-send" value="送信" />
+								<input type="button" id="tofChat-chat-input-history-action-send" value="送信" />
 							</div>
 							<div class="tofChat-input-short">
-								<input type="button" id="tofChat-parette-switch" value="通常入力" />
+								<input type="button" id="tofChat-chat-input-history-switch" value="通常入力" />
 							</div>
 							<div class="tofChat-input-short">
-								<input type="button" id="tofChat-parette-delete" value="削除" />
+								<input type="button" id="tofChat-chat-input-history-delete" value="削除" />
 							</div>
 							<div class="tofChat-input-short">
-								<input type="button" id="tofChat-parette-reload" value="更新" />
+								<input type="button" id="tofChat-chat-input-history-reload" value="更新" />
+							</div>
+						</div>
+						<div>
+							<div class="tofChat-input-half">
+								<select id="tofChat-chat-input-switch">
+									<option value="talk" label="発言">発言</option>
+									<option value="history" label="発言履歴">発言履歴</option>
+									<!--  
+									<option value="parette" label="チャットパレット">チャットパレット</option>
+									<option value="secret" label="シークレットダイス">シークレットダイス</option>
+									-->
+								</select>
+							</div>
+							<div class="tofChat-input-half">
+								<select id="tofChat-input-dicebot"><option
+										value="default" label="デフォルト">部屋指定のダイスボット</option></select>
 							</div>
 						</div>
 					</div>
