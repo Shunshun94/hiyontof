@@ -116,7 +116,7 @@ ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block ui-btn-up-f
 }
 
 #tofChat-chat-input-history {
-	background-color:#F0FFF0;
+	background-color:#A0FFA0;
 	border-radius: 12px;
 	border-bottom: solid 1px black;
 	display:none;
@@ -134,6 +134,18 @@ ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block ui-btn-up-f
 	border: solid 1px black;
 	word-break:keep-all;
 	overflow:hidden;
+}
+
+#tofChat-chat-input-secret {
+	padding:5px;
+	background-color:#FFA0A0;
+	border-radius: 12px;
+	border-bottom: solid 1px black;
+	display:none;
+}
+
+#tofChat-chat-input-shared {
+	padding-top:10px;
 }
 
 .tof-chat-radio-base>span {

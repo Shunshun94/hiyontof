@@ -26,8 +26,11 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 		subMenu = new com.hiyoko.tofclient.Chat.SubMenu($("#tofChat-chat-submenu"), tof.getStatus());
 		status = new com.hiyoko.tofclient.Chat.Status($("#tofChat-connection-status"));
 		display = new com.hiyoko.tofclient.Chat.Display($("#tofChat-log"));
-		inputArea = new com.hiyoko.tofclient.Chat.InputArea(
-				$("#tofChat-input"), $("#tofChat-chat-input-history"), $("#tofChat-inputArea"), isVisitor);
+		inputArea = new com.hiyoko.tofclient.Chat.InputArea($("#tofChat-inputArea"),
+				{	talk:$("#tofChat-input"), 
+					history:$("#tofChat-chat-input-history"),
+					secret:$("#tofChat-chat-input-secret")},
+				isVisitor);
 	}
 
 	function renderChat($html) {
@@ -61,40 +64,6 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 	}
 
 	function eventBinds(serverInfo){
-		var sendMsg = function(e){
-			if(! e.msg) {
-				status.set("Empty msg isn't acceptable.");
-				return "";
-			}
-			status.set("Sending...");
-			tof.sendMessage(
-					function(r){
-						getMsg_("Sending...Done! Getting...")
-					},
-					nameSuiter(e.name), e.msg, e.color, e.tab,e.bot);
-		};
-
-		var sendMsgEvent = function(e) {
-			var requiredCountStr = window.prompt("何人に答えてもらいますか? (初期値: あなたを除く全員)", (tof.getStatus().members.length - 1));
-			var requiredCount = Number(requiredCountStr);
-			if(requiredCountStr === "" || requiredCountStr == null || requiredCount.toString() === "NaN" || requiredCount === 0) {
-				alert("有効な値が入力されなかったため、キャンセルします");
-				return;
-			}
-			if(requiredCount > tof.getStatus().members.length){
-				alert("在卓人数より多いため、キャンセルします");
-				return;
-			}
-
-			if(e.action === "question") {
-				e.msg = '###vote###{"callerId":"nonId","question":"' + e.msg.replace(/"/g, '\\"') + '","isCallTheRoll":false,"requiredCount":'+requiredCount+'}';
-			}
-			if(e.action === "callroll") {
-				e.msg = '###vote###{"callerId":"nonId","question":"","isCallTheRoll":true,"requiredCount":'+requiredCount+'}';
-			}
-			sendMsg(e);
-		};
-
 		var $inputArea = $("#tofChat-inputArea");
 
 		$inputArea.on("sendMessage", sendMsg);
@@ -102,6 +71,10 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 		$inputArea.on("changeTab", function(e){
 			display.activeTab = e.tab;
 			display.reset();
+		});
+		
+		$inputArea.on('sendSecretEvent', function(e){
+			onSendSecretEvent(e);
 		});
 
 		$html.click(function(e){
@@ -155,7 +128,66 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 		getMsg_();
 		tof.getLoginUserInfo(afterBeacon, nameSuiter(inputArea.getName()));
 	}, true);
+	
+	function onSendSecretEvent(e) {
+		tof.sendMessage(
+				function(r){
+					tof.getMessage(function(re) {
+						var key = e.key;
+						var msgs = re.chatMessageDataLog.reverse();
+						var len = msgs.length;
+						for(var i = 0; i < len; i++) {
+							var msg = com.hiyoko.tofclient.Chat.Util.fixChatMsg(msgs[i]);
+							if( msg.msg.indexOf(key) !== -1) {
+								var hashValue = inputArea.stackSecret(msg, key);
+								sendMsg({
+									name: inputArea.getName(),
+									msg: 'シークレットメッセージを送信しました\nダイジェスト値： ' + hashValue,
+									color: inputArea.getColor()
+								});
+								return;
+							}
+						}
+					});
+				},
+				nameSuiter(e.name), e.msg, e.color, e.tab,
+				inputArea.getBot() === 'default' ? false : inputArea.getBot());
+	}
 
+	function sendMsg(e){
+		if(! e.msg) {
+			status.set("Empty msg isn't acceptable.");
+			return "";
+		}
+		status.set("Sending...");
+		tof.sendMessage(
+				function(r){
+					getMsg_("Sending...Done! Getting...")
+				},
+				nameSuiter(e.name), e.msg, e.color, e.tab,e.bot);
+	};
+
+	function sendMsgEvent(e) {
+		var requiredCountStr = window.prompt("何人に答えてもらいますか? (初期値: あなたを除く全員)", (tof.getStatus().members.length - 1));
+		var requiredCount = Number(requiredCountStr);
+		if(requiredCountStr === "" || requiredCountStr == null || requiredCount.toString() === "NaN" || requiredCount === 0) {
+			alert("有効な値が入力されなかったため、キャンセルします");
+			return;
+		}
+		if(requiredCount > tof.getStatus().members.length){
+			alert("在卓人数より多いため、キャンセルします");
+			return;
+		}
+
+		if(e.action === "question") {
+			e.msg = '###vote###{"callerId":"nonId","question":"' + e.msg.replace(/"/g, '\\"') + '","isCallTheRoll":false,"requiredCount":'+requiredCount+'}';
+		}
+		if(e.action === "callroll") {
+			e.msg = '###vote###{"callerId":"nonId","question":"","isCallTheRoll":true,"requiredCount":'+requiredCount+'}';
+		}
+		sendMsg(e);
+	};
+	
 	function getMsg_(msg){
 		if(isAsking){return;}
 		isAsking = true;
@@ -178,7 +210,6 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 		status.add("Please try again; " + result.statusText);
 		isAsking = false;
 	}
-
 
 	function jumpToBottom_(e){
 		try{
@@ -308,8 +339,9 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 				.replace(/\n/gm, '<br/>'));
 		
 		var msg_class = 'msg';
-
-		if(msg.tab === 0){
+		if(msg.tab < 0 || msg.tab >= tabs.length) {
+			return "";
+		} else if(msg.tab === 0){
 			$dom.css('color', '#'+msg.color);
 
 			$name = $('<strong></strong>');
@@ -429,24 +461,34 @@ com.hiyoko.tofclient.Chat.Status = function($html){
 /**
  * Chat User Console Part
  */
-com.hiyoko.tofclient.Chat.InputArea = function($input, $parette, $parent, isVisitor){
-	var inputs = {talk:new com.hiyoko.tofclient.Chat.InputArea.Input($input, isVisitor),
-	              history:new com.hiyoko.tofclient.Chat.InputArea.History($parette)};
+com.hiyoko.tofclient.Chat.InputArea = function($parent, children, isVisitor){
+	var inputs = {talk:new com.hiyoko.tofclient.Chat.InputArea.Input(children.talk, isVisitor),
+	              history:new com.hiyoko.tofclient.Chat.InputArea.History(children.history),
+	              secret:new com.hiyoko.tofclient.Chat.InputArea.Secret(children.secret)};
 	var current = 0;
 	var self = this;
-
 	var $switcher = $('#tofChat-chat-input-switch');
+	var $bot = $("#tofChat-input-dicebot");
 	
 	function eventBind(){
-		$parette.on("EditMessage", function(e){
+		children.history.on("EditMessage", function(e){
 			inputs.talk.setMessage(e);
 			self.hideAll();
 			inputs.talk.enabled();
 			self.changeSwitcherEventless('talk');
 		});
 
-		$input.on("sendMessage", function(e){
+		children.talk.on("sendMessage", function(e){
 			inputs.history.stackMsg(e);
+		});
+		
+		children.secret.on('openSecretMessage', function(e){
+			var event = new $.Event('sendMessage', {
+				msg: e.msg,
+				name: self.getName(),
+				color: self.getColor()
+			});
+			$parent.trigger(event);
 		});
 		
 		$switcher.change(function(e){
@@ -465,6 +507,18 @@ com.hiyoko.tofclient.Chat.InputArea = function($input, $parette, $parent, isVisi
 	this.getName = function(){
 		return inputs.talk.getName();
 	};
+	
+	this.getColor = function(){
+		return inputs.talk.getColor();
+	};
+	
+	this.getBot = function(){
+		return $bot.val();
+	};
+	
+	this.stackSecret = function(msg, key){
+		return inputs.secret.stack(msg, key);
+	};
 
 	this.hideAll = function(){
 		for(var key in inputs) {
@@ -473,7 +527,7 @@ com.hiyoko.tofclient.Chat.InputArea = function($input, $parette, $parent, isVisi
 	};
 	eventBind();
 	this.hideAll();
-	inputs['talk'].enabled();
+	inputs.talk.enabled();
 };
 
 com.hiyoko.tofclient.Chat.InputArea.Input = function($html, isVisitor){
@@ -576,11 +630,6 @@ com.hiyoko.tofclient.Chat.InputArea.Input = function($html, isVisitor){
 			});
 			$html.trigger(event);
 		});
-		/**
-		$("#"+id+"-switch").click(function(e){
-			$html.trigger(new $.Event("switch"));
-		});
-		*/
 	}
 
 	$("#"+id+"-color").val(localStorage.getItem("color"));
@@ -588,6 +637,10 @@ com.hiyoko.tofclient.Chat.InputArea.Input = function($html, isVisitor){
 
 	this.getName = function(){
 		return $("#"+id+"-name").val();
+	};
+	
+	this.getColor = function(){
+		return $("#"+id+"-color").val();
 	};
 
 	this.setMessage = function(e){
@@ -814,6 +867,72 @@ com.hiyoko.tofclient.Chat.InputArea.History = function($html){
 	}
 	init();
 };
+
+com.hiyoko.tofclient.Chat.InputArea.Secret = function($html) {
+	var id = $html.attr('id');
+	var self = this;
+
+	var $add = $("#" + id + "-add");
+	var $msg = $("#" + id + "-msg");
+	
+	var $send = $("#" + id + "-send");
+	var $clear = $("#" + id + "-clear");
+	var $stack = $("#" + id + "-stack");
+	var $stackHead = $("#" + id + "-stack-head");
+		
+	this.disabled = function(){$html.hide()};
+	this.enabled = function(){$html.show()};
+	
+	this.eventBind = function(){
+		$add.click(function(e) {
+			if($msg.val() === '') {
+				alert('内容を入力してください');
+				return;
+			}
+			var key_ = rndString('#');
+			$html.trigger(new $.Event('sendSecretEvent', {
+				msg: $msg.val() + ' ' + key_, tab: -1, key: key_,
+				name: 'ひよんとふシークレットダイス'}));
+			$msg.val('');
+		});
+		
+		$send.click(function(e) {
+			if($stack.val() === '') {return;}
+			$html.trigger(new $.Event('openSecretMessage', {msg: '(シークレットメッセージ開示)\n' + $stack.val()}));
+		});
+		
+		$clear.click(function(e) {
+			if(confirm('現在保存されているシークレットメッセージをすべて削除します。\nよろしいですか?')) {
+				$stackHead.selected = true;
+				$($stack.parent().find('span>span')[0]).text('リストから選択');
+				$('.' + id + '-stack-item').remove();
+			}
+			
+		});
+		
+	};
+	
+	this.load = function(){
+		
+		
+	};
+	
+	this.stack = function(msg, key){
+		var stackedMsg = msg.msg.replace(' ' + key, '');
+		console.log('CryptoJS.SHA256("' + stackedMsg + '");');
+		var hashValue = CryptoJS.SHA256(stackedMsg);
+		var $option = $('<option class="' + id + '-stack-item"></option>');
+		var str = stackedMsg + '\nダイジェスト値： ' + hashValue;
+		$option.text(str);
+		$option.attr('value', str);
+		$stack.append($option);
+		return hashValue;
+	};
+	
+	this.load();
+	this.eventBind();
+};
+
 
 /**
  * Chat Submenu Part

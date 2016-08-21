@@ -210,7 +210,7 @@ com.hiyoko.tof.room = function(urlInput, roomInput, passInput, callback){
 		}
 		sendMsg += "&name=" + encodeURIComponent(name);
 		sendMsg += "&message=" + encodeURIComponent(msg);
-		if(color[0] === "#"){color = color.slice(1);}
+		if(Boolean(color) && color[0] === "#"){color = color.slice(1);}
 		sendMsg += "&color=" + color;
 		if(botName){
 			sendMsg += "&bot=" + encodeURIComponent(botName);
