@@ -5,37 +5,35 @@
 <title>ひよんとふ シークレットメッセージ 真正性確認</title>
 </head>
 <body id="hiyontof-secret-message-verify">
-<p>ダイジェスト値：<span id="hiyontof-secret-message-verify-digest"></span></p>
-<p>メッセージ内容：<span id="hiyontof-secret-message-verify-message"></span></p>
-<p>メッセージのダイジェスト値：<span id="hiyontof-secret-message-verify-calced"></span></p>
+<div id="hiyontof-secret-message-verify-report">
+<h2>検証結果レポート</h2>
+</div>
 
 <script src="./js/lib/crypto-js/core.js"></script>
 <script src="./js/lib/crypto-js/sha256.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script src="js/src/tofClient.js"></script>
 <script src="js/src/hiyokoUtilV1.js"></script>
+<script src="js/src/tofSecretMessageVerify.js"></script>
 <script>
-	$('#hiyontof-secret-message-verify-digest').text(getParam('digest'));
 	var tof = new com.hiyoko.tof.room(getParam('url'), getParam('room'), getParam('pass'), function(me){
+		var verifier = new com.hiyoko.tofclient.SecretMessageVerify(me, getParam('digest'), function(msg){
+			var $newMsg = $('<pre></pre>');
+			$newMsg.text(msg);
+			$('#hiyontof-secret-message-verify-report').append($newMsg);
+		}); 
 		me.getMessage(function(results) {
 			var msgs = results.chatMessageDataLog.reverse();
 			var len = msgs.length;
-			var key = getParam('digest');
-			var prefixRegexp = /^\(シークレットメッセージ開示\)\n/;
-			var suffixRegexp = new RegExp('\nダイジェスト値： ' + key + '$');
-			for(var i = 0; i < 30; i++) {
+			for(var i = 0; i < len; i++) {
 				var msg = me.fixChatMsg(msgs[i]).msg;
-				if( prefixRegexp.test(msg) && suffixRegexp.test(msg) ) {
-					var verifyTarget = msg.replace(prefixRegexp, '').replace(suffixRegexp, '');
-					$('#hiyontof-secret-message-verify-message').text(verifyTarget);
-					$('#hiyontof-secret-message-verify-message').html('<br/>' + $('#hiyontof-secret-message-verify-message').html().replace(/\n/gm, '<br/>'));
-					$('#hiyontof-secret-message-verify-calced').text(CryptoJS.SHA256(verifyTarget));
-					if($('#hiyontof-secret-message-verify-calced').text() === key) {
+				if( verifier.isVerifyTarget(msg) ) {
+					if($(verifier.verify(msg))) {
 						$('#hiyontof-secret-message-verify').css('background-color', 'skyblue');
-						alert('値が合致しました。改ざんはされてません');
+						alert('値が合致しました。このシークレットメッセージは改ざんされてません');
 					} else {
 						$('#hiyontof-secret-message-verify').css('background-color', 'red');
-						alert('値が合致しません。改ざんされています');
+						alert('値が合致しません。このシークレットメッセージは改ざんされています');
 					}
 					return;
 				}

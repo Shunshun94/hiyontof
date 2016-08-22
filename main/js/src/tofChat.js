@@ -919,10 +919,15 @@ com.hiyoko.tofclient.Chat.InputArea.Secret = function($html) {
 	
 	this.stack = function(msg, key){
 		var stackedMsg = msg.msg.replace(' ' + key, '');
-		console.log('CryptoJS.SHA256("' + stackedMsg + '");');
 		var hashValue = CryptoJS.SHA256(stackedMsg);
 		var $option = $('<option class="' + id + '-stack-item"></option>');
-		var str = stackedMsg + '\nダイジェスト値： ' + hashValue;
+		var str = stackedMsg + '\nダイジェスト値： ' + hashValue + '\n真正性検証する： ' +
+					location.protocol + '//' + location.hostname +
+					(function(path){
+						var paths = location.pathname.split('/');
+						paths[paths.length - 1] = 'verify.html';
+						return paths.join('/');})(location.path) +
+					location.search + '&digest=' + hashValue;
 		$option.text(str);
 		$option.attr('value', str);
 		$stack.append($option);
