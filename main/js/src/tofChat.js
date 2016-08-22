@@ -142,7 +142,7 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 								var hashValue = inputArea.stackSecret(msg, key);
 								sendMsg({
 									name: inputArea.getName(),
-									msg: 'シークレットメッセージを送信しました\nダイジェスト値： ' + hashValue,
+									msg: '非公開発言を送信しました\nダイジェスト値： ' + hashValue,
 									color: inputArea.getColor()
 								});
 								return;
@@ -879,7 +879,9 @@ com.hiyoko.tofclient.Chat.InputArea.Secret = function($html) {
 	var $clear = $("#" + id + "-clear");
 	var $stack = $("#" + id + "-stack");
 	var $stackHead = $("#" + id + "-stack-head");
-		
+	
+	var $help = $("#" + id + "-help");
+	
 	this.disabled = function(){$html.hide()};
 	this.enabled = function(){$html.show()};
 	
@@ -892,22 +894,41 @@ com.hiyoko.tofclient.Chat.InputArea.Secret = function($html) {
 			var key_ = rndString('#');
 			$html.trigger(new $.Event('sendSecretEvent', {
 				msg: $msg.val() + ' ' + key_, tab: -1, key: key_,
-				name: 'ひよんとふシークレットダイス'}));
+				name: 'ひよんとふ非公開発言'}));
 			$msg.val('');
 		});
 		
 		$send.click(function(e) {
 			if($stack.val() === '') {return;}
-			$html.trigger(new $.Event('openSecretMessage', {msg: '(シークレットメッセージ開示)\n' + $stack.val()}));
+			$html.trigger(new $.Event('openSecretMessage', {msg: '(非公開発言開示)\n' + $stack.val()}));
 		});
 		
 		$clear.click(function(e) {
-			if(confirm('現在保存されているシークレットメッセージをすべて削除します。\nよろしいですか?')) {
+			if(confirm('現在保存されている非公開発言をすべて削除します。\nよろしいですか?')) {
 				$stackHead.selected = true;
 				$($stack.parent().find('span>span')[0]).text('リストから選択');
 				$('.' + id + '-stack-item').remove();
 			}
-			
+		});
+		
+		$help.click(function(e) {
+			alert('非公開発言\n=============\n\n' +
+					'どどんとふのシークレットダイスと似た機能です。\n' +
+					'他の人には見えないようにダイスを振ったり発言をしたりします。\n\n' +
+					'GM がプレイヤーに見られないようにダイスを振ったり、\n' +
+					'リドルの答えをあらかじめ書いておいて\n「正解はこちら」などといったように公開する際に使えます。');
+			alert('非公開発言の登録\n=============\n\n' +
+					'画面上部の入力欄に他の人から伏せておく発言の内容を打ち込みます。\n' +
+					'そのうえで「登録」ボタンを押してください。\n\n' +
+					'なお、非公開発言を登録すると\nチャットに登録した旨が投稿されます。');
+			alert('非公開発言の公開\n=============\n\n' +
+					'画面下部の「リストから選択」をクリックし、\n公開する非公開発言を選択してください。\n\n' +
+					'その後、公開をクリックすると他のユーザに発言を公開できます。');
+			alert('ダイジェスト値\n=============\n\n' +
+					'非公開発言を後から書き換えてないことを証明するための値です。\n\n' +
+					'非公開発言を公開した際に表示されるリンク先ではこの値を使って、\n' +
+					'書き換えられていないこと (真正性) を証明しています。\n\n' +
+					'なぜこれで証明できるのかについては\n「SHA-256」や「ハッシュ値」等で調べてみてください。');
 		});
 		
 	};

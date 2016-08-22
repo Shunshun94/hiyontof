@@ -3,7 +3,7 @@ com.hiyoko = com.hiyoko || {};
 com.hiyoko.tofclient = com.hiyoko.tofclient || {};
 
 com.hiyoko.tofclient.SecretMessageVerify = function(tof, hashValue, opt_logger) {
-	var prefixRegexp = /^\(シークレットメッセージ開示\)\n/;
+	var prefixRegexp = /^\(非公開発言開示\)\n/;
 	var suffixRegexp = new RegExp('\nダイジェスト値： ' + hashValue + '\n真正性検証する： .*$');
 	var logger = opt_logger ? opt_logger : function(log){console.log(log);};
 	

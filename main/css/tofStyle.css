@@ -309,4 +309,11 @@ ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block ui-btn-up-f
 	border-bottom:solid 1px #AEFFAE;
 }
 
-
+.tofChat-help {
+	text-align:center;
+	border:3px green outset;
+	border-radius: 1ex;
+	padding:2px;
+	background-color: #B0FFB0;
+	color:black;
+}
