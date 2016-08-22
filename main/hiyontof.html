@@ -79,32 +79,54 @@
 									<div class="tofChat-button-heavy" id="tofChat-input-send">送信</div>
 								</div>
 							</div>
-							<div class="tofChat-input-short">
-								<input type="button" id="tofChat-input-switch" value="履歴" />
-							</div>
-							<div class="tofChat-input-long">
-								<select id="tofChat-input-dicebot"><option
-										value="default" label="デフォルト">部屋指定のダイスボット</option></select>
-							</div>
+
 						</div>
-						<div id="tofChat-parette">
-							<p id="tofChat-parette-tabs"></p>
-							<select id="tofChat-parette-list"><option>-</option></select>
+						<div id="tofChat-chat-input-history">
+							<p id="tofChat-chat-input-history-tabs"></p>
+							<select id="tofChat-chat-input-history-list"><option>-</option></select>
 							<div class="tofChat-input-half">
-								<input type="button" id="tofChat-parette-action-edit"
+								<input type="button" id="tofChat-chat-input-history-action-edit"
 									value="編集して送信" />
 							</div>
 							<div class="tofChat-input-half">
-								<input type="button" id="tofChat-parette-action-send" value="送信" />
+								<input type="button" id="tofChat-chat-input-history-action-send" value="送信" />
 							</div>
-							<div class="tofChat-input-short">
-								<input type="button" id="tofChat-parette-switch" value="通常入力" />
+							<div class="tofChat-input-half">
+								<input type="button" id="tofChat-chat-input-history-delete" value="削除" />
 							</div>
-							<div class="tofChat-input-short">
-								<input type="button" id="tofChat-parette-delete" value="削除" />
+							<div class="tofChat-input-half">
+								<input type="button" id="tofChat-chat-input-history-reload" value="更新" />
 							</div>
-							<div class="tofChat-input-short">
-								<input type="button" id="tofChat-parette-reload" value="更新" />
+						</div>
+						<div id="tofChat-chat-input-secret">
+							<textarea rows="7" placeholder="発言内容を入力" id="tofChat-chat-input-secret-msg"></textarea>
+							<div class="tofChat-button-heavy" id="tofChat-chat-input-secret-add">登録</div>
+							<div style="padding:6px;"><hr/></div>
+							<select id="tofChat-chat-input-secret-stack">
+								<option value="" id="tofChat-chat-input-secret-stack-head">リストから選択</option>
+							</select>
+							<div class="tofChat-input-half">
+							<div class="tofChat-button-heavy" id="tofChat-chat-input-secret-send">公開</div>
+							</div>
+							<div class="tofChat-input-half">
+							<div class="tofChat-button-heavy" id="tofChat-chat-input-secret-clear">全削除</div>
+							</div>
+							<div class="tofChat-help" id="tofChat-chat-input-secret-help">HELP (非公開発言の説明)</div>
+						</div>
+						<div id="tofChat-chat-input-shared">
+							<div class="tofChat-input-half">
+								<select id="tofChat-chat-input-switch">
+									<option value="talk" label="発言">発言</option>
+									<option value="history" label="発言履歴">発言履歴</option>
+									<option value="secret" label="非公開発言">非公開発言</option>
+									<!--  
+									<option value="pallet" label="チャットパレット">チャットパレット</option>
+									-->
+								</select>
+							</div>
+							<div class="tofChat-input-half">
+								<select id="tofChat-input-dicebot"><option
+										value="default" label="デフォルト">部屋指定のダイスボット</option></select>
 							</div>
 						</div>
 					</div>
@@ -198,6 +220,8 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 	<script src="https://rawgit.com/briangonzalez/jquery.pep.js/master/src/jquery.pep.js"></script>
 	<script src='js/lib/jscolor/jscolor.min.js'></script>
+	<script src="./js/lib/crypto-js/core.js"></script>
+	<script src="./js/lib/crypto-js/sha256.js"></script>
 	<script src="js/src/hiyokoUtilV1.js"></script>
 	<script src="js/src/tofServerList.js"></script>
 	<script src="js/src/tofClient.js"></script>

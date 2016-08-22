@@ -210,7 +210,7 @@ com.hiyoko.tof.room = function(urlInput, roomInput, passInput, callback){
 		}
 		sendMsg += "&name=" + encodeURIComponent(name);
 		sendMsg += "&message=" + encodeURIComponent(msg);
-		if(color[0] === "#"){color = color.slice(1);}
+		if(Boolean(color) && color[0] === "#"){color = color.slice(1);}
 		sendMsg += "&color=" + color;
 		if(botName){
 			sendMsg += "&bot=" + encodeURIComponent(botName);
@@ -246,19 +246,64 @@ com.hiyoko.tof.room = function(urlInput, roomInput, passInput, callback){
 	};
 
 	this.fixChatMsg = function(chatMsg){
+		var VOTES_ANSWERS = ["",
+                            "賛成",
+                            "反対",
+                            "",
+                            "READY"];
+
+		var parseVoteAnswer = function(msg) {
+			var value = JSON.parse(msg.replace("\n", "").replace("###vote_replay_readyOK###", "").replace(/}.* : /, "}"));
+			return VOTES_ANSWERS[value.voteReplay];
+		};
+
+		var parseVoteRequest = function(msg) {
+			try{
+				var value = JSON.parse(msg.replace("\n", "").replace("###vote###", "").replace(/}.* : /, "}"));
+			}catch(e){
+				return {message:"無効な質問", ready:true};
+			}
+			var text = value.question;
+			if(value.isCallTheRoll){
+				text = "準備できたらクリック";		
+			}
+			return {message:text, ready:value.isCallTheRoll};
+		};
+		
 		var message;
+		var vote = false;
+		var ask = false;
+		var ready = false;
+		var tab = chatMsg[1].channel;
+
 		if(chatMsg[1].message.indexOf("###CutInCommand:rollVisualDice###") !== -1){
 			message = JSON.parse(chatMsg[1].message.replace("###CutInCommand:rollVisualDice###", "")).chatMessage;
 		}else{
 			message = chatMsg[1].message;
 		}
+		if(startsWith(message, "###vote_replay_readyOK###")){
+			message = parseVoteAnswer(message);
+			vote = true;
+			tab = 0;
+		}
+		if(startsWith(message, "###vote###")){
+			var parsedMsg = parseVoteRequest(message);
+			vote = true;
+			ask = true;
+			message = parsedMsg.message;
+			ready = parsedMsg.ready;
+			tab = 0;
+		}
 
 		return ({
 			time:chatMsg[0],
-			msg:message.replace("<", "&amp;lt;").replace(">", "&amp;gt;").replace(/[\n\r]/g,"<br/>").replace(/https?:\/\/[a-zA-Z\/\-%_&\?\.=0-9:]*/gm, function(url){return "<a href='"+url+"'>"+url+"</a>"}),
+			msg:message,
 			color:chatMsg[1].color,
 			name:chatMsg[1].senderName,
-			tab:chatMsg[1].channel
+			tab:tab,
+			isVote: vote,
+			isAsk: ask,
+			isReady: ready
 		});
 	};
 

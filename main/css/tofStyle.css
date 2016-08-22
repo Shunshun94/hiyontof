@@ -115,14 +115,14 @@ ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block ui-btn-up-f
 	margin-right: 0px;
 }
 
-#tofChat-parette {
-	background-color:#F0FFF0;
+#tofChat-chat-input-history {
+	background-color:#A0FFA0;
 	border-radius: 12px;
 	border-bottom: solid 1px black;
 	display:none;
 }
 
-.tofChat-parette-tab {
+.tofChat-chat-input-history-tab {
 	padding-left: 2px;
 	padding-right: 2px;
 	padding-top: 10px;
@@ -133,6 +133,19 @@ ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block ui-btn-up-f
 	width: 15%;
 	border: solid 1px black;
 	word-break:keep-all;
+	overflow:hidden;
+}
+
+#tofChat-chat-input-secret {
+	padding:5px;
+	background-color:#FFA0A0;
+	border-radius: 12px;
+	border-bottom: solid 1px black;
+	display:none;
+}
+
+#tofChat-chat-input-shared {
+	padding-top:10px;
 }
 
 .tof-chat-radio-base>span {
@@ -296,4 +309,11 @@ ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block ui-btn-up-f
 	border-bottom:solid 1px #AEFFAE;
 }
 
-
+.tofChat-help {
+	text-align:center;
+	border:3px green outset;
+	border-radius: 1ex;
+	padding:2px;
+	background-color: #B0FFB0;
+	color:black;
+}
