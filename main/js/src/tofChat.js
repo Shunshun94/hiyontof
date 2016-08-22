@@ -500,7 +500,7 @@ com.hiyoko.tofclient.Chat.InputArea = function($parent, children, isVisitor){
 	this.changeSwitcherEventless = function(key){
 		var $selected = $switcher.children('[value="'+ key +'"]');
 		var caption = $selected.text();
-		$switcher.children('[value="'+ key +'"]')[0].selected = true;
+		$switcher.val(key);
 		$($switcher.parent().find('span>span')[0]).text(caption);
 	};
 
