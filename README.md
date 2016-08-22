@@ -107,6 +107,15 @@ GNU GENERAL PUBLIC LICENSE Version 3 です。
 
 ライセンス情報: http://jscolor.com/download/
 
+### CryptoJS
+
+非公開発言の真正性検証に使っています。
+
+MIT ライセンスです。
+
+ライセンス情報: https://github.com/brix/crypto-js/blob/develop/LICENSE
+
+
 ## ライセンス
 
 ひよんとふは GNU GENERAL PUBLIC LICENSE Version 3 でライセンスします。
