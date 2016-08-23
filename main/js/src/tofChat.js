@@ -536,23 +536,6 @@ com.hiyoko.tofclient.Chat.InputArea.Input = function($html, isVisitor){
 	this.disabled = function(){$html.hide()};
 	this.enabled = function(){$html.show()};
 	var $msg = $("#"+id+"-msg");
-
-	function rerendDom(){
-		/**
-		 * This function must be removed.
-		 * The HTML file should be edited instead of this function.
-		 */
-		$('#'+id+'-sendCallRoll').parent().hide();
-		$('#'+id+'-sendQuestion').parent().hide();
-		$('#'+id+'-send').parent().removeClass('tofChat-input-short');
-
-		$("#"+id+"-tablist").append("<option value='callroll' label='点呼'>点呼</option>");
-		$("#"+id+"-tablist").append("<option value='question' label='投票'>投票</option>");
-	}
-
-	if(getParam("newLayout")) {
-		rerendDom();
-	}
 	
 	if(isVisitor) {
 		// See also rerendDom()
