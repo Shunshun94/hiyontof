@@ -621,7 +621,7 @@ com.hiyoko.tofclient.Chat.InputArea.Input = function($html, isVisitor){
 	
 
 	this.getName = function(){
-		return $("#"+id+"-name").val();
+		return $name.val();
 	};
 	
 	this.getColor = function(){
