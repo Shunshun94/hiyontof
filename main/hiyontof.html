@@ -97,6 +97,7 @@
 							<div class="tofChat-input-half">
 								<input type="button" id="tofChat-chat-input-history-reload" value="更新" />
 							</div>
+							<div class="tofChat-help" id="tofChat-chat-input-history-help">HELP (発言履歴の説明)</div>
 						</div>
 						<div id="tofChat-chat-input-secret">
 							<textarea rows="7" placeholder="発言内容を入力" id="tofChat-chat-input-secret-msg"></textarea>
@@ -141,11 +142,13 @@
 					<div id="tofChat-map-reload" class="tofChat-button">更新</div>
 					<br />
 					<div id="tofChat-map-reset" class="tofChat-button-heavy">背景再読み込み</div>
+					<div class="tofChat-help" id="tofChat-map-help">HELP (マップの説明)</div>
 				</div>
 				<div id="tofChat-table" class="tofChat-tabContent">
 					<div id="tofChat-table-lastupdate">未取得</div>
 					<div id="tofChat-table-display"></div>
 					<input id="tofChat-table-reload" type="button" value="読み込み" />
+					<div class="tofChat-help" id="tofChat-table-help">HELP (能力表の説明)</div>
 				</div>
 				<div id="tofChat-memo" class="tofChat-tabContent">
 					<div id="tofChat-memo-lastupdate">未取得</div>
@@ -169,6 +172,7 @@
 				<div id="tofChat-init-cm"><!-- 広告欄 --></div>
 				<p><button id="tofChat-init-roomlist">サーバ・部屋一覧</button><br/></p>
 				<hr/>
+				<div class="tofChat-help" id="tofChat-init-help">HELP (部屋にログインするには)</div>
 				<p><br/>
 					<label>どどんとふ URL</label><input
 						list="tofChat-init-url-list" autocomplete="on" type="text"
@@ -223,6 +227,7 @@
 	<script src="./js/lib/crypto-js/core.js"></script>
 	<script src="./js/lib/crypto-js/sha256.js"></script>
 	<script src="js/src/hiyokoUtilV1.js"></script>
+	<script src="js/src/tofHelpCard.js"></script>
 	<script src="js/src/tofServerList.js"></script>
 	<script src="js/src/tofClient.js"></script>
 	<script src="js/src/tofChat.js"></script>
