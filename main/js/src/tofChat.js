@@ -536,6 +536,7 @@ com.hiyoko.tofclient.Chat.InputArea.Input = function($html, isVisitor){
 	this.disabled = function(){$html.hide()};
 	this.enabled = function(){$html.show()};
 	var $msg = $("#"+id+"-msg");
+	var $color = $("#"+id+"-color");
 	
 	if(isVisitor) {
 		// See also rerendDom()
@@ -565,13 +566,13 @@ com.hiyoko.tofclient.Chat.InputArea.Input = function($html, isVisitor){
 		$("#"+id+"-send").click(function(e){
 			var tabId = $("#"+id+"-tablist").val();
 
-			localStorage.setItem("color", $("#"+id+"-color").val());
+			localStorage.setItem("color", $color.val());
 			localStorage.setItem("name",  $("#"+id+"-name").val());
 
 			if($.isNumeric(tabId)){			
 				$html.trigger(new $.Event("sendMessage", {
 					msg: $msg.val(),
-					color: $("#"+id+"-color").val(),
+					color: $color.val(),
 					name: $("#"+id+"-name").val(),
 					tab: Number($("#"+id+"-tablist").val()),
 					bot: ($("#"+id+"-dicebot").val() !== "default") ? $("#"+id+"-dicebot").val() : false
@@ -579,7 +580,7 @@ com.hiyoko.tofclient.Chat.InputArea.Input = function($html, isVisitor){
 			} else {
 				$html.trigger(new $.Event("sendMessageEvent", {
 					msg: $msg.val(),
-					color: $("#"+id+"-color").val(),
+					color: $color.val(),
 					name: $("#"+id+"-name").val(),
 					tab: 0,
 					action: tabId
@@ -589,7 +590,7 @@ com.hiyoko.tofclient.Chat.InputArea.Input = function($html, isVisitor){
 		}); 
 
 		$("#"+id+"-sendQuestion").click(function(e){
-			localStorage.setItem("color", $("#"+id+"-color").val());
+			localStorage.setItem("color", $color.val());
 			localStorage.setItem("name",  $("#"+id+"-name").val());
 			$html.trigger(new $.Event("sendMessageEvent", {
 				msg: $msg.val(),
@@ -602,7 +603,7 @@ com.hiyoko.tofclient.Chat.InputArea.Input = function($html, isVisitor){
 		});
 
 		$("#"+id+"-sendCallRoll").click(function(e){
-			localStorage.setItem("color", $("#"+id+"-color").val());
+			localStorage.setItem("color", $color.val());
 			localStorage.setItem("name",  $("#"+id+"-name").val());
 			var event = new $.Event("sendMessageEvent", {
 				msg: "",
@@ -615,24 +616,28 @@ com.hiyoko.tofclient.Chat.InputArea.Input = function($html, isVisitor){
 		});
 	}
 
-	$("#"+id+"-color").val(localStorage.getItem("color"));
-	$("#"+id+"-name").val(localStorage.getItem("name"));
+	
 
 	this.getName = function(){
 		return $("#"+id+"-name").val();
 	};
 	
 	this.getColor = function(){
-		return $("#"+id+"-color").val();
+		return $color.val();
 	};
 
 	this.setMessage = function(e){
 		$msg.val(e.msg);
-		$("#"+id+"-color").css("background-color", "#" + e.color);
-		$("#"+id+"-color").val(e.color);
+		$color.css("background-color", "#" + e.color);
+		$color.val(e.color);
 		$("#"+id+"-name").val(e.name);
 	};
+	
+	// Initialize
+	$color.val(localStorage.getItem("color"));
+	$("#"+id+"-name").val(localStorage.getItem("name"));
 	eventBind();
+	$color.css("background-color", "#" + $color.val());
 };
 
 com.hiyoko.tofclient.Chat.InputArea.History = function($html){
