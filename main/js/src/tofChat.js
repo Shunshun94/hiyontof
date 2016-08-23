@@ -536,26 +536,12 @@ com.hiyoko.tofclient.Chat.InputArea.Input = function($html, isVisitor){
 	this.disabled = function(){$html.hide()};
 	this.enabled = function(){$html.show()};
 	var $msg = $("#"+id+"-msg");
-
-	function rerendDom(){
-		/**
-		 * This function must be removed.
-		 * The HTML file should be edited instead of this function.
-		 */
-		$('#'+id+'-sendCallRoll').parent().hide();
-		$('#'+id+'-sendQuestion').parent().hide();
-		$('#'+id+'-send').parent().removeClass('tofChat-input-short');
-
-		$("#"+id+"-tablist").append("<option value='callroll' label='点呼'>点呼</option>");
-		$("#"+id+"-tablist").append("<option value='question' label='投票'>投票</option>");
-	}
-
-	if(getParam("newLayout")) {
-		rerendDom();
-	}
+	var $color = $("#"+id+"-color");
+	var $name = $("#"+id+"-name");
+	
+	var self = this;
 	
 	if(isVisitor) {
-		// See also rerendDom()
 		$('#'+id+'-sendCallRoll').parent().hide();
 		$('#'+id+'-sendQuestion').parent().hide();
 		$('#'+id+'-send').parent().removeClass('tofChat-input-short');		
@@ -582,22 +568,22 @@ com.hiyoko.tofclient.Chat.InputArea.Input = function($html, isVisitor){
 		$("#"+id+"-send").click(function(e){
 			var tabId = $("#"+id+"-tablist").val();
 
-			localStorage.setItem("color", $("#"+id+"-color").val());
-			localStorage.setItem("name",  $("#"+id+"-name").val());
+			localStorage.setItem("color", self.getColor());
+			localStorage.setItem("name",  self.getName());
 
 			if($.isNumeric(tabId)){			
 				$html.trigger(new $.Event("sendMessage", {
 					msg: $msg.val(),
-					color: $("#"+id+"-color").val(),
-					name: $("#"+id+"-name").val(),
+					color: self.getColor(),
+					name: self.getName(),
 					tab: Number($("#"+id+"-tablist").val()),
 					bot: ($("#"+id+"-dicebot").val() !== "default") ? $("#"+id+"-dicebot").val() : false
 				}));
 			} else {
 				$html.trigger(new $.Event("sendMessageEvent", {
 					msg: $msg.val(),
-					color: $("#"+id+"-color").val(),
-					name: $("#"+id+"-name").val(),
+					color: self.getColor(),
+					name: self.getName(),
 					tab: 0,
 					action: tabId
 				}));
@@ -606,12 +592,12 @@ com.hiyoko.tofclient.Chat.InputArea.Input = function($html, isVisitor){
 		}); 
 
 		$("#"+id+"-sendQuestion").click(function(e){
-			localStorage.setItem("color", $("#"+id+"-color").val());
-			localStorage.setItem("name",  $("#"+id+"-name").val());
+			localStorage.setItem("color", self.getColor());
+			localStorage.setItem("name",  self.getName());
 			$html.trigger(new $.Event("sendMessageEvent", {
 				msg: $msg.val(),
-				color: $("#"+id+"-color").val(),
-				name: $("#"+id+"-name").val(),
+				color: self.getColor(),
+				name: self.getName(),
 				tab: 0,
 				action: "question"
 			}));
@@ -619,12 +605,12 @@ com.hiyoko.tofclient.Chat.InputArea.Input = function($html, isVisitor){
 		});
 
 		$("#"+id+"-sendCallRoll").click(function(e){
-			localStorage.setItem("color", $("#"+id+"-color").val());
-			localStorage.setItem("name",  $("#"+id+"-name").val());
+			localStorage.setItem("color", self.getColor());
+			localStorage.setItem("name",  self.getName());
 			var event = new $.Event("sendMessageEvent", {
 				msg: "",
-				color: $("#"+id+"-color").val(),
-				name: $("#"+id+"-name").val(),
+				color: self.getColor(),
+				name: self.getName(),
 				tab: 0,
 				action: "callroll"
 			});
@@ -632,24 +618,28 @@ com.hiyoko.tofclient.Chat.InputArea.Input = function($html, isVisitor){
 		});
 	}
 
-	$("#"+id+"-color").val(localStorage.getItem("color"));
-	$("#"+id+"-name").val(localStorage.getItem("name"));
+	
 
 	this.getName = function(){
-		return $("#"+id+"-name").val();
+		return $name.val();
 	};
 	
 	this.getColor = function(){
-		return $("#"+id+"-color").val();
+		return $color.val();
 	};
 
 	this.setMessage = function(e){
 		$msg.val(e.msg);
-		$("#"+id+"-color").css("background-color", "#" + e.color);
-		$("#"+id+"-color").val(e.color);
-		$("#"+id+"-name").val(e.name);
+		$color.css("background-color", "#" + e.color);
+		$color.val(e.color);
+		$name.val(e.name);
 	};
+	
+	// Initialize
+	$color.val(localStorage.getItem("color"));
+	$name.val(localStorage.getItem("name"));
 	eventBind();
+	$color.css("background-color", "#" + self.getColor());
 };
 
 com.hiyoko.tofclient.Chat.InputArea.History = function($html){
