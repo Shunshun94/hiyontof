@@ -8,8 +8,9 @@ com.hiyoko.tofclient.Memo = function(tof, interval, opt_$html){
 	var $cont = $("#tofChat-memo-content");
 	var $send = $("#tofChat-memo-append");
 	var $update = $("#tofChat-memo-lastupdate");
+	var MemoClass = com.hiyoko.tofclient.Memo.SimpleMemo;
 	
-	var list = [];
+	
 	
 	function isActive() {
 		return $html.css('display') !== 'none';
@@ -41,11 +42,11 @@ com.hiyoko.tofclient.Memo = function(tof, interval, opt_$html){
 	
 	var displayMemos = function(result){
 		$disp.empty();
-		list = [];
+		var list = [];
 		
 		$.each(result.characters, function(ind, memo){
 			if(memo.type !== "Memo"){return;}
-			var memoObj = new com.hiyoko.tofclient.Memo.Memo(memo);
+			var memoObj = new MemoClass(memo);
 			list.push(memoObj);
 			$disp.append(memoObj.rend());
 		});
@@ -63,7 +64,7 @@ com.hiyoko.tofclient.Memo = function(tof, interval, opt_$html){
 	init();
 };
 
-com.hiyoko.tofclient.Memo.Memo = function(data) {
+com.hiyoko.tofclient.Memo.SimpleMemo = function(data) {
 	var id = data.imgId;
 	var text = data.message;
 	var self = this;
