@@ -8,15 +8,20 @@ com.hiyoko.tofclient.Memo = function(tof, interval, opt_$html){
 	var $cont = $("#tofChat-memo-content");
 	var $send = $("#tofChat-memo-append");
 	var $update = $("#tofChat-memo-lastupdate");
-	var MemoClass = com.hiyoko.tofclient.Memo.SimpleMemo;
 	
+	var list = {};
 	
+	var MemoClass = com.hiyoko.tofclient.Memo.TabedMemo;
 	
 	function isActive() {
 		return $html.css('display') !== 'none';
 	}
 	
-	var init = function(){
+	var init = function(version){
+		if (version.number < 104815) {
+			MemoClass = com.hiyoko.tofclient.Memo.SimpleMemo;
+		}
+		
 		$read.click(function(e){
 			loadMemo();
 		});
@@ -31,7 +36,7 @@ com.hiyoko.tofclient.Memo = function(tof, interval, opt_$html){
 
 		if(interval){
 			window.setInterval(function(){
-				if(!isActive() || $(document.activeElement).hasClass('tofChat-memo-memo')) {
+				if(!isActive() || $(document.activeElement).hasClass('tofChat-memo-text')) {
 					return;
 				}
 				$read.click();
@@ -41,17 +46,29 @@ com.hiyoko.tofclient.Memo = function(tof, interval, opt_$html){
 	};
 	
 	var displayMemos = function(result){
-		$disp.empty();
-		var list = [];
+		var noMemo = true;
+		var time = result.lastUpdateTimes.characters;
 		
 		$.each(result.characters, function(ind, memo){
 			if(memo.type !== "Memo"){return;}
-			var memoObj = new MemoClass(memo);
-			list.push(memoObj);
-			$disp.append(memoObj.rend());
+			noMemo = false;
+			
+			if(Boolean(list[memo.imgId])) {
+				list[memo.imgId].setText(memo.message);	
+			} else {
+				list[memo.imgId] = new MemoClass(memo);
+				$disp.append(list[memo.imgId].rend());				
+			}
+			list[memo.imgId].updateTime = time;
 		});
-		if(list.length === 0) {
+		if(noMemo) {
 			$disp.append("<p>表示すべきメモがありません</p>");
+		}
+		
+		for(var key in list) {
+			if(list[key].updateTime !== time) {
+				list[key].$elem.remove();
+			}
 		}
 	};
 	
@@ -61,13 +78,50 @@ com.hiyoko.tofclient.Memo = function(tof, interval, opt_$html){
 		$update.text('Memo Last Update： ' + now.getHours() + '：' + now.getMinutes() + '：' + now.getSeconds());
 	};
 	
-	init();
+	tof.getServerVersion(function(version){init(version);});	
+};
+
+com.hiyoko.tofclient.Memo.TabedMemo = function(data) {
+	var id = data.imgId;
+	var texts = data.message.split('\t|\t');
+	var self = this;
+	this.$elem = $("<div class='tofChat-memo-tabledmemo'></div>");
+	this.updateTime;
+	
+	this.getId = function(){
+		return id;
+	};
+	
+	this.getText = function(){
+		return texts.join('\t|\t');
+	};
+	
+	this.rend = function() {
+		var $tabs = $("<div class='tofChat-memo-tabledmemo-tab' contenteditable='true'></div>");
+		
+		
+		var $text = $("<div class='tofChat-memo-tabledmemo-text tofChat-memo-text' contenteditable='true'></div>");
+		
+		$text.text(texts[0]);
+		$text.html($text.html().replace(/[\n\r]/gm, '<br/>'));
+		
+		this.$elem.append($tabs);
+		this.$elem.append($text);
+		
+		
+
+		//bindEvent($elem);
+		return this.$elem;
+	};
+
 };
 
 com.hiyoko.tofclient.Memo.SimpleMemo = function(data) {
 	var id = data.imgId;
 	var text = data.message;
 	var self = this;
+	this.$elem = $("<div class='tofChat-memo-simplememo tofChat-memo-text' contenteditable='true'></div>");
+	this.updateTime;
 	
 	this.getId = function(){
 		return id;
@@ -77,12 +131,16 @@ com.hiyoko.tofclient.Memo.SimpleMemo = function(data) {
 		return text;
 	};
 	
+	this.setText = function(text){
+		this.$elem.text(text);
+		this.$elem.html(this.$elem.html().replace(/[\n\r]/gm, '<br/>'));
+	};
+	
 	this.rend = function(){
-		var $elem = $("<div class='tofChat-memo-memo' contenteditable='true'></div>");
-		$elem.text(text);
-		$elem.html($elem.html().replace(/[\n\r]/gm, '<br/>'));
-		bindEvent($elem);
-		return $elem;
+		this.$elem.text(text);
+		this.$elem.html(this.$elem.html().replace(/[\n\r]/gm, '<br/>'));
+		bindEvent(this.$elem);
+		return this.$elem;
 	};
 	
 	function bindEvent($tag){

@@ -247,12 +247,34 @@ ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block ui-btn-up-f
 	text-align:right;
 }
 
-#tofChat-memo-display>div {
+.tofChat-memo-simplememo {
 	-moz-box-shadow: inset 0 1px 4px rgba(0,0,0,.2);
 	-webkit-box-shadow: inset 0 1px 4px rgba(0,0,0,.2);
 	box-shadow: inset 0 1px 4px rgba(0,0,0,.2);
 	border: 2px inset gray;
 	border-radius: 5px;
+	padding: 4px;
+	margin-bottom: 1em;
+}
+
+.tofChat-memo-tabledmemo-tab {
+	-moz-box-shadow: inset 0 1px 4px rgba(0,0,0,.2);
+	-webkit-box-shadow: inset 0 1px 4px rgba(0,0,0,.2);
+	box-shadow: inset 0 1px 4px rgba(0,0,0,.2);
+	border: 2px inset gray;
+	border-bottom: 1px none gray;
+	border-top-right-radius: 5px;
+	border-top-left-radius: 5px;
+	padding: 4px;
+}
+
+.tofChat-memo-tabledmemo-text {
+	-moz-box-shadow: inset 0 1px 4px rgba(0,0,0,.2);
+	-webkit-box-shadow: inset 0 1px 4px rgba(0,0,0,.2);
+	box-shadow: inset 0 1px 4px rgba(0,0,0,.2);
+	border: 2px inset gray;
+	border-bottom-right-radius: 5px;
+	border-bottom-left-radius: 5px;
 	padding: 4px;
 	margin-bottom: 1em;
 }
