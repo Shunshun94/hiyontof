@@ -68,6 +68,7 @@ com.hiyoko.tofclient.Memo = function(tof, interval, opt_$html){
 		for(var key in list) {
 			if(list[key].updateTime !== time) {
 				list[key].$elem.remove();
+				list[key] = null;
 			}
 		}
 	};
@@ -85,7 +86,12 @@ com.hiyoko.tofclient.Memo.TabedMemo = function(data) {
 	var id = data.imgId;
 	var texts = data.message.split('\t|\t');
 	var self = this;
+	var activeTab = 0;
+	
 	this.$elem = $("<div class='tofChat-memo-tabledmemo'></div>");
+	this.$tabs = $("<div class='tofChat-memo-tabledmemo-tab'></div>");
+	this.$text = $("<div class='tofChat-memo-tabledmemo-text tofChat-memo-text' contenteditable='true'></div>");
+	
 	this.updateTime;
 	
 	this.getId = function(){
@@ -96,22 +102,30 @@ com.hiyoko.tofclient.Memo.TabedMemo = function(data) {
 		return texts.join('\t|\t');
 	};
 	
+	this.setText = function(text){
+		self.$text.text(text);
+		self.$text.html(self.$text.html().replace(/[\n\r]/gm, '<br/>'));
+		texts[activeTag] = text;
+	};
+	
 	this.rend = function() {
-		var $tabs = $("<div class='tofChat-memo-tabledmemo-tab' contenteditable='true'></div>");
+		$.each(texts, function(i,text) {
+			var $tab = $("<div class='tofChat-memo-tabledmemo-tab-tab'></div>");
+			$tab.text(text.substring(0,4));
+			$tab.val(i);
+			self.$tabs.append($tab);
+		});
 		
+		self.$text.text(texts[activeTab]);
+		self.$text.html(self.$text.html().replace(/[\n\r]/gm, '<br/>'));
 		
-		var $text = $("<div class='tofChat-memo-tabledmemo-text tofChat-memo-text' contenteditable='true'></div>");
-		
-		$text.text(texts[0]);
-		$text.html($text.html().replace(/[\n\r]/gm, '<br/>'));
-		
-		this.$elem.append($tabs);
-		this.$elem.append($text);
+		self.$elem.append(self.$tabs);
+		self.$elem.append(self.$text);
 		
 		
 
 		//bindEvent($elem);
-		return this.$elem;
+		return self.$elem;
 	};
 
 };
