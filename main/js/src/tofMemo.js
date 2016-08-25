@@ -103,18 +103,39 @@ com.hiyoko.tofclient.Memo.TabedMemo = function(data) {
 	};
 	
 	this.setText = function(text){
-		self.$text.text(text);
+		texts = text.split('\t|\t');
+		
+		var len = texts.length;
+
+		self.$tabs.children('.tofChat-memo-tabledmemo-tab-tab').remove();
+		var $tabAppendBase = self.$tabs.children('[value="ADD"]');
+		for(var i = 0; i < len; i++) {
+			var $tab = $('<div class="tofChat-memo-tabledmemo-tab-tab"></div>');
+			$tab.text(texts[i].substring(0,4));
+			$tab.val(i);
+			$tabAppendBase.before($tab);
+		}
+		
+		self.$text.text(texts[activeTab]);
 		self.$text.html(self.$text.html().replace(/[\n\r]/gm, '<br/>'));
-		texts[activeTag] = text;
 	};
+	
+	function loadText(num){
+		activeTab = num;
+		self.$text.text(texts[activeTab]);
+		self.$text.html(self.$text.html().replace(/[\n\r]/gm, '<br/>'));
+	}
 	
 	this.rend = function() {
 		$.each(texts, function(i,text) {
-			var $tab = $("<div class='tofChat-memo-tabledmemo-tab-tab'></div>");
+			var $tab = $('<div class="tofChat-memo-tabledmemo-tab-tab"></div>');
 			$tab.text(text.substring(0,4));
 			$tab.val(i);
 			self.$tabs.append($tab);
 		});
+		
+		self.$tabs.append('<div class="tofChat-memo-tabledmemo-tab-button" value="ADD">＋</div>');
+		self.$tabs.append('<div class="tofChat-memo-tabledmemo-tab-button" value="REMOVE">－</div>');
 		
 		self.$text.text(texts[activeTab]);
 		self.$text.html(self.$text.html().replace(/[\n\r]/gm, '<br/>'));
@@ -122,12 +143,47 @@ com.hiyoko.tofclient.Memo.TabedMemo = function(data) {
 		self.$elem.append(self.$tabs);
 		self.$elem.append(self.$text);
 		
-		
-
-		//bindEvent($elem);
+		bindEvent();
 		return self.$elem;
 	};
-
+	
+	function bindEvent() {
+		self.$tabs.click(function(e){
+			var $clicked = $(e.target);
+			
+			if($clicked.hasClass('tofChat-memo-tabledmemo-tab-tab')) {
+				loadText($clicked.val());
+				return;
+			}
+			if($clicked.attr('value') === 'ADD'){
+				texts.push('NEW tab');
+				var event = new $.Event("updateMemo", {memo:self});
+				self.$text.trigger(event);
+				self.setText(self.getText());
+			}
+			
+			if($clicked.attr('value') === 'REMOVE'){
+				if(texts.length === 1) {return;}
+				
+				texts.pop();
+				if(Number(activeTab) === texts.length) {
+					activeTab = activeTab - 1;
+				}
+				
+				var event = new $.Event("updateMemo", {memo:self});
+				self.$text.trigger(event);
+				self.setText(self.getText());
+			}
+		});
+		
+		self.$text.on('focusout', function(e){
+			texts[activeTab] = self.$text.html().replace(/<\/?div\/?>/gm, '').replace(/<br\/?>/gm, '\n').replace(/&lt;/gm, '<').replace(/&gt;/gm, '>');
+			var event = new $.Event("updateMemo", {memo:self});
+			self.$text.trigger(event);
+			self.$text.css('opacity', '0').animate({opacity:'1'}, 800);
+			self.setText(self.getText());
+		});
+	}
 };
 
 com.hiyoko.tofclient.Memo.SimpleMemo = function(data) {
