@@ -154,6 +154,34 @@ com.hiyoko.tof.room = function(urlInput, roomInput, passInput, callback){
 		});
 		
 	};
+	
+	this.getServerVersion = function(callback) {
+		var sendMsg = url + "webif=getBusyInfo";
+		if(pass != ""){
+			sendMsg += "&password="+pass;
+		}
+		
+		$.ajax({
+			type:'get',
+			url: sendMsg,
+			async:false,
+			statusCode:{
+				105:function(result){alert('どどんとふサーバの確認に失敗しました。URL を再度確認してください。');}
+			},
+			dataType:'jsonp'}
+		).done(function(result){
+			var version = result.version.match(/Ver\.(\d+)\.(\d+)\.(\d+)/);
+			var result = {
+				major: Number(version[1]),
+				minor: Number(version[2]),
+				patch: Number(version[3]),
+				string: version[0]
+			};
+			result.number = result.major * 100000 + result.minor * 100 + result.patch;
+			
+			callback(result);
+		});		
+	};
 
 	this.getRoomInfo = function(callback, opt_failCallBack){
 		var sendMsg = url + "webif=getRoomInfo&room="+room;
