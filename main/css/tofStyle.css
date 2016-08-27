@@ -130,10 +130,12 @@ ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block ui-btn-up-f
 	display: inline-block;
 	background-color:#F0FFF0;
 	border-top-left-radius: 12px;
-	width: 15%;
+	width: 14%;
+	top:37px;
 	border: solid 1px black;
 	word-break:keep-all;
 	overflow:hidden;
+	white-space:nowrap;
 }
 
 #tofChat-chat-input-secret {
