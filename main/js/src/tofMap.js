@@ -9,35 +9,47 @@ com.hiyoko.tofclient.Map = function(tof, interval, options){
 	
 	var $disp = $("#" + id + "-display");
 	var $reset = $("#" + id + "-reset");
-	var $reload = $("#" + id + "-reload");
+	var $reload = $("#" + id + "-re  load");
 	var $update = $("#" + id + "-lastupdate");
 	var $switchChar = $("#" + id + "-char-switch");
 	var $switchLine = $("#" + id + "-line-switch");
 
-	var mapWriter = new com.hiyoko.tofclient.Map.MapWriter(id, tof, isDrag, debugMode);
+	//var mapWriter = new com.hiyoko.tofclient.Map.MapWriter(id, tof, isDrag, debugMode);
+	
+	var map = new com.hiyoko.tofclient.Map.MapBack($disp);
+	com.hiyoko.tofclient.Map.tofUrl = tof.getStatus().url;
 
 	function isActive() {
 		return $html.css('display') !== 'none';
 	}
 	
+	function getMap(callback) {
+		tof.getRefresh(callback, true, true);
+	};
+	
+	function getCharacters(callback) {
+		tof.getRefresh(callback, true);
+	};
+	
 	this.init = function(){
 
 		$reload.click(function(e){
-			mapWriter.rewriteCharacters();
+			getCharacters(map.update);
+			//mapWriter.rewriteCharacters();
 		});
 		$disp.on("moveCharacter", function(e){
 			e.obj.move(e.x, e.y);
 		});
 		$switchChar.click(function(e){
-			mapWriter.toggleName();
+			map.toggleName();
 		});
 		
 		$switchLine.click(function(e){
-			mapWriter.toggleLine();
+			map.toggleLine();
 		});
 		
 		$reset.click(function(e){
-			mapWriter.rewriteMap();
+			getMap(map.updateAll);
 		});
 		
 		if(interval){
@@ -56,7 +68,6 @@ com.hiyoko.tofclient.Map = function(tof, interval, options){
 				alert(e);
 			}
 		}, 100);
-		
 	};
 
 	this.init();
@@ -79,7 +90,7 @@ com.hiyoko.tofclient.Map.MapWriter = function(id, tof, opt_dragMode, opt_debugMo
 	var debugLog = debugMode ? function(str){alert(str)} : function(str){};
 	
 	this.toggleName = function() {
-		$('.' + id + '-char-name').toggle();
+		
 	};
 	
 	this.toggleLine = function() {
@@ -312,4 +323,169 @@ com.hiyoko.tofclient.Map.MapWriter = function(id, tof, opt_dragMode, opt_debugMo
 		$char.append($name);
 		return $char;
 	}
+};
+
+com.hiyoko.tofclient.Map.MapBack = function($base) {
+	var parseUrl = com.hiyoko.tofclient.Map.parseUrl;
+	var id = $base.attr('id');
+	var self = this;
+	
+	var boxSize = 0;
+	
+	var tiles = [];
+	
+	this.updateAll = function(info) {
+		var chars = info.characters;
+		
+		boxSize = Math.floor(($(window).width() - 30)  / (info.mapData.xMax)) - 1;
+		clearMap();
+		
+		drawMap(info.mapData);
+		drawTile(chars);
+		self.update(info);
+	};
+	
+	this.update = function(info) {
+		drawCharacters(info.characters);
+		drawDiceSymbols(info.characters);
+	};
+	
+	this.toggleName = function() {
+		$('.' + id + '-char-name').toggle();
+	};
+	
+	this.toggleLine = function() {
+		var $box = $('.' + id + '-box');
+		if($box.hasClass(id + '-box-lined')) {
+			$('.' + id + '-box').removeClass(id + '-box-lined');
+			$('.' + id + '-box').css('width', ((Number($('.' + id + '-box').css('width').replace('px','')) + 2)+'px'));
+			$('.' + id + '-box').css('height', ((Number($('.' + id + '-box').css('height').replace('px','')) + 2)+'px'));
+		} else {
+			$('.' + id + '-box').addClass(id + '-box-lined');
+			$('.' + id + '-box').css('width', ((Number($('.' + id + '-box').css('width').replace('px','')) - 2)+'px'));
+			$('.' + id + '-box').css('height', ((Number($('.' + id + '-box').css('height').replace('px','')) - 2)+'px'));
+		}	
+	};
+	
+	function clearMap() {
+		$base.empty();
+	}
+	
+	function drawCharacters(cData) {
+		$.each(cData, function(ind, char){
+			if(char.type === "characterData"){
+				var newCharacter = new com.hiyoko.tofclient.Map.Character(char, boxSize, id);
+				$base.append(newCharacter.$elem);
+			}
+		});
+	}
+	
+	function drawDiceSymbols(cData) {}
+	
+	function drawMapMakers(cData) {}
+	
+	function drawTile(cData) {
+		$.each(cData, function(ind, tile){
+			if(tile.type === "floorTile"){
+				var newTile = new com.hiyoko.tofclient.Map.FloorTile(tile, boxSize, id);
+				$base.append(newTile.$elem);
+			}
+		});
+	}
+	
+	function drawMap(mapData){
+		var backgroundColors = mapData.mapMarks;
+		var $map = $("<div id='" + id + "-map'></div>");
+
+		//rendFloorTiles(data.characters, $map);
+		if(backgroundColors && backgroundColors.length !== 0){
+			$.each(backgroundColors, function(ia, boxs){
+				var $tr = $("<div class='" + id + "-line'></div>");
+				$.each(boxs, function(ib, box){
+					var $sq = $("<div class='" + id + "-box'></div>");
+					$sq.css("background-color", intToColor(box));
+					$tr.append($sq);
+				});
+				$map.append($tr);
+			});
+		} else {
+			for(var i = 0; i < mapData.yMax; i++) {
+				var $tr = $("<div class='" + id + "-line'></div>");
+				for(var j = 0; j < mapData.xMax; j++) {
+					var $sq = $("<div class='" + id + "-box'></div>");
+					$tr.append($sq);					
+				}
+				$map.append($tr);
+			}
+		}
+		$base.append($map);
+		$("." + id + "-box").css("opacity", mapData.mapMarksAlpha);
+		$("." + id + "-box").css("width", boxSize + "px");
+		$("." + id + "-box").css("height", boxSize + "px");
+		$("#" + id + "-map").css("background-image",
+				"url('" + parseUrl(mapData.imageSource) + "')");
+	}
+};
+
+com.hiyoko.tofclient.Map.FloorTile = function(tile, size, parentId) {
+	var parseUrl = com.hiyoko.tofclient.Map.parseUrl;
+	var self = this;
+	this.$elem = $("<div class='" + parentId + "-tile'></div>");
+	
+	function rend(){
+		self.$elem.css({
+			"position": "absolute",
+			"width": (tile.width * (size) - 2) + "px",
+			"height": (tile.height * (size) - 2) + "px",
+			"top": (1 + tile.y * (size)) + "px",
+			"left": (1 + tile.x * (size)) + "px",
+			"background-image":
+				"url('" + parseUrl(tile.imageUrl) + "')"		
+		});
+	};
+	rend();	
+};
+
+com.hiyoko.tofclient.Map.Character = function(char, boxsize, parentId) {
+	this.$elem = $("<div class='" + parentId + "-char'></div>");
+	var self = this;
+	var parseUrl = com.hiyoko.tofclient.Map.parseUrl;
+	var name = char.name;
+	var image = parseUrl(char.imageName);
+	var size = char.size;
+	var position = {
+			x: char.x,
+			y: char.y
+	};
+	
+	function rend() {
+		var $name = $("<div class='" + parentId + "-char-name' style='height:"+(size * (boxsize) - 2)+"px'></div>");
+		$name.text(char.name);
+		
+		self.$elem.css("width", (size * (boxsize) - 2) + "px");
+		self.$elem.css("height", (size * (boxsize) - 2) + "px");
+
+		self.$elem.css("top", (1 + position.y * (boxsize)) + "px");
+		self.$elem.css("left", (1 + position.x * (boxsize)) + "px");
+		self.$elem.css("background-image", "url('" + image + "')");
+		self.$elem.append($name);
+	};
+	rend();
+};
+
+com.hiyoko.tofclient.Map.MapMask = function($map, tile) {};
+
+com.hiyoko.tofclient.Map.DiceSymbol = function($map, tile) {};
+
+com.hiyoko.tofclient.Map.parseUrl = function(picUrl){
+	if(startsWith(picUrl, "http")){
+		return picUrl;
+	}
+	if(startsWith(picUrl, "../") || startsWith(picUrl, "/")){
+		return com.hiyoko.tofclient.Map.tofUrl.replace("DodontoFServer.rb?", picUrl);				
+	}
+	if(startsWith(picUrl, "./")){
+		return com.hiyoko.tofclient.Map.tofUrl.replace("DodontoFServer.rb?", picUrl.substring(1));		
+	}
+	return com.hiyoko.tofclient.Map.tofUrl.replace("DodontoFServer.rb?", "/" + picUrl);
 };
