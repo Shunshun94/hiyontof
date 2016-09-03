@@ -238,7 +238,7 @@ ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block ui-btn-up-f
 	text-indent:15px;
 }
 
-.tofChat-map-display-char-name {
+.tofChat-map-display-object-name {
 	display:none;
 	background-color: white;
 	font-size: 60%;

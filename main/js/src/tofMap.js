@@ -47,6 +47,12 @@ com.hiyoko.tofclient.Map = function(tof, interval, options){
 			tof.moveCharacter(e.name, e.x, e.y);
 			$status.text('');
 		});
+		
+		$disp.on('updateEvent', function(e){
+			var now = new Date();
+			$update.text('Map Last Update： ' + now.getHours() + '：' + now.getMinutes() + '：' + now.getSeconds());
+		});
+		
 		$switchChar.click(function(e){
 			map.toggleName();
 		});
@@ -81,195 +87,6 @@ com.hiyoko.tofclient.Map = function(tof, interval, options){
 
 };
 
-com.hiyoko.tofclient.Map.MapWriter = function(id, tof, opt_dragMode, opt_debugMode){
-	var isDrag = opt_dragMode ? true : false;
-	var debugMode = opt_debugMode;
-	var tofUrl = tof.getStatus().url;
-	var self = this;
-	
-	// $(window).width() - 30 = $disp().parent().parent().width() (means $disp.width()) 
-	// Because of unknown reason, $disp().parent().parent().width() couldn't be get from Safari.
-	var boxSize = Math.floor(($(window).width() - 30)  / (20)) - 1;
-	var $status = $("#" + id + "-status");
-	var $update = $("#" + id + "-lastupdate");
-	var $disp = $("#" + id + "-display");
-	
-	var debugLog = debugMode ? function(str){alert(str)} : function(str){};
-	
-	this.displaySwitch = function(){
-		this.toggleName();
-		this.toggleLine();
-	};
-
-	this.rewriteMap = function(){
-		tof.getRefresh(rewriteMapAll_,true, true);
-	};
-
-	this.rewriteCharacters = function(){
-		tof.getRefresh(rerendCharacters_,true);
-	};
-
-	function parseUrl(picUrl){
-		if(startsWith(picUrl, "http")){
-			return picUrl;
-		}
-		if(startsWith(picUrl, "../") || startsWith(picUrl, "/")){
-			return tofUrl.replace("DodontoFServer.rb?", picUrl);				
-		}
-		if(startsWith(picUrl, "./")){
-			return tofUrl.replace("DodontoFServer.rb?", picUrl.substring(1));		
-		}
-		return tofUrl.replace("DodontoFServer.rb?", "/" + picUrl);
-	}
-
-	function rewriteMapAll_(result){
-		try{		
-			var urlParser = com.hiyoko.tofclient.Map.getPicUrl;
-			var chars = result.characters;
-			boxSize = Math.floor(($(window).width() - 30)  / (result.mapData.xMax)) - 1;
-			clearMap();
-			drawMap(result);
-	
-	
-			$("." + id + "-box").css("width", boxSize + "px");
-			$("." + id + "-box").css("height", boxSize + "px");
-	
-			rendCharacters(chars, boxSize);
-		} catch (e) {
-			alert("ERROR @Shunshun94 にこの文字列 (ないし画面) を送ってください\n" + e.stack);
-		}
-	}
-
-	function clearMap(){
-		$disp.empty();
-	}
-
-	function drawMap(data){
-		var mapData = data.mapData;
-		var backgroundColors = mapData.mapMarks;
-		var $map = $("<div id='" + id + "-map'></div>");
-
-		rendFloorTiles(data.characters, $map);
-		if(backgroundColors && backgroundColors.length !== 0){
-			$.each(backgroundColors, function(ia, boxs){
-				var $tr = $("<div class='" + id + "-line'></div>");
-				$.each(boxs, function(ib, box){
-					var $sq = $("<div class='" + id + "-box'></div>");
-					$sq.css("background-color", intToColor(box));
-					$tr.append($sq);
-				});
-				$map.append($tr);
-			});
-		} else {
-			for(var i = 0; i < mapData.yMax; i++) {
-				var $tr = $("<div class='" + id + "-line'></div>");
-				for(var j = 0; j < mapData.xMax; j++) {
-					var $sq = $("<div class='" + id + "-box'></div>");
-					$tr.append($sq);					
-				}
-				$map.append($tr);
-			}
-		}
-		$disp.append($map);
-		$("." + id + "-box").css("opacity", mapData.mapMarksAlpha);
-		$("#" + id + "-map").css("background-image",
-				"url('" + parseUrl(mapData.imageSource) + "')");
-	}
-
-	function clearCharacters(){
-		$("." + id + "-char").remove();
-	}
-
-	function rerendCharacters_(result){
-		clearCharacters();
-		rendCharacters(result.characters);
-	};
-
-
-	function rendCharacters(chars, opt_size){
-		var size = opt_size ? opt_size : boxSize;
-		var charList = {};
-		$.each(chars, function(ind, char){
-			if(char.type === "characterData"){
-				charList[char.name] = tof.generateCharacterFromResult(char);
-				charList[char.name].x = char.x;
-				charList[char.name].y = char.y;
-				charList[char.name].elem = rendCharacter(char, size);
-				$("#" + id + "-map").append(charList[char.name].elem);
-			}
-		});
-
-		if(isDrag){
-			$("." + id + "-char").pep({
-				constrainTo: 'parent',
-				shouldEase: false,
-				start: function(ev, obj){
-					$status.text(this.$el.text());
-				},
-				stop: function(ev, obj){
-					$status.text("");
-					if(this.$el.hasClass(id + "-char-pop-triger")){
-						this.$el.removeClass(id + "-char-pop-triger");
-						return;
-					}
-					var $tag = this.$el;
-					var pos = $tag.position();
-					var half = size / 2;
-					var posY = Math.floor((half + pos.top)  / (size));
-					var posX = Math.floor((half + pos.left) / (size));
-					var event = new $.Event("endMoveCharacter",
-							{obj:charList[this.$el.text()],
-							 x: posX, y: posY});
-					$tag.trigger(event);
-					$tag.removeClass(id + "-char-pop");
-					placeCharacter(posX, posY, $tag, size);
-					charList[$tag.text()].x = posX;
-					charList[$tag.text()].y = posY;
-					closeSamePlaceCharacters(charList);
-				}
-			});
-			$("." + id + "-char").mousedown(function(e){
-				var samePlaceList = [];
-				var target = charList[$(e.target).text()];
-				var x = target.x;
-				var y = target.y;
-				for(key in charList) {
-					if(charList[key].x === x && charList[key].y === y){
-						samePlaceList.push(charList[key]);
-					}
-				}
-				if(samePlaceList.length === 1 || $(e.target).hasClass(id + "-char-pop")){
-					return;
-				}
-				$(e.target).addClass(id + "-char-pop-triger");
-				openSamePlaceCharacters(samePlaceList);
-			});
-		}
-		
-		var now = new Date();
-		$update.text('Map Last Update： ' + now.getHours() + '：' + now.getMinutes() + '：' + now.getSeconds());
-	}
-	
-
-	
-	function openSamePlaceCharacters(charList){
-		$.each(charList, function(i, char){
-			char.elem.addClass(id + "-char-pop");
-			placeCharacter(char.x, char.y + i, char.elem);
-		});
-	}
-	
-	function closeSamePlaceCharacters(charList){
-		$.each($("." + id + "-char-pop"),function(i, elem){
-			var $elem = $(elem);
-			var char = charList[$elem.text()];
-			$elem.removeClass(id + "-char-pop");
-			placeCharacter(char.x, char.y, $elem);
-		});
-	}
-
-};
-
 com.hiyoko.tofclient.Map.MapBack = function($base) {
 	var parseUrl = com.hiyoko.tofclient.Map.parseUrl;
 	var id = $base.attr('id');
@@ -291,12 +108,15 @@ com.hiyoko.tofclient.Map.MapBack = function($base) {
 	};
 	
 	this.update = function(info) {
+		drawMapMasks(info.characters);
+		drawMapMakers(info.characters);
 		drawCharacters(info.characters);
 		drawDiceSymbols(info.characters);
+		$base.trigger(new $.Event('updateEvent'));
 	};
 	
 	this.toggleName = function() {
-		$('.' + id + '-char-name').toggle();
+		$('.' + id + '-object-name').toggle();
 	};
 	
 	this.toggleLine = function() {
@@ -341,7 +161,19 @@ com.hiyoko.tofclient.Map.MapBack = function($base) {
 	
 	function drawDiceSymbols(cData) {}
 	
-	function drawMapMakers(cData) {}
+	function drawMapMakers(cData) {
+		
+	}
+	
+	function drawMapMasks(cData) {
+		$('.' + id + '-mask').remove();
+		$.each(cData, function(ind, tile){
+			if(tile.type === "mapMask"){
+				var newMask = new com.hiyoko.tofclient.Map.MapMask(tile, boxSize, id);
+				$base.append(newMask.$elem);
+			}
+		});
+	}
 	
 	function drawTile(cData) {
 		$.each(cData, function(ind, tile){
@@ -385,6 +217,39 @@ com.hiyoko.tofclient.Map.MapBack = function($base) {
 	}
 };
 
+com.hiyoko.tofclient.Map.MapMask = function(mask, size, parentId) {
+//	{"rotation":0,
+//	"draggable":true,
+//	"color":65535,
+//	"height":2,
+//	"imgId":"character_1472920995.4460_0001",
+//	"alpha":0.682758620689655,
+//	"name":"マップマスク！",
+//	"width":3,
+//	"x":12,
+//	"y":5,
+//	"type":"mapMask"}
+	var parseUrl = com.hiyoko.tofclient.Map.parseUrl;
+	var self = this;
+	this.$elem = $("<div class='" + parentId + "-mask'></div>");
+	
+	function rend(){
+		self.$elem.css({
+			"position": "absolute",
+			"width": (mask.width * (size) - 2) + "px",
+			"height": (mask.height * (size) - 2) + "px",
+			"top": (1 + mask.y * (size)) + "px",
+			"left": (1 + mask.x * (size)) + "px",
+			"background-color": intToColor(mask.color),
+			"opacity": mask.alpha
+		});
+		var $name = $("<div class='" + parentId + "-object-name' style='height:"+(self.size * (size) - 2)+"px'></div>");
+		$name.text(mask.name);
+		self.$elem.append($name);
+	};
+	rend();	
+};
+
 com.hiyoko.tofclient.Map.FloorTile = function(tile, size, parentId) {
 	var parseUrl = com.hiyoko.tofclient.Map.parseUrl;
 	var self = this;
@@ -417,7 +282,7 @@ com.hiyoko.tofclient.Map.Character = function(char, boxsize, parentId) {
 	};
 	
 	function rend() {
-		var $name = $("<div class='" + parentId + "-char-name' style='height:"+(self.size * (boxsize) - 2)+"px'></div>");
+		var $name = $("<div class='" + parentId + "-object-name' style='height:"+(self.size * (boxsize) - 2)+"px'></div>");
 		$name.text(char.name);
 		
 		self.$elem.css("width", (self.size * (boxsize) - 2) + "px");
@@ -451,10 +316,7 @@ com.hiyoko.tofclient.Map.Character = function(char, boxsize, parentId) {
 	}
 
 	rend();
-	bindEvents();
 };
-
-com.hiyoko.tofclient.Map.MapMask = function($map, tile) {};
 
 com.hiyoko.tofclient.Map.DiceSymbol = function($map, tile) {};
 
