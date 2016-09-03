@@ -9,10 +9,11 @@ com.hiyoko.tofclient.Map = function(tof, interval, options){
 	
 	var $disp = $("#" + id + "-display");
 	var $reset = $("#" + id + "-reset");
-	var $reload = $("#" + id + "-re  load");
+	var $reload = $("#" + id + "-reload");
 	var $update = $("#" + id + "-lastupdate");
 	var $switchChar = $("#" + id + "-char-switch");
 	var $switchLine = $("#" + id + "-line-switch");
+	var $status = $('#' + id + '-status');
 
 	//var mapWriter = new com.hiyoko.tofclient.Map.MapWriter(id, tof, isDrag, debugMode);
 	
@@ -37,8 +38,14 @@ com.hiyoko.tofclient.Map = function(tof, interval, options){
 			getCharacters(map.update);
 			//mapWriter.rewriteCharacters();
 		});
-		$disp.on("moveCharacter", function(e){
-			e.obj.move(e.x, e.y);
+		
+		$disp.on('startMoveCharacter', function(e){
+			$status.text(e.name);
+		});
+		
+		$disp.on("endMoveCharacter", function(e){
+			tof.moveCharacter(e.name, e.x, e.y);
+			$status.text('');
 		});
 		$switchChar.click(function(e){
 			map.toggleName();
@@ -88,23 +95,6 @@ com.hiyoko.tofclient.Map.MapWriter = function(id, tof, opt_dragMode, opt_debugMo
 	var $disp = $("#" + id + "-display");
 	
 	var debugLog = debugMode ? function(str){alert(str)} : function(str){};
-	
-	this.toggleName = function() {
-		
-	};
-	
-	this.toggleLine = function() {
-		var $box = $('.' + id + '-box');
-		if($box.hasClass(id + '-box-lined')) {
-			$('.' + id + '-box').removeClass(id + '-box-lined');
-			$('.' + id + '-box').css('width', ((Number($('.' + id + '-box').css('width').replace('px','')) + 2)+'px'));
-			$('.' + id + '-box').css('height', ((Number($('.' + id + '-box').css('height').replace('px','')) + 2)+'px'));
-		} else {
-			$('.' + id + '-box').addClass(id + '-box-lined');
-			$('.' + id + '-box').css('width', ((Number($('.' + id + '-box').css('width').replace('px','')) - 2)+'px'));
-			$('.' + id + '-box').css('height', ((Number($('.' + id + '-box').css('height').replace('px','')) - 2)+'px'));
-		}		
-	}
 	
 	this.displaySwitch = function(){
 		this.toggleName();
@@ -195,29 +185,6 @@ com.hiyoko.tofclient.Map.MapWriter = function(id, tof, opt_dragMode, opt_debugMo
 		rendCharacters(result.characters);
 	};
 
-	function rendFloorTiles(tiles, opt_parent, opt_size) {
-		var $tag = opt_parent ? opt_parent : $("#" + id + "-map");
-		var size = opt_size ? opt_size : boxSize;
-		$.each(tiles, function(ind, tile){
-			if(tile.type === "floorTile"){
-				$tag.append(rendTile(tile, size));
-			}
-		});
-	}
-
-	function rendTile(tile, opt_size){
-		var size = opt_size || boxSize;
-		var $tile = $("<div class='" + id + "-tile'></div>");
-		$tile.css("position", "absolute");
-		$tile.css("width", (tile.width * (size) - 2) + "px");
-		$tile.css("height", (tile.height * (size) - 2) + "px");
-
-		$tile.css("top", (1 + tile.y * (size)) + "px");
-		$tile.css("left", (1 + tile.x * (size)) + "px");
-		$tile.css("background-image",
-				"url('" + parseUrl(tile.imageUrl, tofUrl) + "')");
-		return $tile;
-	};
 
 	function rendCharacters(chars, opt_size){
 		var size = opt_size ? opt_size : boxSize;
@@ -250,7 +217,7 @@ com.hiyoko.tofclient.Map.MapWriter = function(id, tof, opt_dragMode, opt_debugMo
 					var half = size / 2;
 					var posY = Math.floor((half + pos.top)  / (size));
 					var posX = Math.floor((half + pos.left) / (size));
-					var event = new $.Event("moveCharacter",
+					var event = new $.Event("endMoveCharacter",
 							{obj:charList[this.$el.text()],
 							 x: posX, y: posY});
 					$tag.trigger(event);
@@ -283,13 +250,7 @@ com.hiyoko.tofclient.Map.MapWriter = function(id, tof, opt_dragMode, opt_debugMo
 		$update.text('Map Last Update： ' + now.getHours() + '：' + now.getMinutes() + '：' + now.getSeconds());
 	}
 	
-	function placeCharacter(x, y, $tag, opt_scale){
-		var size = opt_scale || boxSize;
-		var realX = (1 + x * (size)) - Number($tag.css("left").replace("px", ""));
-		var realY = (1 + y * (size)) - Number($tag.css("top").replace("px", ""));
-		
-		$tag.css("transform", "matrix(1, 0, 0, 1," + realX + "," + realY +")");
-	}
+
 	
 	function openSamePlaceCharacters(charList){
 		$.each(charList, function(i, char){
@@ -306,23 +267,7 @@ com.hiyoko.tofclient.Map.MapWriter = function(id, tof, opt_dragMode, opt_debugMo
 			placeCharacter(char.x, char.y, $elem);
 		});
 	}
-	
-	function rendCharacter(char, opt_size){
-		var size = opt_size || boxSize;
-		var $char = $("<div class='" + id + "-char'></div>");
-		var $name = $("<div class='" + id + "-char-name' style='height:"+(char.size * (size) - 2)+"px'></div>");
-		$name.text(char.name);
-		
-		$char.css("width", (char.size * (size) - 2) + "px");
-		$char.css("height", (char.size * (size) - 2) + "px");
 
-		$char.css("top", (1 + char.y * (size)) + "px");
-		$char.css("left", (1 + char.x * (size)) + "px");
-		$char.css("background-image",
-				"url('" + parseUrl(char.imageName, tofUrl) + "')");
-		$char.append($name);
-		return $char;
-	}
 };
 
 com.hiyoko.tofclient.Map.MapBack = function($base) {
@@ -372,10 +317,24 @@ com.hiyoko.tofclient.Map.MapBack = function($base) {
 	}
 	
 	function drawCharacters(cData) {
+		var chars = {};
+		$('.' + id + '-char').remove();
 		$.each(cData, function(ind, char){
 			if(char.type === "characterData"){
 				var newCharacter = new com.hiyoko.tofclient.Map.Character(char, boxSize, id);
+				chars[newCharacter.name] = newCharacter;
 				$base.append(newCharacter.$elem);
+			}
+		});
+		$('.' + id + '-char').pep({
+			constrainTo: 'parent',
+			shouldEase: false,
+			start: function(ev, obj){
+				var name = this.$el.text();
+				$base.trigger(new $.Event("startMoveCharacter", {name: name}));
+			},
+			stop: function(ev, obj){
+				chars[this.$el.text()].fixPosition();
 			}
 		});
 	}
@@ -397,7 +356,6 @@ com.hiyoko.tofclient.Map.MapBack = function($base) {
 		var backgroundColors = mapData.mapMarks;
 		var $map = $("<div id='" + id + "-map'></div>");
 
-		//rendFloorTiles(data.characters, $map);
 		if(backgroundColors && backgroundColors.length !== 0){
 			$.each(backgroundColors, function(ia, boxs){
 				var $tr = $("<div class='" + id + "-line'></div>");
@@ -450,27 +408,50 @@ com.hiyoko.tofclient.Map.Character = function(char, boxsize, parentId) {
 	this.$elem = $("<div class='" + parentId + "-char'></div>");
 	var self = this;
 	var parseUrl = com.hiyoko.tofclient.Map.parseUrl;
-	var name = char.name;
-	var image = parseUrl(char.imageName);
-	var size = char.size;
+	this.name = char.name;
+	this.image = parseUrl(char.imageName);
+	this.size = char.size;
 	var position = {
 			x: char.x,
 			y: char.y
 	};
 	
 	function rend() {
-		var $name = $("<div class='" + parentId + "-char-name' style='height:"+(size * (boxsize) - 2)+"px'></div>");
+		var $name = $("<div class='" + parentId + "-char-name' style='height:"+(self.size * (boxsize) - 2)+"px'></div>");
 		$name.text(char.name);
 		
-		self.$elem.css("width", (size * (boxsize) - 2) + "px");
-		self.$elem.css("height", (size * (boxsize) - 2) + "px");
+		self.$elem.css("width", (self.size * (boxsize) - 2) + "px");
+		self.$elem.css("height", (self.size * (boxsize) - 2) + "px");
 
 		self.$elem.css("top", (1 + position.y * (boxsize)) + "px");
 		self.$elem.css("left", (1 + position.x * (boxsize)) + "px");
-		self.$elem.css("background-image", "url('" + image + "')");
+		self.$elem.css("background-image", "url('" + self.image + "')");
 		self.$elem.append($name);
 	};
+	
+	this.fixPosition = function() {
+		var pos = self.$elem.position();
+		var half = boxsize / 2;
+		var posY = Math.floor((half + pos.top)  / (boxsize));
+		var posX = Math.floor((half + pos.left) / (boxsize));
+		var event = new $.Event("endMoveCharacter",
+				{name: self.name,
+				 x: posX, y: posY});
+		self.$elem.trigger(event);
+	
+		self.position = {x:posX, y:posY};
+		placeCharacter(posX, posY);
+	};
+	
+	function placeCharacter(x, y){
+		var realX = (1 + x * (boxsize)) - Number(self.$elem.css("left").replace("px", ""));
+		var realY = (1 + y * (boxsize)) - Number(self.$elem.css("top").replace("px", ""));
+		
+		self.$elem.css("transform", "matrix(1, 0, 0, 1," + realX + "," + realY +")");
+	}
+
 	rend();
+	bindEvents();
 };
 
 com.hiyoko.tofclient.Map.MapMask = function($map, tile) {};
