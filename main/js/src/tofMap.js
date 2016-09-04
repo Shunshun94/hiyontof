@@ -5,38 +5,64 @@ com.hiyoko.tofclient.Map = function(tof, interval, options){
 	var isDrag = options.isDraggable ? true : false;
 	var debugMode = options.debug;
 	var $html = options.html ? options.html : $("#tofChat-map");
+	var id = $html.attr('id');
 	
-	var $disp = $("#tofChat-map-display");
-	var $reset = $("#tofChat-map-reset");
-	var $reload = $("#tofChat-map-reload");
-	var $update = $("#tofChat-map-lastupdate");
-	var $switchChar = $("#tofChat-map-char-switch");
-	var $switchLine = $("#tofChat-map-line-switch");
+	var $disp = $("#" + id + "-display");
+	var $reset = $("#" + id + "-reset");
+	var $reload = $("#" + id + "-reload");
+	var $update = $("#" + id + "-lastupdate");
+	var $switchChar = $("#" + id + "-char-switch");
+	var $switchLine = $("#" + id + "-line-switch");
+	var $status = $('#' + id + '-status');
 
-	var mapWriter = new com.hiyoko.tofclient.Map.MapWriter($disp, tof, isDrag, debugMode);
+	//var mapWriter = new com.hiyoko.tofclient.Map.MapWriter(id, tof, isDrag, debugMode);
+	
+	var map = new com.hiyoko.tofclient.Map.MapBack($disp);
+	com.hiyoko.tofclient.Map.tofUrl = tof.getStatus().url;
 
 	function isActive() {
 		return $html.css('display') !== 'none';
 	}
 	
+	function getMap(callback) {
+		tof.getRefresh(callback, true, true);
+	};
+	
+	function getCharacters(callback) {
+		tof.getRefresh(callback, true);
+	};
+	
 	this.init = function(){
 
 		$reload.click(function(e){
-			mapWriter.rewriteCharacters();
+			getCharacters(map.update);
+			//mapWriter.rewriteCharacters();
 		});
-		$disp.on("moveCharacter", function(e){
-			e.obj.move(e.x, e.y);
+		
+		$disp.on('startMoveCharacter', function(e){
+			$status.text(e.name);
 		});
+		
+		$disp.on("endMoveCharacter", function(e){
+			tof.moveCharacter(e.name, e.x, e.y);
+			$status.text('');
+		});
+		
+		$disp.on('updateEvent', function(e){
+			var now = new Date();
+			$update.text('Map Last Update： ' + now.getHours() + '：' + now.getMinutes() + '：' + now.getSeconds());
+		});
+		
 		$switchChar.click(function(e){
-			mapWriter.toggleName();
+			map.toggleName();
 		});
 		
 		$switchLine.click(function(e){
-			mapWriter.toggleLine();
+			map.toggleLine();
 		});
 		
 		$reset.click(function(e){
-			mapWriter.rewriteMap();
+			getMap(map.updateAll);
 		});
 		
 		if(interval){
@@ -55,103 +81,132 @@ com.hiyoko.tofclient.Map = function(tof, interval, options){
 				alert(e);
 			}
 		}, 100);
-		
 	};
 
 	this.init();
 
 };
 
-com.hiyoko.tofclient.Map.MapWriter = function($disp, tof, opt_dragMode, opt_debugMode){
-	var isDrag = opt_dragMode ? true : false;
-	var debugMode = opt_debugMode;
-	var tofUrl = tof.getStatus().url;
+com.hiyoko.tofclient.Map.MapBack = function($base) {
+	var parseUrl = com.hiyoko.tofclient.Map.parseUrl;
+	var id = $base.attr('id');
 	var self = this;
 	
-	// $(window).width() - 30 = $disp().parent().parent().width() (means $disp.width()) 
-	// Because of unknown reason, $disp().parent().parent().width() couldn't be get from Safari.
-	var boxSize = Math.floor(($(window).width() - 30)  / (20)) - 1;
-	var $status = $("#tofChat-map-status");
-	var $update = $("#tofChat-map-lastupdate");
+	var boxSize = 0;
 	
-	var debugLog = debugMode ? function(str){alert(str)} : function(str){};
+	var tiles = [];
+	
+	this.updateAll = function(info) {
+		var chars = info.characters;
+		
+		boxSize = Math.floor(($(window).width() - 30)  / (info.mapData.xMax)) - 1;
+		clearMap();
+		
+		drawMap(info.mapData);
+		drawTile(chars);
+		self.update(info);
+	};
+	
+	this.update = function(info) {
+		drawMapMasks(info.characters);
+		drawMapMakers(info.characters);
+		drawCharacters(info.characters);
+		drawDiceSymbols(info.characters);
+		$base.trigger(new $.Event('updateEvent'));
+	};
 	
 	this.toggleName = function() {
-		$('.tofChat-map-char-name').toggle();
+		$('.' + id + '-object-name').toggle();
 	};
 	
 	this.toggleLine = function() {
-		var $box = $('.tofChat-map-box');
-		if($box.hasClass('tofChat-map-box-lined')) {
-			$('.tofChat-map-box').removeClass('tofChat-map-box-lined');
-			$('.tofChat-map-box').css('width', ((Number($('.tofChat-map-box').css('width').replace('px','')) + 2)+'px'));
-			$('.tofChat-map-box').css('height', ((Number($('.tofChat-map-box').css('height').replace('px','')) + 2)+'px'));
+		var $box = $('.' + id + '-box');
+		if($box.hasClass(id + '-box-lined')) {
+			$('.' + id + '-box').removeClass(id + '-box-lined');
+			$('.' + id + '-box').css('width', ((Number($('.' + id + '-box').css('width').replace('px','')) + 2)+'px'));
+			$('.' + id + '-box').css('height', ((Number($('.' + id + '-box').css('height').replace('px','')) + 2)+'px'));
 		} else {
-			$('.tofChat-map-box').addClass('tofChat-map-box-lined');
-			$('.tofChat-map-box').css('width', ((Number($('.tofChat-map-box').css('width').replace('px','')) - 2)+'px'));
-			$('.tofChat-map-box').css('height', ((Number($('.tofChat-map-box').css('height').replace('px','')) - 2)+'px'));
-		}		
-	}
-	
-	this.displaySwitch = function(){
-		this.toggleName();
-		this.toggleLine();
+			$('.' + id + '-box').addClass(id + '-box-lined');
+			$('.' + id + '-box').css('width', ((Number($('.' + id + '-box').css('width').replace('px','')) - 2)+'px'));
+			$('.' + id + '-box').css('height', ((Number($('.' + id + '-box').css('height').replace('px','')) - 2)+'px'));
+		}	
 	};
-
-	this.rewriteMap = function(){
-		tof.getRefresh(rewriteMapAll_,true, true);
-	};
-
-	this.rewriteCharacters = function(){
-		tof.getRefresh(rerendCharacters_,true);
-	};
-
-	function parseUrl(picUrl){
-		if(startsWith(picUrl, "http")){
-			return picUrl;
-		}
-		if(startsWith(picUrl, "../") || startsWith(picUrl, "/")){
-			return tofUrl.replace("DodontoFServer.rb?", picUrl);				
-		}
-		if(startsWith(picUrl, "./")){
-			return tofUrl.replace("DodontoFServer.rb?", picUrl.substring(1));		
-		}
-		return tofUrl.replace("DodontoFServer.rb?", "/" + picUrl);
-	}
-
-	function rewriteMapAll_(result){
-		try{		
-			var urlParser = com.hiyoko.tofclient.Map.getPicUrl;
-			var chars = result.characters;
-			boxSize = Math.floor(($(window).width() - 30)  / (result.mapData.xMax)) - 1;
-			clearMap();
-			drawMap(result);
 	
-	
-			$(".tofChat-map-box").css("width", boxSize + "px");
-			$(".tofChat-map-box").css("height", boxSize + "px");
-	
-			rendCharacters(chars, boxSize);
-		} catch (e) {
-			alert("ERROR @Shunshun94 にこの文字列 (ないし画面) を送ってください\n" + e.stack);
-		}
+	function clearMap() {
+		$base.empty();
 	}
-
-	function clearMap(){
-		$disp.empty();
+	
+	function drawCharacters(cData) {
+		var chars = {};
+		$('.' + id + '-char').remove();
+		$.each(cData, function(ind, char){
+			if(char.type === "characterData"){
+				var newCharacter = new com.hiyoko.tofclient.Map.Character(char, boxSize, id);
+				chars[newCharacter.name] = newCharacter;
+				$base.append(newCharacter.$elem);
+			}
+		});
+		$('.' + id + '-char').pep({
+			constrainTo: 'parent',
+			shouldEase: false,
+			start: function(ev, obj){
+				var name = this.$el.text();
+				$base.trigger(new $.Event("startMoveCharacter", {name: name}));
+			},
+			stop: function(ev, obj){
+				chars[this.$el.text()].fixPosition();
+			}
+		});
 	}
-
-	function drawMap(data){
-		var mapData = data.mapData;
+	
+	function drawDiceSymbols(cData) {
+		$('.' + id + '-dice').remove();
+		$.each(cData, function(ind, dice){
+			if(dice.type === "diceSymbol"){
+				var newDice = new com.hiyoko.tofclient.Map.DiceSymbol(dice, boxSize, id);
+				$base.append(newDice.$elem);
+			}
+		});
+	}
+	
+	function drawMapMakers(cData) {
+		$('.' + id + '-marker').remove();
+		$.each(cData, function(ind, tile){
+			if(tile.type === "mapMarker"){
+				var newMarker = new com.hiyoko.tofclient.Map.MapMarker(tile, boxSize, id);
+				$base.append(newMarker.$elem);
+			}
+		});
+	}
+	
+	function drawMapMasks(cData) {
+		$('.' + id + '-mask').remove();
+		$.each(cData, function(ind, tile){
+			if(tile.type === "mapMask"){
+				var newMask = new com.hiyoko.tofclient.Map.MapMask(tile, boxSize, id);
+				$base.append(newMask.$elem);
+			}
+		});
+	}
+	
+	function drawTile(cData) {
+		$.each(cData, function(ind, tile){
+			if(tile.type === "floorTile"){
+				var newTile = new com.hiyoko.tofclient.Map.FloorTile(tile, boxSize, id);
+				$base.append(newTile.$elem);
+			}
+		});
+	}
+	
+	function drawMap(mapData){
 		var backgroundColors = mapData.mapMarks;
-		var $map = $("<div id='tofChat-map-map'></div>");
+		var $map = $("<div id='" + id + "-map'></div>");
 
-		rendFloorTiles(data.characters, $map);
 		if(backgroundColors && backgroundColors.length !== 0){
 			$.each(backgroundColors, function(ia, boxs){
-				var $tr = $("<div class='tofChat-map-line'></div>");
+				var $tr = $("<div class='" + id + "-line'></div>");
 				$.each(boxs, function(ib, box){
-					var $sq = $("<div class='tofChat-map-box'></div>");
+					var $sq = $("<div class='" + id + "-box'></div>");
 					$sq.css("background-color", intToColor(box));
 					$tr.append($sq);
 				});
@@ -159,155 +214,175 @@ com.hiyoko.tofclient.Map.MapWriter = function($disp, tof, opt_dragMode, opt_debu
 			});
 		} else {
 			for(var i = 0; i < mapData.yMax; i++) {
-				var $tr = $("<div class='tofChat-map-line'></div>");
+				var $tr = $("<div class='" + id + "-line'></div>");
 				for(var j = 0; j < mapData.xMax; j++) {
-					var $sq = $("<div class='tofChat-map-box'></div>");
+					var $sq = $("<div class='" + id + "-box'></div>");
 					$tr.append($sq);					
 				}
 				$map.append($tr);
 			}
 		}
-		$disp.append($map);
-		$(".tofChat-map-box").css("opacity", mapData.mapMarksAlpha);
-		$("#tofChat-map-map").css("background-image",
+		$base.append($map);
+		$("." + id + "-box").css("opacity", mapData.mapMarksAlpha);
+		$("." + id + "-box").css("width", boxSize + "px");
+		$("." + id + "-box").css("height", boxSize + "px");
+		$("#" + id + "-map").css("background-image",
 				"url('" + parseUrl(mapData.imageSource) + "')");
 	}
+};
 
-	function clearCharacters(){
-		$(".tofChat-map-char").remove();
-	}
-
-	function rerendCharacters_(result){
-		clearCharacters();
-		rendCharacters(result.characters);
-	};
-
-	function rendFloorTiles(tiles, opt_parent, opt_size) {
-		var $tag = opt_parent ? opt_parent : $("#tofChat-map-map");
-		var size = opt_size ? opt_size : boxSize;
-		$.each(tiles, function(ind, tile){
-			if(tile.type === "floorTile"){
-				$tag.append(rendTile(tile, size));
-			}
-		});
-	}
-
-	function rendTile(tile, opt_size){
-		var size = opt_size || boxSize;
-		var $tile = $("<div class='tofChat-map-tile'></div>");
-		$tile.css("position", "absolute");
-		$tile.css("width", (tile.width * (size) - 2) + "px");
-		$tile.css("height", (tile.height * (size) - 2) + "px");
-
-		$tile.css("top", (1 + tile.y * (size)) + "px");
-		$tile.css("left", (1 + tile.x * (size)) + "px");
-		$tile.css("background-image",
-				"url('" + parseUrl(tile.imageUrl, tofUrl) + "')");
-		return $tile;
-	};
-
-	function rendCharacters(chars, opt_size){
-		var size = opt_size ? opt_size : boxSize;
-		var charList = {};
-		$.each(chars, function(ind, char){
-			if(char.type === "characterData"){
-				charList[char.name] = tof.generateCharacterFromResult(char);
-				charList[char.name].x = char.x;
-				charList[char.name].y = char.y;
-				charList[char.name].elem = rendCharacter(char, size);
-				$("#tofChat-map-map").append(charList[char.name].elem);
-			}
+com.hiyoko.tofclient.Map.MapMarker = function(marker, size, parentId) {
+	var self = this;
+	this.$elem = $("<div class='" + parentId + "-marker'></div>");
+	
+	function rend(){
+		self.$elem.css({
+			"position": "absolute",
+			"width": (marker.width * (size) - 8) + "px",
+			"height": (marker.height * (size) - 8) + "px",
+			"top": (1 + marker.y * (size)) + "px",
+			"left": (1 + marker.x * (size)) + "px",
+			"border": 'solid 3px ' + intToColor(marker.color)
 		});
 
-		if(isDrag){
-			$(".tofChat-map-char").pep({
-				constrainTo: 'parent',
-				shouldEase: false,
-				start: function(ev, obj){
-					$status.text(this.$el.text());
-				},
-				stop: function(ev, obj){
-					$status.text("");
-					if(this.$el.hasClass("tofChat-map-char-pop-triger")){
-						this.$el.removeClass("tofChat-map-char-pop-triger");
-						return;
-					}
-					var $tag = this.$el;
-					var pos = $tag.position();
-					var half = size / 2;
-					var posY = Math.floor((half + pos.top)  / (size));
-					var posX = Math.floor((half + pos.left) / (size));
-					var event = new $.Event("moveCharacter",
-							{obj:charList[this.$el.text()],
-							 x: posX, y: posY});
-					$tag.trigger(event);
-					$tag.removeClass("tofChat-map-char-pop");
-					placeCharacter(posX, posY, $tag, size);
-					charList[$tag.text()].x = posX;
-					charList[$tag.text()].y = posY;
-					closeSamePlaceCharacters(charList);
-				}
-			});
-			$(".tofChat-map-char").mousedown(function(e){
-				var samePlaceList = [];
-				var target = charList[$(e.target).text()];
-				var x = target.x;
-				var y = target.y;
-				for(key in charList) {
-					if(charList[key].x === x && charList[key].y === y){
-						samePlaceList.push(charList[key]);
-					}
-				}
-				if(samePlaceList.length === 1 || $(e.target).hasClass("tofChat-map-char-pop")){
-					return;
-				}
-				$(e.target).addClass("tofChat-map-char-pop-triger");
-				openSamePlaceCharacters(samePlaceList);
-			});
+		if(marker.isPaint) {
+			self.$elem.css('background-color', intToColor(marker.color));
 		}
-		
-		var now = new Date();
-		$update.text('Map Last Update： ' + now.getHours() + '：' + now.getMinutes() + '：' + now.getSeconds());
-	}
+
+		var $name = $("<div class='" + parentId + "-object-name' style='height:"+(marker.height * (size) - 8)+"px'></div>");
+		$name.text(marker.message);
+		self.$elem.append($name);
+	};
+	rend();
+};
+
+com.hiyoko.tofclient.Map.MapMask = function(mask, size, parentId) {
+	var self = this;
+	this.$elem = $("<div class='" + parentId + "-mask'></div>");
 	
-	function placeCharacter(x, y, $tag, opt_scale){
-		var size = opt_scale || boxSize;
-		var realX = (1 + x * (size)) - Number($tag.css("left").replace("px", ""));
-		var realY = (1 + y * (size)) - Number($tag.css("top").replace("px", ""));
-		
-		$tag.css("transform", "matrix(1, 0, 0, 1," + realX + "," + realY +")");
-	}
-	
-	function openSamePlaceCharacters(charList){
-		$.each(charList, function(i, char){
-			char.elem.addClass("tofChat-map-char-pop");
-			placeCharacter(char.x, char.y + i, char.elem);
+	function rend(){
+		self.$elem.css({
+			"position": "absolute",
+			"width": (mask.width * (size) - 2) + "px",
+			"height": (mask.height * (size) - 2) + "px",
+			"top": (1 + mask.y * (size)) + "px",
+			"left": (1 + mask.x * (size)) + "px",
+			"background-color": intToColor(mask.color),
+			"opacity": mask.alpha
 		});
-	}
+		var $name = $("<div class='" + parentId + "-object-name' style='height:"+(mask.height * (size) - 2)+"px'></div>");
+		$name.text(mask.name);
+		self.$elem.append($name);
+	};
+	rend();	
+};
+
+com.hiyoko.tofclient.Map.FloorTile = function(tile, size, parentId) {
+	var parseUrl = com.hiyoko.tofclient.Map.parseUrl;
+	var self = this;
+	this.$elem = $("<div class='" + parentId + "-tile'></div>");
 	
-	function closeSamePlaceCharacters(charList){
-		$.each($(".tofChat-map-char-pop"),function(i, elem){
-			var $elem = $(elem);
-			var char = charList[$elem.text()];
-			$elem.removeClass("tofChat-map-char-pop");
-			placeCharacter(char.x, char.y, $elem);
+	function rend(){
+		self.$elem.css({
+			"position": "absolute",
+			"width": (tile.width * (size) - 2) + "px",
+			"height": (tile.height * (size) - 2) + "px",
+			"top": (1 + tile.y * (size)) + "px",
+			"left": (1 + tile.x * (size)) + "px",
+			"background-image":
+				"url('" + parseUrl(tile.imageUrl) + "')"		
 		});
-	}
+	};
+	rend();	
+};
+
+com.hiyoko.tofclient.Map.Character = function(char, boxsize, parentId) {
+	this.$elem = $("<div class='" + parentId + "-char'></div>");
+	var self = this;
+	var parseUrl = com.hiyoko.tofclient.Map.parseUrl;
+	this.name = char.name;
+	this.image = parseUrl(char.imageName);
+	this.size = char.size;
+	var position = {
+			x: char.x,
+			y: char.y
+	};
 	
-	function rendCharacter(char, opt_size){
-		var size = opt_size || boxSize;
-		var $char = $("<div class='tofChat-map-char'></div>");
-		var $name = $("<div class='tofChat-map-char-name' style='height:"+(char.size * (size) - 2)+"px'></div>");
+	function rend() {
+		var $name = $("<div class='" + parentId + "-object-name' style='height:"+(self.size * (boxsize) - 2)+"px'></div>");
 		$name.text(char.name);
 		
-		$char.css("width", (char.size * (size) - 2) + "px");
-		$char.css("height", (char.size * (size) - 2) + "px");
+		self.$elem.css("width", (self.size * (boxsize) - 2) + "px");
+		self.$elem.css("height", (self.size * (boxsize) - 2) + "px");
 
-		$char.css("top", (1 + char.y * (size)) + "px");
-		$char.css("left", (1 + char.x * (size)) + "px");
-		$char.css("background-image",
-				"url('" + parseUrl(char.imageName, tofUrl) + "')");
-		$char.append($name);
-		return $char;
+		self.$elem.css("top", (1 + position.y * (boxsize)) + "px");
+		self.$elem.css("left", (1 + position.x * (boxsize)) + "px");
+		self.$elem.css("background-image", "url('" + self.image + "')");
+		self.$elem.append($name);
+	};
+	
+	this.fixPosition = function() {
+		var pos = self.$elem.position();
+		var half = boxsize / 2;
+		var posY = Math.floor((half + pos.top)  / (boxsize));
+		var posX = Math.floor((half + pos.left) / (boxsize));
+		var event = new $.Event("endMoveCharacter",
+				{name: self.name,
+				 x: posX, y: posY});
+		self.$elem.trigger(event);
+	
+		self.position = {x:posX, y:posY};
+		placeCharacter(posX, posY);
+	};
+	
+	function placeCharacter(x, y){
+		var realX = (1 + x * (boxsize)) - Number(self.$elem.css("left").replace("px", ""));
+		var realY = (1 + y * (boxsize)) - Number(self.$elem.css("top").replace("px", ""));
+		
+		self.$elem.css("transform", "matrix(1, 0, 0, 1," + realX + "," + realY +")");
 	}
+
+	rend();
+};
+
+com.hiyoko.tofclient.Map.DiceSymbol = function(dice, size, parentId) {	
+	var self = this;
+	this.$elem = $("<div class='" + parentId + "-dice'></div>");
+	
+	function rend(){
+		self.$elem.css({
+			"position": "absolute",
+			"width": (size - 10) + "px",
+			"height": (size - 10) + "px",
+			"top": (1 + dice.y * (size)) + "px",
+			"left": (1 + dice.x * (size)) + "px",
+			'border': 'outset 4px black',
+			'border-radius': '1ex',
+			"background-color": 'white',
+			'color': 'black',
+			'text-align': 'center'
+ 		});
+		self.$elem.text(dice.owner ? '？' : dice.number);
+
+		self.$elem.click(function(e) {
+			alert('ダイスシンボル' +
+					'\n持ち主：' + dice.ownerName +
+					'\n出目：' + (dice.owner ? '非公開' : dice.number) +
+					'\nダイス：' + dice.maxNumber + '面体');
+		});
+	};
+	rend();	
+};
+
+com.hiyoko.tofclient.Map.parseUrl = function(picUrl){
+	if(startsWith(picUrl, "http")){
+		return picUrl;
+	}
+	if(startsWith(picUrl, "../") || startsWith(picUrl, "/")){
+		return com.hiyoko.tofclient.Map.tofUrl.replace("DodontoFServer.rb?", picUrl);				
+	}
+	if(startsWith(picUrl, "./")){
+		return com.hiyoko.tofclient.Map.tofUrl.replace("DodontoFServer.rb?", picUrl.substring(1));		
+	}
+	return com.hiyoko.tofclient.Map.tofUrl.replace("DodontoFServer.rb?", "/" + picUrl);
 };

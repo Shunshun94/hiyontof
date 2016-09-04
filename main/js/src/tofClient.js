@@ -230,6 +230,20 @@ com.hiyoko.tof.room = function(urlInput, roomInput, passInput, callback){
 			}
 		});
 	};
+	
+	this.moveCharacter = function(characterName, x, y, opt_callback){
+		var sendMsg = url + "webif=changeCharacter&room="+room;
+		if(pass != ""){
+			sendMsg += "&password="+pass;
+		}
+		sendMsg += "&targetName=" + characterName;
+		sendMsg += "&x=" + x + "&y=" + y;
+		$.ajax({
+			type:'get',
+			url: sendMsg,
+			dataType:'jsonp'}
+		).done(function(result){if(opt_callback){opt_callback(result);}});
+	};
 
 	this.sendMessage = function(callback, name, msg, color, targetTab, botName ){
 		var sendMsg = "webif=talk&room="+room;
