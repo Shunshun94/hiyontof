@@ -159,7 +159,15 @@ com.hiyoko.tofclient.Map.MapBack = function($base) {
 		});
 	}
 	
-	function drawDiceSymbols(cData) {}
+	function drawDiceSymbols(cData) {
+		$('.' + id + '-dice').remove();
+		$.each(cData, function(ind, dice){
+			if(dice.type === "diceSymbol"){
+				var newDice = new com.hiyoko.tofclient.Map.DiceSymbol(dice, boxSize, id);
+				$base.append(newDice.$elem);
+			}
+		});
+	}
 	
 	function drawMapMakers(cData) {
 		$('.' + id + '-marker').remove();
@@ -168,7 +176,7 @@ com.hiyoko.tofclient.Map.MapBack = function($base) {
 				var newMarker = new com.hiyoko.tofclient.Map.MapMarker(tile, boxSize, id);
 				$base.append(newMarker.$elem);
 			}
-		});		
+		});
 	}
 	
 	function drawMapMasks(cData) {
@@ -224,7 +232,6 @@ com.hiyoko.tofclient.Map.MapBack = function($base) {
 };
 
 com.hiyoko.tofclient.Map.MapMarker = function(marker, size, parentId) {
-	var parseUrl = com.hiyoko.tofclient.Map.parseUrl;
 	var self = this;
 	this.$elem = $("<div class='" + parentId + "-marker'></div>");
 	
@@ -242,7 +249,7 @@ com.hiyoko.tofclient.Map.MapMarker = function(marker, size, parentId) {
 			self.$elem.css('background-color', intToColor(marker.color));
 		}
 
-		var $name = $("<div class='" + parentId + "-object-name' style='height:"+(marker.height * (size) - 2)+"px'></div>");
+		var $name = $("<div class='" + parentId + "-object-name' style='height:"+(marker.height * (size) - 8)+"px'></div>");
 		$name.text(marker.message);
 		self.$elem.append($name);
 	};
@@ -250,7 +257,6 @@ com.hiyoko.tofclient.Map.MapMarker = function(marker, size, parentId) {
 };
 
 com.hiyoko.tofclient.Map.MapMask = function(mask, size, parentId) {
-	var parseUrl = com.hiyoko.tofclient.Map.parseUrl;
 	var self = this;
 	this.$elem = $("<div class='" + parentId + "-mask'></div>");
 	
@@ -346,6 +352,34 @@ com.hiyoko.tofclient.Map.DiceSymbol = function(dice, size, parentId) {
 //	{"rotation":0,"draggable":true,"imgId":"character_1472921183.9290_0001",
 //		"owner":null,"maxNumber":6,"ownerName":"ななしさん",
 //		"colorName":"","y":3,"x":16,"type":"diceSymbol","number":3}
+	
+	var self = this;
+	this.$elem = $("<div class='" + parentId + "-dice'></div>");
+	
+	function rend(){
+		self.$elem.css({
+			"position": "absolute",
+			"width": (size - 10) + "px",
+			"height": (size - 10) + "px",
+			"top": (1 + dice.y * (size)) + "px",
+			"left": (1 + dice.x * (size)) + "px",
+			'border': 'outset 4px black',
+			'border-radius': '1ex',
+			"background-color": 'white',
+			'color': 'black',
+			'text-align': 'center'
+ 		});
+		self.$elem.text(dice.owner ? '？' : dice.number);
+
+		self.$elem.click(function(e) {
+			alert('ダイスシンボル' +
+					'\n持ち主：' + dice.ownerName +
+					'\n出目：' + (dice.owner ? '非公開' : dice.number) +
+					'\nダイス：' + dice.maxNumber + '面体');
+		});
+		
+	};
+	rend();	
 };
 
 com.hiyoko.tofclient.Map.parseUrl = function(picUrl){
