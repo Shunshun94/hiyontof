@@ -345,14 +345,7 @@ com.hiyoko.tofclient.Map.Character = function(char, boxsize, parentId) {
 	rend();
 };
 
-com.hiyoko.tofclient.Map.DiceSymbol = function(dice, size, parentId) {
-//	{"rotation":0,"draggable":true,"imgId":"character_1472921180.7230_0001",
-//		"owner":"isnek3hn","maxNumber":6,"ownerName":"ななしさん",
-//		"colorName":"","x":15,"y":3,"type":"diceSymbol","number":3},
-//	{"rotation":0,"draggable":true,"imgId":"character_1472921183.9290_0001",
-//		"owner":null,"maxNumber":6,"ownerName":"ななしさん",
-//		"colorName":"","y":3,"x":16,"type":"diceSymbol","number":3}
-	
+com.hiyoko.tofclient.Map.DiceSymbol = function(dice, size, parentId) {	
 	var self = this;
 	this.$elem = $("<div class='" + parentId + "-dice'></div>");
 	
@@ -377,7 +370,6 @@ com.hiyoko.tofclient.Map.DiceSymbol = function(dice, size, parentId) {
 					'\n出目：' + (dice.owner ? '非公開' : dice.number) +
 					'\nダイス：' + dice.maxNumber + '面体');
 		});
-		
 	};
 	rend();	
 };
