@@ -162,7 +162,13 @@ com.hiyoko.tofclient.Map.MapBack = function($base) {
 	function drawDiceSymbols(cData) {}
 	
 	function drawMapMakers(cData) {
-		
+		$('.' + id + '-marker').remove();
+		$.each(cData, function(ind, tile){
+			if(tile.type === "mapMarker"){
+				var newMarker = new com.hiyoko.tofclient.Map.MapMarker(tile, boxSize, id);
+				$base.append(newMarker.$elem);
+			}
+		});		
 	}
 	
 	function drawMapMasks(cData) {
@@ -217,18 +223,33 @@ com.hiyoko.tofclient.Map.MapBack = function($base) {
 	}
 };
 
+com.hiyoko.tofclient.Map.MapMarker = function(marker, size, parentId) {
+	var parseUrl = com.hiyoko.tofclient.Map.parseUrl;
+	var self = this;
+	this.$elem = $("<div class='" + parentId + "-marker'></div>");
+	
+	function rend(){
+		self.$elem.css({
+			"position": "absolute",
+			"width": (marker.width * (size) - 8) + "px",
+			"height": (marker.height * (size) - 8) + "px",
+			"top": (1 + marker.y * (size)) + "px",
+			"left": (1 + marker.x * (size)) + "px",
+			"border": 'solid 3px ' + intToColor(marker.color)
+		});
+
+		if(marker.isPaint) {
+			self.$elem.css('background-color', intToColor(marker.color));
+		}
+
+		var $name = $("<div class='" + parentId + "-object-name' style='height:"+(marker.height * (size) - 2)+"px'></div>");
+		$name.text(marker.message);
+		self.$elem.append($name);
+	};
+	rend();
+};
+
 com.hiyoko.tofclient.Map.MapMask = function(mask, size, parentId) {
-//	{"rotation":0,
-//	"draggable":true,
-//	"color":65535,
-//	"height":2,
-//	"imgId":"character_1472920995.4460_0001",
-//	"alpha":0.682758620689655,
-//	"name":"マップマスク！",
-//	"width":3,
-//	"x":12,
-//	"y":5,
-//	"type":"mapMask"}
 	var parseUrl = com.hiyoko.tofclient.Map.parseUrl;
 	var self = this;
 	this.$elem = $("<div class='" + parentId + "-mask'></div>");
@@ -243,7 +264,7 @@ com.hiyoko.tofclient.Map.MapMask = function(mask, size, parentId) {
 			"background-color": intToColor(mask.color),
 			"opacity": mask.alpha
 		});
-		var $name = $("<div class='" + parentId + "-object-name' style='height:"+(self.size * (size) - 2)+"px'></div>");
+		var $name = $("<div class='" + parentId + "-object-name' style='height:"+(mask.height * (size) - 2)+"px'></div>");
 		$name.text(mask.name);
 		self.$elem.append($name);
 	};
@@ -318,7 +339,14 @@ com.hiyoko.tofclient.Map.Character = function(char, boxsize, parentId) {
 	rend();
 };
 
-com.hiyoko.tofclient.Map.DiceSymbol = function($map, tile) {};
+com.hiyoko.tofclient.Map.DiceSymbol = function(dice, size, parentId) {
+//	{"rotation":0,"draggable":true,"imgId":"character_1472921180.7230_0001",
+//		"owner":"isnek3hn","maxNumber":6,"ownerName":"ななしさん",
+//		"colorName":"","x":15,"y":3,"type":"diceSymbol","number":3},
+//	{"rotation":0,"draggable":true,"imgId":"character_1472921183.9290_0001",
+//		"owner":null,"maxNumber":6,"ownerName":"ななしさん",
+//		"colorName":"","y":3,"x":16,"type":"diceSymbol","number":3}
+};
 
 com.hiyoko.tofclient.Map.parseUrl = function(picUrl){
 	if(startsWith(picUrl, "http")){
