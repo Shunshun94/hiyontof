@@ -51,6 +51,11 @@ com.hiyoko.tof = function(urlInput) {
 com.hiyoko.tof.urlNomalizer = function(url) {
 	var swf = "DodontoF.swf";
 	var rb = "DodontoFServer.rb?";
+	
+	if(! startsWith(url, 'https://') && ! startsWith(url, 'http://')){
+		url = 'http://' + url;
+	}
+	
 	if(url.indexOf(rb) === url.length - rb.length) {
 		// DodontoF/DodontoFServer.rb?
 		return url;
