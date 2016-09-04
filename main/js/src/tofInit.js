@@ -23,7 +23,7 @@
 		} else if (initData.url.indexOf('ddntf.museru.com') !== -1) {
 			alert('ひよんとふはどどんとふむせるにはアクセスできません');
 			initData.url = '';
-		}　else if (startsWith(document.location.protocol, 'https') && startsWith(initData.url, 'http://')) {
+		}　else if (startsWith(document.location.protocol, 'https') && !startsWith(initData.url, 'https://')) {
 			alert('本ひよんとふは  URL が https で始まるどどんとふにのみアクセスできます');
 			initData.url = '';
 		}
