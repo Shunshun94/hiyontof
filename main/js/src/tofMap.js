@@ -15,8 +15,6 @@ com.hiyoko.tofclient.Map = function(tof, interval, options){
 	var $switchLine = $("#" + id + "-line-switch");
 	var $status = $('#' + id + '-status');
 
-	//var mapWriter = new com.hiyoko.tofclient.Map.MapWriter(id, tof, isDrag, debugMode);
-	
 	var map = new com.hiyoko.tofclient.Map.MapBack($disp);
 	com.hiyoko.tofclient.Map.tofUrl = tof.getStatus().url;
 
@@ -36,7 +34,6 @@ com.hiyoko.tofclient.Map = function(tof, interval, options){
 
 		$reload.click(function(e){
 			getCharacters(map.update);
-			//mapWriter.rewriteCharacters();
 		});
 		
 		$disp.on('startMoveCharacter', function(e){
@@ -88,7 +85,7 @@ com.hiyoko.tofclient.Map = function(tof, interval, options){
 };
 
 com.hiyoko.tofclient.Map.MapBack = function($base) {
-	var parseUrl = com.hiyoko.tofclient.Map.parseUrl;
+	var parseUrl = com.hiyoko.tof.parseResourceUrl;
 	var id = $base.attr('id');
 	var self = this;
 	
@@ -227,7 +224,7 @@ com.hiyoko.tofclient.Map.MapBack = function($base) {
 		$("." + id + "-box").css("width", boxSize + "px");
 		$("." + id + "-box").css("height", boxSize + "px");
 		$("#" + id + "-map").css("background-image",
-				"url('" + parseUrl(mapData.imageSource) + "')");
+				"url('" + parseUrl(mapData.imageSource, com.hiyoko.tofclient.Map.tofUrl) + "')");
 	}
 };
 
@@ -278,7 +275,7 @@ com.hiyoko.tofclient.Map.MapMask = function(mask, size, parentId) {
 };
 
 com.hiyoko.tofclient.Map.FloorTile = function(tile, size, parentId) {
-	var parseUrl = com.hiyoko.tofclient.Map.parseUrl;
+	var parseUrl = com.hiyoko.tof.parseResourceUrl;
 	var self = this;
 	this.$elem = $("<div class='" + parentId + "-tile'></div>");
 	
@@ -290,7 +287,7 @@ com.hiyoko.tofclient.Map.FloorTile = function(tile, size, parentId) {
 			"top": (1 + tile.y * (size)) + "px",
 			"left": (1 + tile.x * (size)) + "px",
 			"background-image":
-				"url('" + parseUrl(tile.imageUrl) + "')"		
+				"url('" + parseUrl(tile.imageUrl, com.hiyoko.tofclient.Map.tofUrl) + "')"		
 		});
 	};
 	rend();	
@@ -299,9 +296,9 @@ com.hiyoko.tofclient.Map.FloorTile = function(tile, size, parentId) {
 com.hiyoko.tofclient.Map.Character = function(char, boxsize, parentId) {
 	this.$elem = $("<div class='" + parentId + "-char'></div>");
 	var self = this;
-	var parseUrl = com.hiyoko.tofclient.Map.parseUrl;
+	var parseUrl = com.hiyoko.tof.parseResourceUrl;
 	this.name = char.name;
-	this.image = parseUrl(char.imageName);
+	this.image = parseUrl(char.imageName, com.hiyoko.tofclient.Map.tofUrl);
 	this.size = char.size;
 	var position = {
 			x: char.x,

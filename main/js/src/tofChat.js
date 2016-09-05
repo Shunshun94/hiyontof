@@ -9,7 +9,7 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 	//TODO ID の直接指定を減らしていく
 	var $html = options.html || $("#tofChat-chat");
 	renderChat($html);
-	
+	com.hiyoko.tofclient.Chat.Util.TofURL = tof.getStatus().url;
 	var isAsking = false;
 	var isVisitor = Boolean(options.visitor);
 
@@ -100,6 +100,11 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 		$submenu.on("changeDisplayMode", function(e){
 			display.isShowAll = e.isShowAll;
 			display.reset();
+		});
+		
+		$submenu.on("changeBgmMode", function(e){
+			display.isLoadBGM = e.isLoadBGM;
+			console.log(display.isLoadBGM);
 		});
 		
 		$submenu.on("sendAlarm", function(e){
@@ -235,6 +240,8 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
  */
 com.hiyoko.tofclient.Chat.Util = com.hiyoko.tofclient.Chat.Util || {};
 
+com.hiyoko.tofclient.Chat.Util.TofURL;
+
 com.hiyoko.tofclient.Chat.Util.colorChange = function(target){
 
 };
@@ -263,11 +270,17 @@ com.hiyoko.tofclient.Chat.Util.parseVoteRequest = function(msg) {
 	return {message:text, ready:value.isCallTheRoll};
 };
 
+com.hiyoko.tofclient.Chat.Util.parseCommand = function(msg, header) {
+	return JSON.parse(msg.replace("\n", "").replace(header, "").replace(/}.* : /, "}"));
+};
+
+
 com.hiyoko.tofclient.Chat.Util.fixChatMsg = function(chatMsg){
 	var message;
 	var vote = false;
 	var ask = false;
 	var ready = false;
+	var cutin = false;
 	var tab = chatMsg[1].channel;
 
 	if(chatMsg[1].message.indexOf("###CutInCommand:rollVisualDice###") !== -1){
@@ -288,6 +301,16 @@ com.hiyoko.tofclient.Chat.Util.fixChatMsg = function(chatMsg){
 		ready = parsedMsg.ready;
 		tab = 0;
 	}
+	if(startsWith(message, '###CutInMovie###')) {
+		var parsedMsg = com.hiyoko.tofclient.Chat.Util.parseCommand(message, '###CutInMovie###');
+		
+		message = parsedMsg.message;
+		cutin = {
+			bgm: parsedMsg.soundSource,
+			pic: parsedMsg.source
+		};
+		
+	}
 
 	return ({
 		time:chatMsg[0],
@@ -297,7 +320,8 @@ com.hiyoko.tofclient.Chat.Util.fixChatMsg = function(chatMsg){
 		tab:tab,
 		isVote: vote,
 		isAsk: ask,
-		isReady: ready
+		isReady: ready,
+		isCutIn: cutin
 	});
 };
 
@@ -321,6 +345,7 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 
 	this.lastTime = 0;
 	this.isShowAll = true;
+	this.isLoadBGM = false;
 	this.activeTab = 0;
 
 	this.msgToDom = function(msg, tabs) {
@@ -353,6 +378,12 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 				$msg.append("<span class='vote-button-yes'>賛成</span><span class='vote-button-no'>反対</span>");
 			} else if(msg.isVote) {
 				msg_class = 'vote-msg';
+			} else if(msg.isCutIn) {
+				if(msg.isCutIn.bgm) {
+					var $audio = self.isLoadBGM ? $('<audio controls>') : $('<span>（BGM 再生）</span>');
+					$audio.attr('src', com.hiyoko.tof.parseResourceUrl(msg.isCutIn.bgm, com.hiyoko.tofclient.Chat.Util.TofURL));
+					$msg.append($audio);
+				}
 			}
 		} else {
 			$dom.addClass('notmain');
@@ -746,11 +777,6 @@ com.hiyoko.tofclient.Chat.InputArea.History = function($html){
 			$html.trigger(new $.Event("sendMessage", msg));
 			self.updateMsg(num.c, num.m);
 		});
-		/**
-		$("#tofChat-chat-input-history-switch").click(function(e){
-			$html.trigger(new $.Event("switch"));
-		});
-		*/
 
 		$("#tofChat-chat-input-history-delete").click(function(e){
 			if($("#tofChat-chat-input-history-list > option").length < 2){
@@ -1023,6 +1049,14 @@ com.hiyoko.tofclient.Chat.SubMenu.List = [
 		  var isShowAll = $(e.target).text()==="全表示に切替";
 		  $(e.target).text(isShowAll ? "タブ毎の表示に切替" : "全表示に切替");
 		  $(e.target).trigger(new $.Event("changeDisplayMode", {isShowAll:isShowAll}))
+		  com.hiyoko.tofclient.Chat.SubMenu.List.fireCloseEvent(e.target);
+	  }},
+  {code: 'bar2', type:'bar'},
+  {code: 'bgmMode', type:'item', label:'BGM を再生する',
+	  click:function(e){
+		  var isLoadBGM = $(e.target).text()==="BGM を再生する";
+		  $(e.target).text(isLoadBGM ? "BGM を再生しない" : "BGM を再生する");
+		  $(e.target).trigger(new $.Event("changeBgmMode", {isLoadBGM:isLoadBGM}))
 		  com.hiyoko.tofclient.Chat.SubMenu.List.fireCloseEvent(e.target);
 	  }},
   {code: 'bar2', type:'bar'},
