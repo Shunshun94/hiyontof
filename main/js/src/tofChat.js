@@ -34,7 +34,6 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 		
 		var isBgmActivate = Boolean(Number(localStorage.getItem("com.hiyoko.tofclient.Chat.Display.bgm")));
 		display.isLoadBGM = isBgmActivate;
-		console.log("com.hiyoko.tofclient.Chat.Display.bgm",localStorage.getItem("com.hiyoko.tofclient.Chat.Display.bgm"));
 		subMenu.updateItem('bgmMode', isBgmActivate);
 	}
 
@@ -47,7 +46,7 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 		return isVisitor ? newName + '@見学' : newName;
 	}
 
-	function initializeDisplay(serverInfo){		
+	function initializeDisplay(serverInfo){
 		// TODO これらって com.hiyoko.tofclient.Chat.InputArea の持ち物だよね
 		var status = tof.getStatus();
 		$("#tofChat-Title").text(isVisitor ? '【見学】' + status.name : status.name);
