@@ -31,6 +31,11 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 					history:$("#tofChat-chat-input-history"),
 					secret:$("#tofChat-chat-input-secret")},
 				isVisitor);
+		
+		var isBgmActivate = Boolean(Number(localStorage.getItem("com.hiyoko.tofclient.Chat.Display.bgm")));
+		display.isLoadBGM = isBgmActivate;
+		console.log("com.hiyoko.tofclient.Chat.Display.bgm",localStorage.getItem("com.hiyoko.tofclient.Chat.Display.bgm"));
+		subMenu.updateItem('bgmMode', isBgmActivate);
 	}
 
 	function renderChat($html) {
@@ -42,7 +47,7 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 		return isVisitor ? newName + '@見学' : newName;
 	}
 
-	function initializeDisplay(serverInfo){
+	function initializeDisplay(serverInfo){		
 		// TODO これらって com.hiyoko.tofclient.Chat.InputArea の持ち物だよね
 		var status = tof.getStatus();
 		$("#tofChat-Title").text(isVisitor ? '【見学】' + status.name : status.name);
@@ -104,7 +109,7 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 		
 		$submenu.on("changeBgmMode", function(e){
 			display.isLoadBGM = e.isLoadBGM;
-			console.log(display.isLoadBGM);
+			localStorage.setItem("com.hiyoko.tofclient.Chat.Display.bgm", e.isLoadBGM ? 1 : 0);
 		});
 		
 		$submenu.on("sendAlarm", function(e){
@@ -1058,6 +1063,9 @@ com.hiyoko.tofclient.Chat.SubMenu.List = [
 		  $(e.target).text(isLoadBGM ? "BGM を再生しない" : "BGM を再生する");
 		  $(e.target).trigger(new $.Event("changeBgmMode", {isLoadBGM:isLoadBGM}))
 		  com.hiyoko.tofclient.Chat.SubMenu.List.fireCloseEvent(e.target);
+	  },
+	  update:function($html, data){
+		  $html.text(data ? "BGM を再生しない" : "BGM を再生する");
 	  }},
   {code: 'bar2', type:'bar'},
   {code: 'sendAlarm', type:'item', label: 'アラームを送信する',
