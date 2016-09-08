@@ -345,8 +345,9 @@ com.hiyoko.tofclient.Chat.Util.checkScroll_ = function(e){
 com.hiyoko.tofclient.Chat.Display = function($html){
 	var self = this;
 	var isAddTimeStamp = Boolean(getParam("time"));
-	var tabClass = "tofChat-log-tab";
-
+	var id = $html.attr('id');
+	var tabClass = id + '-tab';
+	
 	this.lastTime = 0;
 	this.isShowAll = true;
 	this.isLoadBGM = false;
@@ -383,10 +384,16 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 			} else if(msg.isVote) {
 				msg_class = 'vote-msg';
 			} else if(msg.isCutIn) {
+				console.log(msg.isCutIn.pic);
 				if(msg.isCutIn.bgm) {
-					var $audio = self.isLoadBGM ? $('<audio controls>') : $('<span>（BGM 再生）</span>');
+					var $audio = self.isLoadBGM ? $('<audio class="' + id + '-cutin-bgm" controls>') : $('<span>（BGM 再生）</span>');
 					$audio.attr('src', com.hiyoko.tof.parseResourceUrl(msg.isCutIn.bgm, com.hiyoko.tofclient.Chat.Util.TofURL));
 					$msg.append($audio);
+				}
+				if(msg.isCutIn.pic) {
+					var $pic = $('<span class="' + id + '-cutin-pic">　[カットイン画像]</span>');
+					$pic.attr('title', com.hiyoko.tof.parseResourceUrl(msg.isCutIn.pic, com.hiyoko.tofclient.Chat.Util.TofURL));
+					$msg.append($pic);
 				}
 			}
 		} else {
@@ -452,8 +459,16 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 					tab: 0,
 					bot: false
 				}));
+				return;
+			}
+			
+			if(classStr === id + '-cutin-pic') {
+				alert($(e.target).attr('title'));
+				//http://webnonotes.com/javascript-2/jquerypopup/
 			}
 		});
+		
+		
 	};
 
 	this.reset = function(){
