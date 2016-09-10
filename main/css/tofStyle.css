@@ -162,6 +162,16 @@ ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block ui-btn-up-f
     z-index:1001;
 }
 
+.tofChat-chat-log-cutin-pic {
+	margin-left:1em;
+	text-align:center;
+	border:1px #A0AAA0 outset;
+	border-radius: 1ex;
+	padding:2px;
+	background-color: #E0FFE0;
+	color:gray;
+}
+
 #tofChat-chat-input-secret {
 	padding:5px;
 	background-color:#FFA0A0;
