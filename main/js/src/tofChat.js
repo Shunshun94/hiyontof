@@ -386,12 +386,12 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 				msg_class = 'vote-msg';
 			} else if(msg.isCutIn) {
 				if(msg.isCutIn.bgm) {
-					var $audio = self.isLoadBGM ? $('<audio class="' + id + '-cutin-bgm" controls>') : $('<span>（BGM 再生）</span>');
+					var $audio = self.isLoadBGM ? $('<audio class="' + id + '-cutin-bgm" controls>') : $('<span>（BGM 再生は現在無効です）</span>');
 					$audio.attr('src', com.hiyoko.tof.parseResourceUrl(msg.isCutIn.bgm, com.hiyoko.tofclient.Chat.Util.TofURL));
 					$msg.append($audio);
 				}
 				if(msg.isCutIn.pic) {
-					var $pic = $('<span class="' + id + '-cutin-pic">　[カットイン画像]</span>');
+					var $pic = $('<span class="' + id + '-cutin-pic">カットイン画像を表示</span>');
 					$pic.attr('title', com.hiyoko.tof.parseResourceUrl(msg.isCutIn.pic, com.hiyoko.tofclient.Chat.Util.TofURL));
 					$msg.append($pic);
 				}
