@@ -35,6 +35,10 @@ com.hiyoko.tofclient.App = function(tof) {
 				}
 			});
 			
+			$(window).on('beforeunload', function(e){
+				return '退室してよろしいですか?';
+			});
+			
 	
 		};
 	
