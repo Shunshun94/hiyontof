@@ -45,3 +45,9 @@ com.hiyoko.tofclient.ServerList.SERVER_LIST = {
  * true にすると com.hiyoko.tofclient.ServerList.SERVER_LIST に登録されているサーバにしかアクセスできないようになる。
  */
 com.hiyoko.tofclient.ServerList.RESTRICTION = false;
+
+/**
+ * 許容する最小更新間隔。秒で設定する。
+ * 初期値は10秒 (10,000ミリ秒)。
+ */
+com.hiyoko.tofclient.App.MIN_UPDATE_INTERVAL = 10;

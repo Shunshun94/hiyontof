@@ -4,8 +4,8 @@ com.hiyoko.tofclient = com.hiyoko.tofclient || {};
 com.hiyoko.tofclient.App = function(tof) {
 	tof.isVisitor(function(isVisitor) {
 		var interval = Number(getParam("reload", 0));
-		if(interval < 10000) {
-			interval = 10000;
+		if(interval < com.hiyoko.tofclient.App.MIN_UPDATE_INTERVAL * 1000) {
+			interval = com.hiyoko.tofclient.App.MIN_UPDATE_INTERVAL * 1000;
 		}
 		
 		this.chat = new com.hiyoko.tofclient.Chat(tof, interval, {visitor: isVisitor, html:$("#tofChat-chat")});
@@ -45,3 +45,5 @@ com.hiyoko.tofclient.App = function(tof) {
 		this.init();
 	});
 };
+
+com.hiyoko.tofclient.App.MIN_UPDATE_INTERVAL = 10;

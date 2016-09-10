@@ -47,12 +47,13 @@
 どどんとふのチャットにアクセスするためのファイルです。
 以下に分かれています。
 
-- ``com.hiyoko.tofclient.Chat: tofChat`` に含まれるクラス全体を管理するクラスです
+- ``com.hiyoko.tofclient.Chat`` : ``tofChat`` に含まれるクラス全体を管理するクラスです
   - ``com.hiyoko.tofclient.Chat.Display`` : どどんとふのログを表示するためのクラスです
   - ``com.hiyoko.tofclient.Chat.Status``: どどんとふとの通信状況を表示するためのクラスです
   - ``com.hiyoko.tofclient.Chat.InputArea`` : 送信するチャットメッセージを受け付けるためのクラスです
     - ``com.hiyoko.tofclient.Chat.InputArea.Input`` : 標準的なチャットメッセージを送るためのクラスです
-    - ``com.hiyoko.tofclient.Chat.InputArea.Parette`` : 過去の入力履歴を利用してチャットメッセージを送るためのクラスです
+    - ``com.hiyoko.tofclient.Chat.InputArea.History`` : 過去の入力履歴を利用してチャットメッセージを送るためのクラスです
+    - ``com.hiyoko.tofclient.Chat.InputArea.Secret`` : 非公開発言を行うためのクラスです
   - ``com.hiyoko.tofclient.Chat.SubMenu`` : 画面左上に表示されるサブメニューを扱うクラスです
 
 原則として、`` InputArea`` 以下のクラスや ``SubMenu`` からイベントを受け取り、
@@ -62,8 +63,6 @@
 
 どどんとふの Map を扱うクラスです。
 ``jquery.pep.js`` を使い、コマの移動をサポートしています。
-
-殆どの仕事は ``com.hiyoko.tofclient.Map.MapWriter`` が行っています。
 
 キャラクターを動かすとキャラクターから移動イベントが発され、
 ``com.hiyoko.tofclient.Map`` がそれをキャッチしてどどんとふに反映する、という方法でコマの配置を扱っています。
@@ -79,7 +78,10 @@
 ### tofMemo.js
 
 共有メモの表示と更新を行うためのクラスです。
-各メモがイベントを発し、`` com.hiyoko.tofclient.Memo`` がどどんとふへの繁栄を行っています。
+各メモがイベントを発し、``com.hiyoko.tofclient.Memo`` がどどんとふへの反映を行っています。
+
+メモは二種類のクラスで表現されており、 1.48.15 未満のメモを表現する ``com.hiyoko.tofclient.Memo.SimpleMemo`` と
+それ以降を表現する ``com.hiyoko.tofclient.Memo.TabedMemo`` があります。
 
 ## 設定ファイル
 
@@ -102,6 +104,15 @@ URL を KEY とし、サーバ名を VALUE とする json の形式になって�
 
 自鯖用のひよんとふとして設置したいのであれば、 ``true`` にした上で
 ``com.hiyoko.tofclient.ServerList.SERVER_LIST`` に自鯖だけを登録しておけばよいでしょう。
+
+### com.hiyoko.tofclient.App.MIN_UPDATE_INTERVAL
+
+``com.hiyoko.tofclient.App.MIN_UPDATE_INTERVAL`` は自動更新の最小間隔を設定します。
+初期値は10です。初期値の場合、ユーザは望んでも自動更新間隔を10秒より短くすることはできません。
+
+この値を小さくすることでより頻繁な自動更新をユーザに認めることになります。
+しかし、その分端末は頻繁に通信を行い、どどんとふは頻繁にリクエストを処理することになります。
+あまりに小さな値にすることは勧められません。
 
 ## ひよんとふの URL
 
