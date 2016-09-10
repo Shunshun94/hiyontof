@@ -16,6 +16,16 @@ HTML/JS で動くスマートフォン向けどどんとふクライアントで
 
 ## 設置手順
 
+
+### ガイド
+
+[超簡単 どどんとふ設置マニュアル | こかげ工房](https://cokage.works/trpg/dodontof_installer/) の手順に従えばさくらのレンタルサーバ限定ですが、どどんとふとひよんとふを簡単にセットアップできます。
+
+また、 [超簡単 どどんとふメンテナンスマニュアル | こかげ工房](https://cokage.works/trpg/dodontof_maintenance/) の手順に従うことでバージョンアップも容易にできます。
+
+### もう少し泥臭い方法
+
+
 まずは、任意のディレクトリで以下を実行。
 
 ``` bash
@@ -34,21 +44,31 @@ $ git submodule update
 
 その後、ユーザを hiyontof.html にアクセスするように誘導してください。
 
-### 何故 git submodule を実行しないといけないの?
+#### 何故 git submodule を実行しないといけないの?
 
 jscolor というライブラリをダウンロードしてくるためのコマンドです。
 ``main/js/lib/jscolor`` 以下に ``jscolor.min.js`` を手動で設置していただいてもかまいません。
 
-### 他のライブラリはどうするの?
+#### 他のライブラリはどうするの?
 
 各ライブラリがホストしている CDN 等からアクセスしています。
 ``git submodule`` で配置しているものは、その URL が公式に示されていないためにこのようにしています。
 
-### 既に設置済みでバージョンアップするにはどうすればいいの?
+#### 既に設置済みでバージョンアップするにはどうすればいいの?
 
 特に設定を変えていないのであれば ``$ git pull`` が早いです。
 
-### git コマンドが使えないと導入できないの?
+そうでなければ以下のコマンドが簡単です。
+
+``` bash
+cp main/hiyontof.conf.js main/hiyontof.conf.js.bk
+git stash
+git pull
+rm main/hiyontof.conf.js
+mv main/hiyontof.conf.js.bk main/hiyontof.conf.js
+```
+
+### git コマンドを使わずに導入する
 
 以下の URL から最新版のソースコードをダウンロードできます。
 
@@ -57,12 +77,6 @@ https://github.com/Shunshun94/hiyontof/archive/master.zip
 後は、 ``jscolor.min.js`` を ``main/js/lib/jscolor`` 以下にダウンロードしてきて配置するだけ。
 
 更新の際は単純に上書きしましょう。
-
-### ガイド
-
-[簡単 ひよんとふ設置マニュアル | こかげ工房](https://cokage.works/trpg/make-hiyontof/) にさくらのレンタルサーバにおける設置方法が紹介されています。
-謝謝！
-
 
 ## 利用しているライブラリ類
 
