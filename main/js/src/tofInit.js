@@ -23,7 +23,7 @@
 		} else if (initData.url.indexOf('ddntf.museru.com') !== -1) {
 			alert('ひよんとふはどどんとふむせるにはアクセスできません');
 			initData.url = '';
-		}　else if (startsWith(document.location.protocol, 'https') && startsWith(initData.url, 'http://')) {
+		}　else if (startsWith(document.location.protocol, 'https') && !startsWith(initData.url, 'https://')) {
 			alert('本ひよんとふは  URL が https で始まるどどんとふにのみアクセスできます');
 			initData.url = '';
 		}
@@ -46,6 +46,8 @@
 			serverListModule.appendListToStorage(initData.url);
 		});
 	}else{
+		$('#tofChat-init-reload').attr('min', com.hiyoko.tofclient.App.MIN_UPDATE_INTERVAL);
+		
 		for(var key in serverList) {
 			$("#tofChat-init-url-list").append(
 					"<option value=\""+key+"\">"+serverList[key]+"</option>"

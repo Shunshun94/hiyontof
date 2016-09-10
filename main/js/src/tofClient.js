@@ -51,6 +51,11 @@ com.hiyoko.tof = function(urlInput) {
 com.hiyoko.tof.urlNomalizer = function(url) {
 	var swf = "DodontoF.swf";
 	var rb = "DodontoFServer.rb?";
+	
+	if(! startsWith(url, 'https://') && ! startsWith(url, 'http://')){
+		url = 'http://' + url;
+	}
+	
 	if(url.indexOf(rb) === url.length - rb.length) {
 		// DodontoF/DodontoFServer.rb?
 		return url;
@@ -230,6 +235,20 @@ com.hiyoko.tof.room = function(urlInput, roomInput, passInput, callback){
 			}
 		});
 	};
+	
+	this.moveCharacter = function(characterName, x, y, opt_callback){
+		var sendMsg = url + "webif=changeCharacter&room="+room;
+		if(pass != ""){
+			sendMsg += "&password="+pass;
+		}
+		sendMsg += "&targetName=" + characterName;
+		sendMsg += "&x=" + x + "&y=" + y;
+		$.ajax({
+			type:'get',
+			url: sendMsg,
+			dataType:'jsonp'}
+		).done(function(result){if(opt_callback){opt_callback(result);}});
+	};
 
 	this.sendMessage = function(callback, name, msg, color, targetTab, botName ){
 		var sendMsg = "webif=talk&room="+room;
@@ -279,14 +298,20 @@ com.hiyoko.tof.room = function(urlInput, roomInput, passInput, callback){
                             "反対",
                             "",
                             "READY"];
+		
+		var parseCommand = function(msg, header) {
+			return JSON.parse(msg.replace("\n", "").replace(header, "").replace(/}.* : /, "}"));
+		};
 
 		var parseVoteAnswer = function(msg) {
+			// parseCommand で置換する
 			var value = JSON.parse(msg.replace("\n", "").replace("###vote_replay_readyOK###", "").replace(/}.* : /, "}"));
 			return VOTES_ANSWERS[value.voteReplay];
 		};
 
 		var parseVoteRequest = function(msg) {
 			try{
+				// parseCommand で置換する
 				var value = JSON.parse(msg.replace("\n", "").replace("###vote###", "").replace(/}.* : /, "}"));
 			}catch(e){
 				return {message:"無効な質問", ready:true};
@@ -304,6 +329,7 @@ com.hiyoko.tof.room = function(urlInput, roomInput, passInput, callback){
 		var ready = false;
 		var tab = chatMsg[1].channel;
 
+		// TODO ここのコードが最高にダサい。直す
 		if(chatMsg[1].message.indexOf("###CutInCommand:rollVisualDice###") !== -1){
 			message = JSON.parse(chatMsg[1].message.replace("###CutInCommand:rollVisualDice###", "")).chatMessage;
 		}else{
@@ -734,4 +760,17 @@ com.hiyoko.tof.room.Character = function(targetName_input, url_input, counters_i
 com.hiyoko.tof.Exception = function(str) {
 	this.name = "com.hiyoko.tof.Exception";
 	this.message = str ? str : '';
+};
+
+com.hiyoko.tof.parseResourceUrl = function(picUrl, urlBase){
+	if(startsWith(picUrl, "http")){
+		return picUrl;
+	}
+	if(startsWith(picUrl, "../") || startsWith(picUrl, "/")){
+		return urlBase.replace("DodontoFServer.rb?", picUrl);				
+	}
+	if(startsWith(picUrl, "./")){
+		return urlBase.replace("DodontoFServer.rb?", picUrl.substring(1));		
+	}
+	return urlBase.replace("DodontoFServer.rb?", "/" + picUrl);
 };
