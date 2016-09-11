@@ -62,6 +62,7 @@ com.hiyoko.tofclient.Memo = function(tof, interval, opt_$html){
 			list[memo.imgId].updateTime = time;
 		});
 		if(noMemo) {
+			$disp.empty();
 			$disp.append("<p>表示すべきメモがありません</p>");
 		}
 		
