@@ -279,13 +279,14 @@ com.hiyoko.tofclient.Chat.Util.parseCommand = function(msg, header) {
 	return JSON.parse(msg.replace("\n", "").replace(header, "").replace(/}.* : /, "}"));
 };
 
-
 com.hiyoko.tofclient.Chat.Util.fixChatMsg = function(chatMsg){
 	var message;
 	var vote = false;
 	var ask = false;
 	var ready = false;
 	var cutin = false;
+	var name;
+	var status = '通常';
 	var tab = chatMsg[1].channel;
 
 	if(chatMsg[1].message.indexOf("###CutInCommand:rollVisualDice###") !== -1){
@@ -319,14 +320,36 @@ com.hiyoko.tofclient.Chat.Util.fixChatMsg = function(chatMsg){
 			bgm: parsedMsg.soundSource,
 			pic: parsedMsg.source
 		};
-		
 	}
+	
+	var TAIL_NAME_REGEXP_1 = /@([^ \f\n\r\t\v​\u00a0\u1680​\u180e\u2000-\u200a​\u2028\u2029​\u202f\u205f​\u3000\ufeff@]*)$/;
+	
+	var tailNameMatch_1 = TAIL_NAME_REGEXP_1.exec(message);
+	if(tailNameMatch_1){
+		var TAIL_NAME_REGEXP_2 = new RegExp('@([^ \f\n\r\t\v​\u00a0\u1680​\u180e\u2000-\u200a​\u2028\u2029​\u202f\u205f​\u3000\ufeff@]*)@' + tailNameMatch_1[1] + '$');
+		var tailNameMatch_2 = TAIL_NAME_REGEXP_2.exec(message);
+		if(tailNameMatch_2){
+			name = tailNameMatch_2[1].replace('@' + tailNameMatch_1[1], '');
+			status = tailNameMatch_1[1];
+			message = message.replace(tailNameMatch_2[0], '');
+		} else {
+			name = tailNameMatch_1[1];
+			message = message.replace(tailNameMatch_1[0], '');
+		}
+	} else {
+		var name_status = chatMsg[1].senderName.split('\t');
+		name = name_status[0];
+		status = name_status[1] ? name_status[1] : '通常';
+	}
+	
+	
 
 	return ({
 		time:chatMsg[0],
 		msg:message,
 		color:chatMsg[1].color,
-		name:chatMsg[1].senderName,
+		name:name,
+		status:status,
 		tab:tab,
 		isVote: vote,
 		isAsk: ask,
@@ -357,6 +380,7 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 	this.lastTime = 0;
 	this.isShowAll = true;
 	this.isLoadBGM = false;
+	this.isStandPic = false;
 	this.activeTab = 0;
 
 	this.msgToDom = function(msg, tabs) {
@@ -539,6 +563,12 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 
 	this.eventBind_();
 
+};
+
+com.hiyoko.tofclient.Chat.Display.PicStore = function(){
+	this.stack = function(responseFromTof) {};
+	
+	this.get = function(name, opt_status) {};
 };
 
 /**
