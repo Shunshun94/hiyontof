@@ -293,6 +293,11 @@ com.hiyoko.tofclient.Chat.Util.fixChatMsg = function(chatMsg){
 	}else{
 		message = chatMsg[1].message;
 	}
+	
+	if(startsWith(message, '###Language:secretDice###')) {
+		message = 'シークレットダイスを振りました';
+	}
+	
 	if(startsWith(message, "###vote_replay_readyOK###")){
 		message = com.hiyoko.tofclient.Chat.Util.parseVoteAnswer(message);
 		vote = true;
