@@ -377,6 +377,8 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 	var id = $html.attr('id');
 	var tabClass = id + '-tab';
 	
+	var store = new com.hiyoko.tofclient.Chat.Display.PicStore();
+	
 	this.lastTime = 0;
 	this.isShowAll = true;
 	this.isLoadBGM = false;
@@ -455,6 +457,9 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 
 	this.append = function(responseFromTof, opt_tabs){
 		var tabs = opt_tabs || ["", "雑談"];
+		
+		store.stack(responseFromTof);
+		
 		if(responseFromTof.chatMessageDataLog.length !== 0){
 			var modifiedTofResponse = mapArray(responseFromTof.chatMessageDataLog, function(l){return com.hiyoko.tofclient.Chat.Util.fixChatMsg(l);});
 			var $dom = $('<div></div>');
@@ -547,8 +552,6 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 				img.src = imgsrc;
 			}
 		});
-		
-		
 	};
 
 	this.reset = function(){
@@ -566,7 +569,39 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 };
 
 com.hiyoko.tofclient.Chat.Display.PicStore = function(){
-	this.stack = function(responseFromTof) {};
+	var lastCharacterUpdate = 0;
+	var lastEffectUpdate = 0;
+	
+	var store = {};
+	
+	this.stack = function(response) {
+		var lastUpdates = response.lastUpdateTimes;
+		
+		if(lastUpdates.characters > lastCharacterUpdate || lastUpdates.effects > lastEffectUpdate) {
+			updateByCharacter(response.characters);
+			updateByEffect(response.effects);
+		}
+		console.log(store);
+	};
+	
+	var updateByCharacter = function(characters){
+		$.each(characters, function(i, v){
+			if(v.type === 'characterData') {
+				store[v.name] = store[v.name] || {};
+				store[v.name]['通常'] = com.hiyoko.tof.parseResourceUrl(v.imageName, com.hiyoko.tofclient.Chat.Util.TofURL);
+			}
+		});
+	};
+	
+	var updateByEffect = function(effects){
+		$.each(effects, function(i, v){
+			if(v.type === 'standingGraphicInfos') {
+				store[v.name] = store[v.name] || {};
+				store[v.name][v.state] = com.hiyoko.tof.parseResourceUrl(v.source, com.hiyoko.tofclient.Chat.Util.TofURL);
+			}
+		});
+	};
+	
 	
 	this.get = function(name, opt_status) {};
 };
