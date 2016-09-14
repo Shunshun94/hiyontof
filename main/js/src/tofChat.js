@@ -202,7 +202,7 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 		if(isAsking){return;}
 		isAsking = true;
 		status.set(msg || "Getting...");
-		tof.getMessage(getMsgs, display.lastTime, getMsgsFail);
+		tof.getRefresh(getMsgs, true, false, false, true, false, true, display.lastTime, getMsgsFail);
 	}
 
 	function getMsgs(response){
