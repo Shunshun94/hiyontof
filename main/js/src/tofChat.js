@@ -382,9 +382,22 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 	this.lastTime = 0;
 	this.isShowAll = true;
 	this.isLoadBGM = false;
-	this.isStandPic = false;
+	this.isStandPic = true;
 	this.activeTab = 0;
 
+	function constructNameDom(msg) {
+		var $dom;
+		if(self.isStandPic) {
+			$dom = $('<img />');
+			var picUrl = store.get(msg.name, msg.status);
+			$dom.attr('src', picUrl || 'https://pbs.twimg.com/profile_images/683282911387234305/ta67TStV_bigger.png');
+		} else {
+			$dom = $('<strong></strong>');
+			$dom.text(msg.name + ': ');
+		}
+		return $dom;
+	}
+	
 	this.msgToDom = function(msg, tabs) {
 		var $dom = $('<p></p>');
 		$dom.addClass('log');
@@ -406,8 +419,7 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 		} else if(msg.tab === 0){
 			$dom.css('color', '#'+msg.color);
 
-			$name = $('<strong></strong>');
-			$name.text(msg.name + ': ');
+			$name = constructNameDom(msg);
 
 			if(msg.isReady) {
 				msg_class = 'vote-button-ready';
@@ -581,7 +593,6 @@ com.hiyoko.tofclient.Chat.Display.PicStore = function(){
 			updateByCharacter(response.characters);
 			updateByEffect(response.effects);
 		}
-		console.log(store);
 	};
 	
 	var updateByCharacter = function(characters){
@@ -603,7 +614,21 @@ com.hiyoko.tofclient.Chat.Display.PicStore = function(){
 	};
 	
 	
-	this.get = function(name, opt_status) {};
+	this.get = function(name, opt_status) {
+		var status = opt_status || '通常';
+		
+		var character = store[name];
+		if(! character){
+			return '';
+		}
+		
+		var result = character[status];
+		if(result){
+			return result;
+		} else {
+			return character['通常'];
+		}
+	};
 };
 
 /**
