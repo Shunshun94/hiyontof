@@ -36,6 +36,11 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 		var isBgmActivate = Boolean(Number(localStorage.getItem("com.hiyoko.tofclient.Chat.Display.bgm")));
 		display.isLoadBGM = isBgmActivate;
 		subMenu.updateItem('bgmMode', isBgmActivate);
+		
+		var isStandPicActive = Boolean(Number(localStorage.getItem("com.hiyoko.tofclient.Chat.Display.standPic")));
+		display.isStandPic = isStandPicActive;
+		subMenu.updateItem('standPicMode', isStandPicActive);
+		
 	}
 
 	function renderChat($html) {
@@ -111,6 +116,12 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 			display.isLoadBGM = e.isLoadBGM;
 			localStorage.setItem("com.hiyoko.tofclient.Chat.Display.bgm", e.isLoadBGM ? 1 : 0);
 		});
+		
+		$submenu.on("changeStandPic", function(e){
+			display.isStandPic = e.isStandPic;
+			localStorage.setItem("com.hiyoko.tofclient.Chat.Display.standPic", e.isStandPic ? 1 : 0);
+		});
+		
 		
 		$submenu.on("sendAlarm", function(e){
 			var timerCount = window.prompt("何秒後にアラームを鳴らしますか?", 60);
@@ -1227,6 +1238,18 @@ com.hiyoko.tofclient.Chat.SubMenu.List = [
 	  },
 	  update:function($html, data){
 		  $html.text(data ? "BGM を再生しない" : "BGM を再生する");
+	  }},
+  {code: 'bar2', type:'bar'},
+  {code: 'standPicMode', type:'item', label:'立ち絵を表示する',
+	  click:function(e){
+		  alert('※推奨※\n見た目の統一のために\nひよんとふの再読み込みをおすすめします');
+		  var isStandPic = $(e.target).text()==="立ち絵を表示する";
+		  $(e.target).text(isStandPic ? "立ち絵を表示しない" : "立ち絵を表示する");
+		  $(e.target).trigger(new $.Event("changeStandPic", {isStandPic:isStandPic}))
+		  com.hiyoko.tofclient.Chat.SubMenu.List.fireCloseEvent(e.target);
+	  },
+	  update:function($html, data){
+		  $html.text(data ? "立ち絵を表示しない" : "立ち絵を表示する");
 	  }},
   {code: 'bar2', type:'bar'},
   {code: 'sendAlarm', type:'item', label: 'アラームを送信する',
