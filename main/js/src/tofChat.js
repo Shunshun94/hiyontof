@@ -36,6 +36,11 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 		var isBgmActivate = Boolean(Number(localStorage.getItem("com.hiyoko.tofclient.Chat.Display.bgm")));
 		display.isLoadBGM = isBgmActivate;
 		subMenu.updateItem('bgmMode', isBgmActivate);
+		
+		var isStandPicActive = Boolean(Number(localStorage.getItem("com.hiyoko.tofclient.Chat.Display.standPic")));
+		display.isStandPic = isStandPicActive;
+		subMenu.updateItem('standPicMode', isStandPicActive);
+		
 	}
 
 	function renderChat($html) {
@@ -111,6 +116,12 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 			display.isLoadBGM = e.isLoadBGM;
 			localStorage.setItem("com.hiyoko.tofclient.Chat.Display.bgm", e.isLoadBGM ? 1 : 0);
 		});
+		
+		$submenu.on("changeStandPic", function(e){
+			display.isStandPic = e.isStandPic;
+			localStorage.setItem("com.hiyoko.tofclient.Chat.Display.standPic", e.isStandPic ? 1 : 0);
+		});
+		
 		
 		$submenu.on("sendAlarm", function(e){
 			var timerCount = window.prompt("何秒後にアラームを鳴らしますか?", 60);
@@ -202,7 +213,7 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 		if(isAsking){return;}
 		isAsking = true;
 		status.set(msg || "Getting...");
-		tof.getMessage(getMsgs, display.lastTime, getMsgsFail);
+		tof.getRefresh(getMsgs, true, false, false, true, false, true, display.lastTime, getMsgsFail);
 	}
 
 	function getMsgs(response){
@@ -279,13 +290,14 @@ com.hiyoko.tofclient.Chat.Util.parseCommand = function(msg, header) {
 	return JSON.parse(msg.replace("\n", "").replace(header, "").replace(/}.* : /, "}"));
 };
 
-
 com.hiyoko.tofclient.Chat.Util.fixChatMsg = function(chatMsg){
 	var message;
 	var vote = false;
 	var ask = false;
 	var ready = false;
 	var cutin = false;
+	var name;
+	var status = '通常';
 	var tab = chatMsg[1].channel;
 
 	if(chatMsg[1].message.indexOf("###CutInCommand:rollVisualDice###") !== -1){
@@ -319,14 +331,36 @@ com.hiyoko.tofclient.Chat.Util.fixChatMsg = function(chatMsg){
 			bgm: parsedMsg.soundSource,
 			pic: parsedMsg.source
 		};
-		
 	}
+	
+	var TAIL_NAME_REGEXP_1 = /@([^ \f\n\r\t\v​\u00a0\u1680​\u180e\u2000-\u200a​\u2028\u2029​\u202f\u205f​\u3000\ufeff@]*)$/;
+	
+	var tailNameMatch_1 = TAIL_NAME_REGEXP_1.exec(message);
+	if(tailNameMatch_1){
+		var TAIL_NAME_REGEXP_2 = new RegExp('@([^ \f\n\r\t\v​\u00a0\u1680​\u180e\u2000-\u200a​\u2028\u2029​\u202f\u205f​\u3000\ufeff@]*)@' + tailNameMatch_1[1] + '$');
+		var tailNameMatch_2 = TAIL_NAME_REGEXP_2.exec(message);
+		if(tailNameMatch_2){
+			name = tailNameMatch_2[1].replace('@' + tailNameMatch_1[1], '');
+			status = tailNameMatch_1[1];
+			message = message.replace(tailNameMatch_2[0], '');
+		} else {
+			name = tailNameMatch_1[1];
+			message = message.replace(tailNameMatch_1[0], '');
+		}
+	} else {
+		var name_status = chatMsg[1].senderName.split('\t');
+		name = name_status[0];
+		status = name_status[1] ? name_status[1] : '通常';
+	}
+	
+	
 
 	return ({
 		time:chatMsg[0],
 		msg:message,
 		color:chatMsg[1].color,
-		name:chatMsg[1].senderName,
+		name:name,
+		status:status,
 		tab:tab,
 		isVote: vote,
 		isAsk: ask,
@@ -353,15 +387,17 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 	var isAddTimeStamp = Boolean(getParam("time"));
 	var id = $html.attr('id');
 	var tabClass = id + '-tab';
+	var store = new com.hiyoko.tofclient.Chat.Display.PicStore();
 	
 	this.lastTime = 0;
 	this.isShowAll = true;
 	this.isLoadBGM = false;
+	this.isStandPic = false;
 	this.activeTab = 0;
-
+	
 	this.msgToDom = function(msg, tabs) {
 		var $dom = $('<p></p>');
-		$dom.addClass('log');
+		$dom.addClass(id + '-log');
 		$dom.addClass(tabClass + msg.tab);
 
 		var $name;
@@ -415,6 +451,20 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 		}
 
 		$name.addClass('name');
+		$name.addClass(id + '-log-name');
+		
+		if(self.isStandPic) {
+			$msg.css('margin-left', '5px');
+			$name.addClass(id + '-log-name-pic-inner');
+			var $nameContain = $name;
+			
+			$name = $('<div></div>');
+			$name.append($nameContain);
+			$name.css("background-image",
+					"url('" + ('', store.get(msg.name, msg.status) || './image/noimage.png') + "')");
+			$name.addClass(id + '-log-name-pic');
+		}
+		
 		$msg.addClass(msg_class);
 
 		$dom.append($name);
@@ -431,6 +481,9 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 
 	this.append = function(responseFromTof, opt_tabs){
 		var tabs = opt_tabs || ["", "雑談"];
+		
+		store.stack(responseFromTof);
+		
 		if(responseFromTof.chatMessageDataLog.length !== 0){
 			var modifiedTofResponse = mapArray(responseFromTof.chatMessageDataLog, function(l){return com.hiyoko.tofclient.Chat.Util.fixChatMsg(l);});
 			var $dom = $('<div></div>');
@@ -523,8 +576,6 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 				img.src = imgsrc;
 			}
 		});
-		
-		
 	};
 
 	this.reset = function(){
@@ -539,6 +590,57 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 
 	this.eventBind_();
 
+};
+
+com.hiyoko.tofclient.Chat.Display.PicStore = function(){
+	var lastCharacterUpdate = 0;
+	var lastEffectUpdate = 0;
+	
+	var store = {};
+	
+	this.stack = function(response) {
+		var lastUpdates = response.lastUpdateTimes;
+		
+		if(lastUpdates.characters > lastCharacterUpdate || lastUpdates.effects > lastEffectUpdate) {
+			updateByCharacter(response.characters);
+			updateByEffect(response.effects);
+		}
+	};
+	
+	var updateByCharacter = function(characters){
+		$.each(characters, function(i, v){
+			if(v.type === 'characterData') {
+				store[v.name] = store[v.name] || {};
+				store[v.name]['通常'] = com.hiyoko.tof.parseResourceUrl(v.imageName, com.hiyoko.tofclient.Chat.Util.TofURL);
+			}
+		});
+	};
+	
+	var updateByEffect = function(effects){
+		$.each(effects, function(i, v){
+			if(v.type === 'standingGraphicInfos') {
+				store[v.name] = store[v.name] || {};
+				store[v.name][v.state] = com.hiyoko.tof.parseResourceUrl(v.source, com.hiyoko.tofclient.Chat.Util.TofURL);
+			}
+		});
+	};
+	
+	
+	this.get = function(name, opt_status) {
+		var status = opt_status || '通常';
+		
+		var character = store[name];
+		if(! character){
+			return '';
+		}
+		
+		var result = character[status];
+		if(result){
+			return result;
+		} else {
+			return character['通常'];
+		}
+	};
 };
 
 /**
@@ -1136,6 +1238,18 @@ com.hiyoko.tofclient.Chat.SubMenu.List = [
 	  },
 	  update:function($html, data){
 		  $html.text(data ? "BGM を再生しない" : "BGM を再生する");
+	  }},
+  {code: 'bar2', type:'bar'},
+  {code: 'standPicMode', type:'item', label:'立ち絵を表示する',
+	  click:function(e){
+		  alert('※推奨※\n見た目の統一のために\nひよんとふの再読み込みをおすすめします');
+		  var isStandPic = $(e.target).text()==="立ち絵を表示する";
+		  $(e.target).text(isStandPic ? "立ち絵を表示しない" : "立ち絵を表示する");
+		  $(e.target).trigger(new $.Event("changeStandPic", {isStandPic:isStandPic}))
+		  com.hiyoko.tofclient.Chat.SubMenu.List.fireCloseEvent(e.target);
+	  },
+	  update:function($html, data){
+		  $html.text(data ? "立ち絵を表示しない" : "立ち絵を表示する");
 	  }},
   {code: 'bar2', type:'bar'},
   {code: 'sendAlarm', type:'item', label: 'アラームを送信する',

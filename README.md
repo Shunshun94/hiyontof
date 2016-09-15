@@ -131,6 +131,11 @@ MIT ライセンスです。
 
 ライセンス情報: https://github.com/brix/crypto-js/blob/develop/LICENSE
 
+### 立ち絵がないときに表示される画像
+
+[かなひつじ](https://twitter.com/kana_1173) さんに描いていただきました。
+
+ひよんとふ以外での利用は不可とします。
 
 ## ライセンス
 

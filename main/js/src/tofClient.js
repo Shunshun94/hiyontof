@@ -429,7 +429,7 @@ com.hiyoko.tof.room = function(urlInput, roomInput, passInput, callback){
 		return new com.hiyoko.tof.room.Character(cdata.name, roomUrl, counter);
 	};
 
-	this.getRefresh = function(callback, characters, map, time, effects, roomInfo, chat, chatLastTime){
+	this.getRefresh = function(callback, characters, map, time, effects, roomInfo, chat, chatLastTime, opt_failCallBack){
 		var sendMsg = "webif=refresh&room="+room;
 		if(pass != ""){
 			sendMsg += "&password="+pass;
@@ -462,7 +462,15 @@ com.hiyoko.tof.room = function(urlInput, roomInput, passInput, callback){
 			url: sendMsg,
 			async:false,
 			dataType:'jsonp'}
-		).done(function(result){callback(result);});
+		).done(function(result){callback(result);}
+		).fail(function(result){
+			console.log(result);
+			if(opt_failCallBack){
+				opt_failCallBack(result);
+			} else {
+				alert(result.statusText);
+			}
+		});
 	};
 
 	this.appendMemo = function(content, callback){
