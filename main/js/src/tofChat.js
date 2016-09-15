@@ -387,7 +387,6 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 	var isAddTimeStamp = Boolean(getParam("time"));
 	var id = $html.attr('id');
 	var tabClass = id + '-tab';
-	console.log(id);
 	var store = new com.hiyoko.tofclient.Chat.Display.PicStore();
 	
 	this.lastTime = 0;
