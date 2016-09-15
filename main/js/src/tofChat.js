@@ -455,13 +455,14 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 		$name.addClass(id + '-log-name');
 		
 		if(self.isStandPic) {
+			$msg.css('margin-left', '5px');
 			$name.addClass(id + '-log-name-pic-inner');
 			var $nameContain = $name;
 			
 			$name = $('<div></div>');
 			$name.append($nameContain);
 			$name.css("background-image",
-					"url('" + ('', store.get(msg.name, msg.status) || 'https://pbs.twimg.com/profile_images/683282911387234305/ta67TStV_bigger.png') + "')");
+					"url('" + ('', store.get(msg.name, msg.status) || './image/noimage.png') + "')");
 			$name.addClass(id + '-log-name-pic');
 		}
 		

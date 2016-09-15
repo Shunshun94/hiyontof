@@ -145,6 +145,7 @@ ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block ui-btn-up-f
 	background-size:contain;
 	background-repeat:no-repeat;
 	position:relative;
+	top:3px;
 }
 
 .tofChat-chat-log-log-name-pic-inner {
