@@ -138,6 +138,24 @@ ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block ui-btn-up-f
 	white-space:nowrap;
 }
 
+.tofChat-chat-log-log-name-pic {
+	height:60px;
+	width:60px;
+	display:inline-block;
+	background-size:contain;
+	background-repeat:no-repeat;
+	position:relative;
+}
+
+.tofChat-chat-log-log-name-pic-inner {
+	color:black;
+	font-size:40%;
+	position:absolute;
+	bottom:0;
+	right:0;
+
+}
+
 #tofChat-chat-log-cutin {
 	display:none;
     position:fixed;
