@@ -329,8 +329,11 @@ com.hiyoko.tofclient.Chat.Util.fixChatMsg = function(chatMsg){
 		message = parsedMsg.message;
 		cutin = {
 			bgm: parsedMsg.soundSource,
+			loop: parsedMsg.isSoundLoop,
 			pic: parsedMsg.source
 		};
+		
+		console.log(cutin);
 	}
 	
 	var TAIL_NAME_REGEXP_1 = /@([^ \f\n\r\t\v​\u00a0\u1680​\u180e\u2000-\u200a​\u2028\u2029​\u202f\u205f​\u3000\ufeff@]*)$/;
