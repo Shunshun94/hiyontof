@@ -742,7 +742,9 @@ com.hiyoko.tof.room.Character = function(targetName_input, url_input, counters_i
 				sendMsg += "&initiative=" + value;
 			} else if(name ==="info") {
 				sendMsg += "&info=" + value;
-			} else {
+			} else if(name === 'image') {
+				sendMsg += '&image=' + value;
+			}else {
 				$.each(counters, function(ind, pair){
 					if(pair.name === name){
 						counters[ind].value = value;

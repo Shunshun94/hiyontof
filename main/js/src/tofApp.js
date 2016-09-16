@@ -11,7 +11,7 @@ com.hiyoko.tofclient.App = function(tof) {
 		this.chat = new com.hiyoko.tofclient.Chat(tof, interval, {visitor: isVisitor, html:$("#tofChat-chat")});
 		this.map = new com.hiyoko.tofclient.Map(tof, interval, {isDraggable: true, html:$("#tofChat-map"), debug:getParam("debug", false)});
 		this.memo = new com.hiyoko.tofclient.Memo(tof, interval, $("#tofChat-memo"));
-		this.table = new com.hiyoko.tofclient.Table(tof, interval, {html:$("#tofChat-table"), table:true, debug:false});
+		this.table = new com.hiyoko.tofclient.Table(tof, interval, {html:$("#tofChat-table"), table:true, outerImage:tof.getStatus().outerImage , debug:false});
 		this.init = function(){
 			$(".tofChat-button").addClass("ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block ui-btn-up-f");
 			$(".tofChat-button-heavy").addClass("ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block");
