@@ -89,6 +89,7 @@ com.hiyoko.tof.room = function(urlInput, roomInput, passInput, callback){
 	var name;
 	var tabs;
 	var counters;
+	var outerImage;
 	var visitable = false;
 	var members = [];
 	var userId;
@@ -103,10 +104,13 @@ com.hiyoko.tof.room = function(urlInput, roomInput, passInput, callback){
 		tabs = response.chatTab;
 		counters = response.counter;
 		visitable = response.canVisit;
+		outerImage = response.outerImage;
 	};
 
 	this.getStatus = function(){
-		return {url:url, room:room, pass:pass, game:game, name:name, tabs:tabs, counters:counters, members: members};
+		return {
+			url:url, room:room, pass:pass, game:game, name:name, tabs:tabs,
+			counters:counters, members: members, outerImage: outerImage};
 	}
 
 	this.setGame = function(gameInput){
