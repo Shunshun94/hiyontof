@@ -604,6 +604,8 @@ com.hiyoko.tofclient.Chat.Display.PicStore = function(){
 		if(lastUpdates.characters > lastCharacterUpdate || lastUpdates.effects > lastEffectUpdate) {
 			updateByCharacter(response.characters);
 			updateByEffect(response.effects);
+			lastCharacterUpdate = lastUpdates.characters;
+			lastEffectUpdate = lastUpdates.effects;
 		}
 	};
 	
