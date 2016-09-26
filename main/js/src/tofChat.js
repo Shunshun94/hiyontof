@@ -332,8 +332,6 @@ com.hiyoko.tofclient.Chat.Util.fixChatMsg = function(chatMsg){
 			loop: parsedMsg.isSoundLoop,
 			pic: parsedMsg.source
 		};
-		
-		console.log(cutin);
 	}
 	
 	var TAIL_NAME_REGEXP_1 = /@([^ \f\n\r\t\v​\u00a0\u1680​\u180e\u2000-\u200a​\u2028\u2029​\u202f\u205f​\u3000\ufeff@]*)$/;
@@ -398,6 +396,14 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 	this.isStandPic = false;
 	this.activeTab = 0;
 	
+	this.loopBgmStop = function() {
+		var $bgm = $('.' + id + '-cutin-bgm-loop-active');
+		if($bgm.length) {
+			$bgm[0].pause();
+			$bgm.removeClass(id + '-cutin-bgm-loop-active');
+		};
+	};
+	
 	this.msgToDom = function(msg, tabs) {
 		var $dom = $('<p></p>');
 		$dom.addClass(id + '-log');
@@ -432,6 +438,19 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 				if(msg.isCutIn.bgm) {
 					var $audio = self.isLoadBGM ? $('<audio class="' + id + '-cutin-bgm" controls>') : $('<span>（BGM 再生は現在無効です）</span>');
 					$audio.attr('src', com.hiyoko.tof.parseResourceUrl(msg.isCutIn.bgm, com.hiyoko.tofclient.Chat.Util.TofURL));
+					if(self.isLoadBGM && msg.isCutIn.loop) {
+						$audio.attr('loop', '1');
+						$audio.addClass(id + '-cutin-bgm-loop');
+						
+						$audio.on('play', function(e){
+							self.loopBgmStop();
+							$(e.target).addClass(id + '-cutin-bgm-loop-active');
+						});
+						
+						$audio.on('pause', function(e){
+							$(e.target).removeClass(id + '-cutin-bgm-loop-active');
+						});
+					}
 					$msg.append($audio);
 				}
 				if(msg.isCutIn.pic) {
@@ -578,6 +597,10 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 				});
 				img.src = imgsrc;
 			}
+		});
+		
+		$html.on('play', function(e){
+			console.log(e);
 		});
 	};
 
