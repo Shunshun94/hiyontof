@@ -65,7 +65,7 @@ com.hiyoko.tofclient.Table = function(tof, interval, options){
 	};
 	
 	var addCharacter = function(){
-		var cName = window.prompt("名前を入力", "New Character" + rndString("#", 8));
+		var cName = window.prompt("名前を入力", "New Character" + rndString("＃", 8));
 		if(cName !== null){
 			tof.getCharacterBuilder(cName).build();
 			$read.click();
