@@ -600,10 +600,6 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 				img.src = imgsrc;
 			}
 		});
-		
-		$html.on('play', function(e){
-			console.log(e);
-		});
 	};
 
 	this.reset = function(){
