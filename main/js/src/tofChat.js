@@ -330,7 +330,8 @@ com.hiyoko.tofclient.Chat.Util.fixChatMsg = function(chatMsg){
 		cutin = {
 			bgm: parsedMsg.soundSource,
 			loop: parsedMsg.isSoundLoop,
-			pic: parsedMsg.source
+			pic: parsedMsg.source,
+			volume: parsedMsg.volume
 		};
 	}
 	
@@ -438,6 +439,7 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 				if(msg.isCutIn.bgm) {
 					var $audio = self.isLoadBGM ? $('<audio class="' + id + '-cutin-bgm" controls>') : $('<span>（BGM 再生は現在無効です）</span>');
 					$audio.attr('src', com.hiyoko.tof.parseResourceUrl(msg.isCutIn.bgm, com.hiyoko.tofclient.Chat.Util.TofURL));
+					$audio.attr('volume', msg.isCutIn.volume);
 					if(self.isLoadBGM && msg.isCutIn.loop) {
 						$audio.attr('loop', '1');
 						$audio.addClass(id + '-cutin-bgm-loop');
