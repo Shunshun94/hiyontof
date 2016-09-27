@@ -225,13 +225,16 @@ ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block ui-btn-up-f
 }
 
 .tofChat-tab {
+	text-align:center;
+	border:3px green outset;
+	border-radius: 1ex;
+	background-color: #B0FFB0;
+	color:black;
 	padding-top: 10px;
 	padding-bottom: 10px;
 	display: inline-block;
-	background-color: white;
-	border-top-left-radius: 12px;
-	width: 24%;
-	border: solid 1px black;
+	width: 23%;
+	mergin-left:3px;
 }
 
 #tofChat-map-display {
@@ -370,7 +373,9 @@ ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block ui-btn-up-f
 }
 
 .active {
-	border-bottom: none 1px black;
+	border:3px green inset;
+	background-color: #305030;
+	color:white;
 }
 
 .vote-button-ready {

@@ -290,7 +290,7 @@ com.hiyoko.tofclient.Chat.Util.parseCommand = function(msg, header) {
 	return JSON.parse(msg.replace("\n", "").replace(header, "").replace(/}.* : /, "}"));
 };
 
-com.hiyoko.tofclient.Chat.Util.fixChatMsg = function(chatMsg){
+com.hiyoko.tofclient.Chat.Util.fixChatMsg = function(chatMsg, store){
 	var message;
 	var vote = false;
 	var ask = false;
@@ -339,15 +339,30 @@ com.hiyoko.tofclient.Chat.Util.fixChatMsg = function(chatMsg){
 	
 	var tailNameMatch_1 = TAIL_NAME_REGEXP_1.exec(message);
 	if(tailNameMatch_1){
-		var TAIL_NAME_REGEXP_2 = new RegExp('@([^ \f\n\r\t\v​\u00a0\u1680​\u180e\u2000-\u200a​\u2028\u2029​\u202f\u205f​\u3000\ufeff@]*)@' + tailNameMatch_1[1] + '$');
-		var tailNameMatch_2 = TAIL_NAME_REGEXP_2.exec(message);
-		if(tailNameMatch_2){
-			name = tailNameMatch_2[1].replace('@' + tailNameMatch_1[1], '');
-			status = tailNameMatch_1[1];
-			message = message.replace(tailNameMatch_2[0], '');
-		} else {
-			name = tailNameMatch_1[1];
-			message = message.replace(tailNameMatch_1[0], '');
+		try{
+			var swapedName = chatMsg[1].senderName.split('\t');
+			var swapedMsg = message;
+			
+			var TAIL_NAME_REGEXP_2 = new RegExp('@([^ \f\n\r\t\v​\u00a0\u1680​\u180e\u2000-\u200a​\u2028\u2029​\u202f\u205f​\u3000\ufeff@]*)@' + tailNameMatch_1[1] + '$');
+			var tailNameMatch_2 = TAIL_NAME_REGEXP_2.exec(message);
+			if(tailNameMatch_2){
+				name = tailNameMatch_2[1].replace('@' + tailNameMatch_1[1], '');
+				status = tailNameMatch_1[1];
+				message = message.replace(tailNameMatch_2[0], '');
+			} else {
+				name = tailNameMatch_1[1];
+				message = message.replace(tailNameMatch_1[0], '');
+			}
+			
+			if(! Boolean(store.get(name))) {
+				throw('Not name');
+			}
+			
+		} catch(e) {
+			var name_status = chatMsg[1].senderName.split('\t');
+			name = name_status[0];
+			status = name_status[1] ? name_status[1] : '通常';
+			message = swapedMsg;
 		}
 	} else {
 		var name_status = chatMsg[1].senderName.split('\t');
@@ -509,7 +524,7 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 		store.stack(responseFromTof);
 		
 		if(responseFromTof.chatMessageDataLog.length !== 0){
-			var modifiedTofResponse = mapArray(responseFromTof.chatMessageDataLog, function(l){return com.hiyoko.tofclient.Chat.Util.fixChatMsg(l);});
+			var modifiedTofResponse = mapArray(responseFromTof.chatMessageDataLog, function(l){return com.hiyoko.tofclient.Chat.Util.fixChatMsg(l, store);});
 			var $dom = $('<div></div>');
 			$dom.addClass('tofChat-chat-log-msgContainer');
 			$.each(modifiedTofResponse, function(index, msg){
