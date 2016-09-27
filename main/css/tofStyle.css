@@ -414,6 +414,18 @@ ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block ui-btn-up-f
 	border-bottom:solid 1px #AEFFAE;
 }
 
+#tofChat-go-out {
+	text-align:center;
+	border:3px #B0FFB0 outset;
+	border-radius: 1ex;
+	padding:4px;
+	background-color: green;
+	color:white;
+	display:inline-block;
+	position: absolute;
+	right: 0px;
+}
+
 .tofChat-help {
 	text-align:center;
 	border:3px green outset;

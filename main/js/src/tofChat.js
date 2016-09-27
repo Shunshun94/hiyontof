@@ -53,9 +53,12 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 	}
 
 	function initializeDisplay(serverInfo){
-		// TODO これらって com.hiyoko.tofclient.Chat.InputArea の持ち物だよね
 		var status = tof.getStatus();
 		$("#tofChat-Title").text(isVisitor ? '【見学】' + status.name : status.name);
+		$("#tofChat-Title").append('<div id="tofChat-go-out">【退室する】</div>');
+		
+		
+		// TODO これらって com.hiyoko.tofclient.Chat.InputArea の持ち物だよね
 		$.each(status.tabs, function(ind, tabName){
 			if(ind === 0) {return; }
 			var newTab = $("<option></option>");
@@ -71,6 +74,8 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 			newBot.attr('label', bot.name);
 			$("#tofChat-input-dicebot").append(newBot);
 		});
+		
+		
 	}
 
 	function eventBinds(serverInfo){
@@ -138,6 +143,27 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 				$submenu.css("top", (80-$(window).scrollTop())+"px");
 			}
 		});
+		
+		function preventGoOut(e){
+			return '退室してよろしいですか?';
+		}
+		
+		$(window).on('beforeunload', preventGoOut);
+		
+		$('#tofChat-go-out').click(function(e){
+			if(window.confirm('退室してよろしいですか?')) {
+				var name = inputArea.getName();
+				sendMsg({
+					name: 'ひよんとふ',
+					msg: '「' + name +'」がログアウトしました。',
+					color: '00AA00'
+				});
+				$(window).off('beforeunload', preventGoOut);
+				document.location = document.location.protocol + '//' +
+				document.location.host +
+				document.location.pathname;
+			}
+		});
 
 		setAutoReload_();
 	}
@@ -146,6 +172,12 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 		initializeDisplay(serverInfo);
 		buildChildComponents();
 		eventBinds(serverInfo);	
+		var name = nameSuiter(inputArea.getName());
+		sendMsg({
+			name: 'ひよんとふ',
+			msg: '「' + name +'」がひよんとふからログインしました。',
+			color: '00AA00'
+		});
 		getMsg_();
 		tof.getLoginUserInfo(afterBeacon, nameSuiter(inputArea.getName()));
 	}, true);

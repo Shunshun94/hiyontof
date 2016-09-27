@@ -34,12 +34,6 @@ com.hiyoko.tofclient.App = function(tof) {
 					$("#tofChat-tabs").css("top", (42-$(window).scrollTop())+"px");
 				}
 			});
-			
-			$(window).on('beforeunload', function(e){
-				return '退室してよろしいですか?';
-			});
-			
-	
 		};
 	
 		this.init();
