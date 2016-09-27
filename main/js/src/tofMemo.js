@@ -119,6 +119,7 @@ com.hiyoko.tofclient.Memo.TabedMemo = function(data) {
 		
 		self.$text.text(texts[activeTab]);
 		self.$text.html(self.$text.html().replace(/[\n\r]/gm, '<br/>'));
+		setAcitveTab();
 	};
 	
 	function loadText(num){
@@ -143,10 +144,16 @@ com.hiyoko.tofclient.Memo.TabedMemo = function(data) {
 		
 		self.$elem.append(self.$tabs);
 		self.$elem.append(self.$text);
-		
+		setAcitveTab();
 		bindEvent();
 		return self.$elem;
 	};
+	
+	function setAcitveTab(){
+		self.$tabs.children().removeClass('active');
+		$(self.$tabs.children()[activeTab]).addClass('active');
+		console.log($(self.$tabs.children()[activeTab]));
+	}
 	
 	function bindEvent() {
 		self.$tabs.click(function(e){
@@ -154,6 +161,7 @@ com.hiyoko.tofclient.Memo.TabedMemo = function(data) {
 			
 			if($clicked.hasClass('tofChat-memo-tabledmemo-tab-tab')) {
 				loadText($clicked.val());
+				setAcitveTab();
 				return;
 			}
 			if($clicked.attr('value') === 'ADD'){
@@ -175,6 +183,7 @@ com.hiyoko.tofclient.Memo.TabedMemo = function(data) {
 				self.$text.trigger(event);
 				self.setText(self.getText());
 			}
+			setAcitveTab();
 		});
 		
 		self.$text.on('focusout', function(e){
