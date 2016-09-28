@@ -7,7 +7,9 @@ com.hiyoko.tofclient = com.hiyoko.tofclient || {};
 com.hiyoko.tofclient.Table = function(tof, interval, options){
 	var $html = options.html ? options.html : $("#tofChat-table");
 	var table = options.table ? false : true;
+	var outerImage = options.outerImage;
 	var debug = options.debug ? true : false;
+	
 	var logger = new com.hiyoko.HiyoLogger(debug, debug);
 	var $disp = $("#tofChat-table-display");
 	var $read = $("#tofChat-table-reload");
@@ -63,7 +65,7 @@ com.hiyoko.tofclient.Table = function(tof, interval, options){
 	};
 	
 	var addCharacter = function(){
-		var cName = window.prompt("名前を入力", "New Character" + rndString("#", 8));
+		var cName = window.prompt("名前を入力", "New Character" + rndString("＃", 8));
 		if(cName !== null){
 			tof.getCharacterBuilder(cName).build();
 			$read.click();
@@ -157,6 +159,25 @@ com.hiyoko.tofclient.Table = function(tof, interval, options){
 				
 				$ct.append($tr);
 			});
+			
+			if(outerImage) {
+				var $picTr = $('<tr></tr>');
+				$picTr.append('<th>画像</th>');
+				
+				var $picTd = $('<td></td>');
+				var $picInput = $('<input />');
+				
+				$picInput.attr({
+					name: 'image',
+					type: 'text',
+					value: c.imageName
+				});
+				$picTd.append($picInput);
+				
+				$picTr.append($picTd);
+				$ct.append($picTr);
+			}
+			
 			$ct.append("<tr><th>その他</th>"
 						+ "<td><textarea name='info'>" + c.info + "</textarea></td></tr>");
 			$ct.change(function(e){

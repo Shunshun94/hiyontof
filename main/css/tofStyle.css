@@ -138,6 +138,25 @@ ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block ui-btn-up-f
 	white-space:nowrap;
 }
 
+.tofChat-chat-log-log-name-pic {
+	height:60px;
+	width:60px;
+	display:inline-block;
+	background-size:contain;
+	background-repeat:no-repeat;
+	position:relative;
+	top:3px;
+}
+
+.tofChat-chat-log-log-name-pic-inner {
+	color:black;
+	font-size:40%;
+	position:absolute;
+	bottom:0;
+	right:0;
+
+}
+
 #tofChat-chat-log-cutin {
 	display:none;
     position:fixed;
@@ -206,13 +225,16 @@ ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block ui-btn-up-f
 }
 
 .tofChat-tab {
+	text-align:center;
+	border:3px green outset;
+	border-radius: 1ex;
+	background-color: #B0FFB0;
+	color:black;
 	padding-top: 10px;
 	padding-bottom: 10px;
 	display: inline-block;
-	background-color: white;
-	border-top-left-radius: 12px;
-	width: 24%;
-	border: solid 1px black;
+	width: 23%;
+	mergin-left:3px;
 }
 
 #tofChat-map-display {
@@ -261,6 +283,13 @@ ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block ui-btn-up-f
 
 .tofChat-map-display-tile {
 	background-size: 100% 100%;
+}
+
+.tofChat-map-display-chit {
+	background-size: contain;
+	background-position: center center;
+	background-repeat: no-repeat;
+	border: solid 3px skyblue;
 }
 
 #tofChat-map-status {
@@ -351,7 +380,9 @@ ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block ui-btn-up-f
 }
 
 .active {
-	border-bottom: none 1px black;
+	border:3px green inset;
+	background-color: #305030;
+	color:white;
 }
 
 .vote-button-ready {
@@ -388,6 +419,18 @@ ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block ui-btn-up-f
 
 .vote-msg {
 	border-bottom:solid 1px #AEFFAE;
+}
+
+#tofChat-go-out {
+	text-align:center;
+	border:3px #B0FFB0 outset;
+	border-radius: 1ex;
+	padding:4px;
+	background-color: green;
+	color:white;
+	display:inline-block;
+	position: absolute;
+	right: 0px;
 }
 
 .tofChat-help {

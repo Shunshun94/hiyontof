@@ -89,6 +89,7 @@ com.hiyoko.tof.room = function(urlInput, roomInput, passInput, callback){
 	var name;
 	var tabs;
 	var counters;
+	var outerImage;
 	var visitable = false;
 	var members = [];
 	var userId;
@@ -103,10 +104,13 @@ com.hiyoko.tof.room = function(urlInput, roomInput, passInput, callback){
 		tabs = response.chatTab;
 		counters = response.counter;
 		visitable = response.canVisit;
+		outerImage = response.outerImage;
 	};
 
 	this.getStatus = function(){
-		return {url:url, room:room, pass:pass, game:game, name:name, tabs:tabs, counters:counters, members: members};
+		return {
+			url:url, room:room, pass:pass, game:game, name:name, tabs:tabs,
+			counters:counters, members: members, outerImage: outerImage};
 	}
 
 	this.setGame = function(gameInput){
@@ -429,7 +433,7 @@ com.hiyoko.tof.room = function(urlInput, roomInput, passInput, callback){
 		return new com.hiyoko.tof.room.Character(cdata.name, roomUrl, counter);
 	};
 
-	this.getRefresh = function(callback, characters, map, time, effects, roomInfo, chat, chatLastTime){
+	this.getRefresh = function(callback, characters, map, time, effects, roomInfo, chat, chatLastTime, opt_failCallBack){
 		var sendMsg = "webif=refresh&room="+room;
 		if(pass != ""){
 			sendMsg += "&password="+pass;
@@ -462,7 +466,15 @@ com.hiyoko.tof.room = function(urlInput, roomInput, passInput, callback){
 			url: sendMsg,
 			async:false,
 			dataType:'jsonp'}
-		).done(function(result){callback(result);});
+		).done(function(result){callback(result);}
+		).fail(function(result){
+			console.log(result);
+			if(opt_failCallBack){
+				opt_failCallBack(result);
+			} else {
+				alert(result.statusText);
+			}
+		});
 	};
 
 	this.appendMemo = function(content, callback){
@@ -730,7 +742,9 @@ com.hiyoko.tof.room.Character = function(targetName_input, url_input, counters_i
 				sendMsg += "&initiative=" + value;
 			} else if(name ==="info") {
 				sendMsg += "&info=" + value;
-			} else {
+			} else if(name === 'image') {
+				sendMsg += '&image=' + value;
+			}else {
 				$.each(counters, function(ind, pair){
 					if(pair.name === name){
 						counters[ind].value = value;

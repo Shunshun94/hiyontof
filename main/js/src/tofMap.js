@@ -109,6 +109,7 @@ com.hiyoko.tofclient.Map.MapBack = function($base) {
 		drawMapMakers(info.characters);
 		drawCharacters(info.characters);
 		drawDiceSymbols(info.characters);
+		drawChits(info.characters);
 		$base.trigger(new $.Event('updateEvent'));
 	};
 	
@@ -152,6 +153,16 @@ com.hiyoko.tofclient.Map.MapBack = function($base) {
 			},
 			stop: function(ev, obj){
 				chars[this.$el.text()].fixPosition();
+			}
+		});
+	}
+	
+	function drawChits(cData) {
+		$('.' + id + '-chit').remove();
+		$.each(cData, function(ind, chit){
+			if(chit.type === "chit"){
+				var newChit = new com.hiyoko.tofclient.Map.Chit(chit, boxSize, id);
+				$base.append(newChit.$elem);
 			}
 		});
 	}
@@ -226,6 +237,29 @@ com.hiyoko.tofclient.Map.MapBack = function($base) {
 		$("#" + id + "-map").css("background-image",
 				"url('" + parseUrl(mapData.imageSource, com.hiyoko.tofclient.Map.tofUrl) + "')");
 	}
+};
+
+com.hiyoko.tofclient.Map.Chit = function(chit, size, parentId) {
+	var parseUrl = com.hiyoko.tof.parseResourceUrl;
+	var self = this;
+	this.$elem = $("<div class='" + parentId + "-chit'></div>");
+	
+	function rend(){
+		self.$elem.css({
+			"position": "absolute",
+			"width": (chit.width * (size) - 8) + "px",
+			"height": (chit.height * (size) - 8) + "px",
+			"top": (1 + chit.y * (size)) + "px",
+			"left": (1 + chit.x * (size)) + "px",
+			"background-image":
+				"url('" + parseUrl(chit.imageUrl, com.hiyoko.tofclient.Map.tofUrl) + "')"		
+		});
+		
+		var $name = $("<div class='" + parentId + "-object-name' style='height:"+(chit.height * (size) - 8)+"px'></div>");
+		$name.text(chit.info);
+		self.$elem.append($name);
+	};
+	rend();	
 };
 
 com.hiyoko.tofclient.Map.MapMarker = function(marker, size, parentId) {
