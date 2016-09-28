@@ -63,11 +63,11 @@ jscolor というライブラリをダウンロードしてくるためのコマ
 そうでなければ以下のコマンドが簡単です。
 
 ``` bash
-cp main/hiyontof.conf.js main/hiyontof.conf.js.bk
+cp main/hiyontof.conf.js ../hiyontof.conf.js.bk
 git stash
 git pull
 rm main/hiyontof.conf.js
-mv main/hiyontof.conf.js.bk main/hiyontof.conf.js
+mv ../hiyontof.conf.js.bk main/hiyontof.conf.js
 ```
 
 ### git コマンドを使わずに導入する
