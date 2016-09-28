@@ -285,6 +285,13 @@ ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block ui-btn-up-f
 	background-size: 100% 100%;
 }
 
+.tofChat-map-display-chit {
+	background-size: contain;
+	background-position: center center;
+	background-repeat: no-repeat;
+	border: solid 3px skyblue;
+}
+
 #tofChat-map-status {
 	height:30px;
 	border-top-left-radius:15px;
