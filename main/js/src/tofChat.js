@@ -37,7 +37,8 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 		display.isLoadBGM = isBgmActivate;
 		subMenu.updateItem('bgmMode', isBgmActivate);
 		
-		var isStandPicActive = Boolean(Number(localStorage.getItem("com.hiyoko.tofclient.Chat.Display.standPic")));
+		var isStandPicActiveLS = localStorage.getItem("com.hiyoko.tofclient.Chat.Display.standPic");
+		var isStandPicActive = Boolean(Number(isStandPicActiveLS) || isStandPicActiveLS === null);
 		display.isStandPic = isStandPicActive;
 		subMenu.updateItem('standPicMode', isStandPicActive);
 		
