@@ -174,11 +174,13 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 		buildChildComponents();
 		eventBinds(serverInfo);	
 		var name = nameSuiter(inputArea.getName());
-		sendMsg({
-			name: 'ひよんとふ',
-			msg: '「' + name +'」がひよんとふからログインしました。',
-			color: '00AA00'
-		});
+		if(! options.silent){
+			sendMsg({
+				name: 'ひよんとふ',
+				msg: '「' + name +'」がひよんとふからログインしました。',
+				color: '00AA00'
+			});
+		}
 		getMsg_();
 		tof.getLoginUserInfo(afterBeacon, nameSuiter(inputArea.getName()));
 	}, true);
@@ -278,9 +280,11 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 		if(interval){
 			window.setInterval(function(){if(isActive()){getMsg_();}}, interval);
 		}
-		window.setInterval(function(){
-			tof.getLoginUserInfo(afterBeacon, nameSuiter(inputArea.getName()));
-		}, 12500);
+		if(! options.silent) {
+			window.setInterval(function(){
+				tof.getLoginUserInfo(afterBeacon, nameSuiter(inputArea.getName()));
+			}, 12500);
+		}
 	}
 };
 

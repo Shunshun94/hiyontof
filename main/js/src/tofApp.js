@@ -8,7 +8,9 @@ com.hiyoko.tofclient.App = function(tof) {
 			interval = com.hiyoko.tofclient.App.MIN_UPDATE_INTERVAL * 1000;
 		}
 		
-		this.chat = new com.hiyoko.tofclient.Chat(tof, interval, {visitor: isVisitor, html:$("#tofChat-chat")});
+		var isSilentMode = Boolean(getParam("silent", false));
+		
+		this.chat = new com.hiyoko.tofclient.Chat(tof, interval, {visitor: isVisitor, html:$("#tofChat-chat"), silent: isSilentMode});
 		this.map = new com.hiyoko.tofclient.Map(tof, interval, {isDraggable: true, html:$("#tofChat-map"), debug:getParam("debug", false)});
 		this.memo = new com.hiyoko.tofclient.Memo(tof, interval, $("#tofChat-memo"));
 		this.table = new com.hiyoko.tofclient.Table(tof, interval, {html:$("#tofChat-table"), table:true, outerImage:tof.getStatus().outerImage , debug:false});
