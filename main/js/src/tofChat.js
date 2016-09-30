@@ -347,6 +347,10 @@ com.hiyoko.tofclient.Chat.Util.fixChatMsg = function(chatMsg, store){
 		message = 'シークレットダイスを振りました';
 	}
 	
+	if(startsWith(message, '###CutInCommand:getDiceBotInfos###{}')) {
+		message = 'ダイスボットを編集しました';
+	}
+	
 	if(startsWith(message, "###vote_replay_readyOK###")){
 		message = com.hiyoko.tofclient.Chat.Util.parseVoteAnswer(message);
 		vote = true;
