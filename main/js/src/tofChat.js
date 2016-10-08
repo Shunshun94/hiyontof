@@ -30,7 +30,8 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 		inputArea = new com.hiyoko.tofclient.Chat.InputArea($("#tofChat-inputArea"),
 				{	talk:$("#tofChat-input"), 
 					history:$("#" + id + "-input-history"),
-					secret:$("#" + id + "-input-secret")},
+					secret:$("#" + id + "-input-secret"),
+					chatparette:$("#" + id + "-input-chatparette")},
 				isVisitor);
 		
 		var isBgmActivate = Boolean(Number(localStorage.getItem("com.hiyoko.tofclient.Chat.Display.bgm")));
@@ -754,14 +755,15 @@ com.hiyoko.tofclient.Chat.Status = function($html){
 com.hiyoko.tofclient.Chat.InputArea = function($parent, children, isVisitor){
 	var inputs = {talk:new com.hiyoko.tofclient.Chat.InputArea.Input(children.talk, isVisitor),
 	              history:new com.hiyoko.tofclient.Chat.InputArea.History(children.history),
-	              secret:new com.hiyoko.tofclient.Chat.InputArea.Secret(children.secret)};
+	              secret:new com.hiyoko.tofclient.Chat.InputArea.Secret(children.secret),
+	              parette:new com.hiyoko.tofclient.Chat.InputArea.ChatParette(children.chatparette)};
 	var current = 0;
 	var self = this;
 	var $switcher = $('#tofChat-chat-input-switch');
 	var $bot = $("#tofChat-input-dicebot");
 	
 	function eventBind(){
-		children.history.on("EditMessage", function(e){
+		$parent.on("EditMessage", function(e){
 			inputs.talk.setMessage(e);
 			self.hideAll();
 			inputs.talk.enabled();
@@ -1141,6 +1143,247 @@ com.hiyoko.tofclient.Chat.InputArea.History = function($html){
 		eventBind();		
 	}
 	init();
+};
+
+com.hiyoko.tofclient.Chat.InputArea.ChatParette = function($html) {
+	var id = $html.attr('id');
+	this.disabled = function(){$html.hide()};
+	this.enabled = function(){
+		$.each($tab, function(i, v) {
+			$($tab[i]).text(load(i).name);
+		});
+		$html.show();
+	};
+	
+	var RE_VAL = /^\/\/\s*(.+)\s*=\s*(\d+)/;
+
+	var $list = $("#" + id + "-list");
+	var $edit = $("#" + id + "-edit");
+	var $editfinish = $("#" + id + "-editfinish");
+	var $send = $("#" + id + "-action-send");
+	var $editSender = $("#" + id + "-action-edit");
+	var $clear = $("#" + id + "-clear");
+	
+	var $nameEditor = $("#" + id + "-nameEditor");
+	var $colorEditor = $("#" + id + "-colorEditor");
+	var $commandEditor = $("#" + id + "-commandEditor");
+	
+	var $tab = $("." + id + "-tab");
+	
+	var $umode = $("#" + id + "-usemode");
+	var $emode = $("#" + id + "-editmode");
+	var self = this;
+	
+	this.parseMessage = function(text, vars, initTable) {
+		var regexp = /{([^}]*)}/;
+		var word;
+		var execResult;
+		var flag = true;
+		while(flag){
+			execResult = regexp.exec(text);
+			
+			flag = Boolean(execResult);
+			if(flag){
+				word = execResult[1];
+				console.log(word, vars[word]);
+				if(vars[word]) {
+					text = text.replace(execResult[0], vars[word]);
+				} else {
+					var val = initTable.getValue(word);
+					if(val) {
+						text = text.replace(execResult[0], val);
+					} else {
+						text = text.replace(execResult[0], word);
+					}
+				}
+			}
+		}
+		
+		return text;
+	};
+	
+	function sendParsedMessage(text, json, eventType) {
+		var asyncEvent = new $.Event('com.hiyoko.tofclient.Table.DataRequest', {
+			promise: function(result) {
+				cData = result[json.name] || {getValue:function(){return false;}};
+				var parsedText = self.parseMessage(text, json.vars, cData);
+				
+				
+				$html.trigger(new $.Event(eventType, {
+					msg: parsedText,
+					color: json.color,
+					name: json.name,
+					tab: 0
+				}));	
+			}
+		});
+		
+		$html.trigger(asyncEvent);
+	}
+	
+	function activate(num) {
+		load(num);
+	}
+	
+	function load(num) {
+		var json = localStorage.getItem("com.hiyoko.tofclient.Chat.InputArea.ChatParette.Store_" + num);
+		
+		if(json) {
+			return JSON.parse(json);
+		}
+		
+		if(num === 0) {
+			return {
+				name: 'SAMPLE',
+				list: ['サンプルデータ', '2d6+{攻撃} ' + num,'{HP}-3d6'],
+				vars: {'攻撃':'32'}
+			};			
+		} else {
+			return {
+				name: '　',
+				list: [],
+				vars: {}
+			};
+		}
+	}
+	
+	function save(json, num) {
+		localStorage.setItem("com.hiyoko.tofclient.Chat.InputArea.ChatParette.Store_" + num,  JSON.stringify(json));
+	}
+	
+	function reverseCompile(json) {
+		var result = {
+				name: json.name || 'ななしのひよこ',
+				color: json.color || '000000',
+				text: ''
+		};
+		$.each(json.list, function(i, v){
+			result.text += v + '\n';
+		});
+		for(var key in json.vars) {
+			result.text += '//' + key + '=' + json.vars[key] + '\n';
+		}
+		
+		return result;
+	}
+	
+	function parse(lines, name, color) {
+		var result = {
+				name: name || 'ななしのひよこ',
+				color: color || '000000',
+				list: [],
+				vars: {}
+			};
+
+		
+		$.each(lines.split('\n'), function(i, v){
+			var text = v.trim();
+			if(text === '') {
+				return;
+			}
+			var varCand = RE_VAL.exec(text);
+			if(varCand){
+				result.vars[varCand[1]] = varCand[2];
+				return;
+			}
+			result.list.push(text);
+		});
+		return result;
+	}
+	
+	function edit(json) {
+		
+	}
+	
+	function tabByNum(num) {
+		return $($tab[Number(num)]);
+	}
+	
+	function getActiveNum() {
+		for(var i = 0; i < 6; i++) { // TAB はマックス6個なので6決めうち
+			if($($tab[i]).hasClass('active')) {
+				return i;
+			}
+		}
+	}
+	
+	function apply(json, $tab) {
+		$tab.text(json.name || '　');
+		$list.empty();
+		$.each(json.list, function(i,v){
+			var $opt = $('<option></option>');
+			
+			$opt.text(v);
+			$opt.val(v);
+			
+			$list.append($opt);
+		});
+		var caption = json.list.length ? json.list[0] : '';
+		$list.val(caption);
+		$($list.parent().find('span>span')[0]).text(caption);
+	}
+	
+	function onClickTab(num){
+		var json = load(num);
+		apply(json, tabByNum(num));
+	}
+	
+	function startEdit(){
+		var data = reverseCompile(load(getActiveNum()));
+		$commandEditor.val(data.text);
+		$nameEditor.val(data.name);
+		$colorEditor.val(data.color);
+		$colorEditor.css("background-color", "#" + data.color);
+		$umode.hide();
+		$emode.show();
+	}
+	
+	function endEdit() {
+		$umode.show();
+		$emode.hide();
+		var num = getActiveNum();
+		var json = parse($commandEditor.val(), $nameEditor.val(), $colorEditor.val());
+		save(json, num);
+		apply(json, $($tab[num]));
+	}
+	
+	function clear(){
+		var num = getActiveNum();
+		if(confirm(load(num).name + 'のチャットパレットを削除します。よろしいですか?')){
+			save({list:[]} , num);
+			apply({list:[]}, $($tab[num]));
+		}
+	}
+	
+	function eventBind(){
+		$edit.click(function(e){
+			startEdit();
+		});
+		$editfinish.click(function(e){
+			endEdit();
+		});
+		
+		$tab.click(function(e){
+			$tab.removeClass('active');
+			$(e.target).addClass('active');
+			onClickTab(getActiveNum());
+		});
+		
+		$clear.click(function(e){
+			clear();
+		});
+		
+		$editSender.click(function(e){
+			sendParsedMessage($list.val(), load(getActiveNum()), "EditMessage");
+		});
+		
+		$send.click(function(e){
+			sendParsedMessage($list.val(), load(getActiveNum()), "sendMessage");
+		});
+	}
+	
+	eventBind();
+	onClickTab(getActiveNum());
 };
 
 com.hiyoko.tofclient.Chat.InputArea.Secret = function($html) {

@@ -21,6 +21,22 @@ com.hiyoko.tofclient.Table = function(tof, interval, options){
 		return $html.css('display') !== 'none';
 	}
 	
+	this.getValuesAsync = function(opt_callback) {
+		tof.getRefresh(function(result){rend(result.characters, function(){
+			var result = {};
+			
+			$.each(chars, function(i, c) {
+				result[c.getName()] = c;
+			});
+			
+			if(opt_callback) {
+				opt_callback(result);
+			} else {
+				console.log(result);
+			}
+		})}, true);
+	};
+	
 	this.init = function(){
 		$read.click(function(e){
 			tof.getRefresh(function(result){rend(result.characters)}, true);
@@ -56,12 +72,15 @@ com.hiyoko.tofclient.Table = function(tof, interval, options){
 		return new com.hiyoko.tof.room.Character(cdata.name, roomUrl, counter);
 	};
 	
-	var rend = function(charCandidates){
+	var rend = function(charCandidates, opt_callback){
 		$disp.empty();
 		rendCharacterTable(charCandidates);
 		appendAddButton();
 		var now = new Date();
 		$update.text('Table Last Update： ' + now.getHours() + '：' + now.getMinutes() + '：' + now.getSeconds());
+		if(opt_callback) {
+			opt_callback();
+		}
 	};
 	
 	var addCharacter = function(){
