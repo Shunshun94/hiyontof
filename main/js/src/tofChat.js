@@ -494,7 +494,7 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 				msg_class = 'vote-msg';
 			} else if(msg.isCutIn) {
 				if(msg.isCutIn.bgm) {
-					var $audio = self.isLoadBGM ? $('<audio class="' + id + '-cutin-bgm" controls>') : $('<span>（BGM 再生は現在無効です）</span>');
+					var $audio = self.isLoadBGM ? $('<audio class="' + id + '-cutin-bgm" controls>') : $('<span>（BGM 再生は現在無効です。左上の MENU から有効にできます）</span>');
 					$audio.attr('src', com.hiyoko.tof.parseResourceUrl(msg.isCutIn.bgm, com.hiyoko.tofclient.Chat.Util.TofURL));
 					$audio.attr('volume', msg.isCutIn.volume);
 					if(self.isLoadBGM && msg.isCutIn.loop) {
