@@ -456,6 +456,7 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 	var id = $html.attr('id');
 	var tabClass = id + '-tab';
 	var store = new com.hiyoko.tofclient.Chat.Display.PicStore();
+	var sound_updateLog = new Audio("./sound/com-hiyoko-tofclient-chat-display-updateLog.mp3");
 	
 	this.lastTime = 0;
 	this.isShowAll = true;
@@ -580,13 +581,13 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 			var modifiedTofResponse = mapArray(responseFromTof.chatMessageDataLog, function(l){return com.hiyoko.tofclient.Chat.Util.fixChatMsg(l, store);});
 			var $dom = $('<div></div>');
 			$dom.addClass('tofChat-chat-log-msgContainer');
-			console.log(self.isTabColored);
 			var noMainTabColored = self.isTabColored ? function(m){return '#'+m.color} : function(m){return 'black';};
 			$.each(modifiedTofResponse, function(index, msg){
 				$dom.append(self.msgToDom(msg, tabs, noMainTabColored));
 				this.lastTime = msg.time;
 			}.bind(this));
 			$html.append($dom);
+			sound_updateLog.play();
 		}
 		this.reset();
 		com.hiyoko.tofclient.Chat.Util.checkScroll_(null);
