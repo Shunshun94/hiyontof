@@ -554,7 +554,7 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 			$name = $('<div></div>');
 			$name.append($nameContain);
 			$name.css("background-image",
-					"url('" + ('', store.get(msg.name, msg.status) || './image/noimage.png') + "')");
+					"url('" + (store.get(msg.name, msg.status) || './image/noimage.png') + "')");
 			$name.addClass(id + '-log-name-pic');
 		}
 		
