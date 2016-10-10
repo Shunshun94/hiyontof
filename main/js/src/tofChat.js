@@ -83,7 +83,7 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 	function eventBinds(serverInfo){
 		var $inputArea = $("#tofChat-inputArea");
 
-		$inputArea.on("sendMessage", sendMsg);
+		$html.on("sendMessage", sendMsg);
 		$inputArea.on("sendMessageEvent", sendMsgEvent);
 		$inputArea.on("changeTab", function(e){
 			display.activeTab = e.tab;
@@ -101,7 +101,6 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 			subMenu.close();
 		});
 
-		$("#tofChat-log").on("sendMessage", sendMsg);
 		$("#tofChat-input-get").click(function(){getMsg_("Getting...")});
 		$("#tofChat-jump > p").click(jumpToBottom_);
 		$(window).scroll(com.hiyoko.tofclient.Chat.Util.checkScroll_);
@@ -1185,7 +1184,6 @@ com.hiyoko.tofclient.Chat.InputArea.ChatParette = function($html) {
 			flag = Boolean(execResult);
 			if(flag){
 				word = execResult[1];
-				console.log(word, vars[word]);
 				if(vars[word]) {
 					text = text.replace(execResult[0], vars[word]);
 				} else {
