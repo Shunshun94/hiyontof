@@ -43,6 +43,10 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 		display.isStandPic = isStandPicActive;
 		subMenu.updateItem('standPicMode', isStandPicActive);
 		
+		var isTabColoredLS = localStorage.getItem("com.hiyoko.tofclient.Chat.Display.ColoredTab");
+		var isTabColored = Boolean(Number(isTabColoredLS) || isTabColoredLS === null);
+		display.isTabColored = isTabColored;
+		subMenu.updateItem('tabColoredMode', isStandPicActive);
 	}
 
 	function renderChat($html) {
@@ -113,6 +117,8 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 				});
 			alert(str);
 		});
+		
+		// この辺の設定系、共通のクラス作ってそいつに任せた方が良いのでは?
 		$submenu.on("changeDisplayMode", function(e){
 			display.isShowAll = e.isShowAll;
 			display.reset();
@@ -128,6 +134,10 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 			localStorage.setItem("com.hiyoko.tofclient.Chat.Display.standPic", e.isStandPic ? 1 : 0);
 		});
 		
+		$submenu.on("changeTabColor", function(e){
+			display.is = e.isTabColored;
+			localStorage.setItem("com.hiyoko.tofclient.Chat.Display.ColoredTab", e.isTabColored ? 1 : 0);
+		});
 		
 		$submenu.on("sendAlarm", function(e){
 			var timerCount = window.prompt("何秒後にアラームを鳴らしますか?", 60);
@@ -451,6 +461,7 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 	this.isShowAll = true;
 	this.isLoadBGM = false;
 	this.isStandPic = false;
+	this.isTabColored = false;
 	this.activeTab = 0;
 	
 	this.loopBgmStop = function() {
@@ -461,7 +472,7 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 		};
 	};
 	
-	this.msgToDom = function(msg, tabs) {
+	this.msgToDom = function(msg, tabs, noMainTabColored) {
 		var $dom = $('<p></p>');
 		$dom.addClass(id + '-log');
 		$dom.addClass(tabClass + msg.tab);
@@ -519,7 +530,8 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 			}
 		} else {
 			$dom.addClass('notmain');
-
+			$dom.css('color', noMainTabColored(msg));
+			
 			$name = $('<span></span>');
 			$name.text(msg.name);
 
@@ -568,8 +580,10 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 			var modifiedTofResponse = mapArray(responseFromTof.chatMessageDataLog, function(l){return com.hiyoko.tofclient.Chat.Util.fixChatMsg(l, store);});
 			var $dom = $('<div></div>');
 			$dom.addClass('tofChat-chat-log-msgContainer');
+			console.log(self.isTabColored);
+			var noMainTabColored = self.isTabColored ? function(m){return '#'+m.color} : function(m){return 'black';};
 			$.each(modifiedTofResponse, function(index, msg){
-				$dom.append(self.msgToDom(msg, tabs));
+				$dom.append(self.msgToDom(msg, tabs, noMainTabColored));
 				this.lastTime = msg.time;
 			}.bind(this));
 			$html.append($dom);
@@ -1572,6 +1586,16 @@ com.hiyoko.tofclient.Chat.SubMenu.List = [
 	  update:function($html, data){
 		  $html.text(data ? "立ち絵を表示しない" : "立ち絵を表示する");
 	  }},
+  {code: 'tabColoredMode', type:'item', label:'メイン以外もカラフルに',
+		  click:function(e){
+			  var isStandPic = $(e.target).text()==="全タブをカラフルに";
+			  $(e.target).text(isStandPic ? "メインだけカラフルに" : "全タブをカラフルに");
+			  $(e.target).trigger(new $.Event("changeTabColor", {isTabColored:isStandPic}))
+			  com.hiyoko.tofclient.Chat.SubMenu.List.fireCloseEvent(e.target);
+		  },
+		  update:function($html, data){
+			  $html.text(data ? "メインだけカラフルに" : "全タブをカラフルに");
+		  }},
   {code: 'bar3', type:'bar'},
   {code: 'sendAlarm', type:'item', label: 'アラームを送信する',
 	  click:function(e){
