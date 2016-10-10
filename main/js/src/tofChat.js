@@ -46,7 +46,7 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 		var isTabColoredLS = localStorage.getItem("com.hiyoko.tofclient.Chat.Display.ColoredTab");
 		var isTabColored = Boolean(Number(isTabColoredLS) || isTabColoredLS === null);
 		display.isTabColored = isTabColored;
-		subMenu.updateItem('tabColoredMode', isStandPicActive);
+		subMenu.updateItem('tabColoredMode', isTabColored);
 	}
 
 	function renderChat($html) {
@@ -674,11 +674,11 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 
 	this.reset = function(){
 		if(this.isShowAll){
-			$(".log").show();
+			$('.' + id + '-log').show();
 			return;
 		}
 
-		$(".log").hide();
+		$('.' + id + '-log').hide();
 		$("."+tabClass+self.activeTab).show();
 	};
 
@@ -1565,7 +1565,17 @@ com.hiyoko.tofclient.Chat.SubMenu.List = [
 		  $(e.target).trigger(new $.Event("changeDisplayMode", {isShowAll:isShowAll}))
 		  com.hiyoko.tofclient.Chat.SubMenu.List.fireCloseEvent(e.target);
 	  }},
-  {code: 'bgmMode', type:'item', label:'BGM を再生する',
+  {code: 'tabColoredMode', type:'item', label:'全タブをカラフルに',
+		  click:function(e){
+			  var isTabColored = $(e.target).text()==="全タブをカラフルに";
+			  $(e.target).text(isTabColored ? "メインだけカラフルに" : "全タブをカラフルに");
+			  $(e.target).trigger(new $.Event("changeTabColor", {isTabColored:isTabColored}));
+			  com.hiyoko.tofclient.Chat.SubMenu.List.fireCloseEvent(e.target);
+		  },
+		  update:function($html, data){
+			  $html.text(data ? "メインだけカラフルに" : "全タブをカラフルに");
+		  }},
+　　{code: 'bgmMode', type:'item', label:'BGM を再生する',
 	  click:function(e){
 		  var isLoadBGM = $(e.target).text()==="BGM を再生する";
 		  $(e.target).text(isLoadBGM ? "BGM を再生しない" : "BGM を再生する");
@@ -1580,22 +1590,12 @@ com.hiyoko.tofclient.Chat.SubMenu.List = [
 		  alert('※推奨※\n見た目の統一のために\nひよんとふの再読み込みをおすすめします');
 		  var isStandPic = $(e.target).text()==="立ち絵を表示する";
 		  $(e.target).text(isStandPic ? "立ち絵を表示しない" : "立ち絵を表示する");
-		  $(e.target).trigger(new $.Event("changeStandPic", {isStandPic:isStandPic}))
+		  $(e.target).trigger(new $.Event("changeStandPic", {isStandPic:isStandPic}));
 		  com.hiyoko.tofclient.Chat.SubMenu.List.fireCloseEvent(e.target);
 	  },
 	  update:function($html, data){
 		  $html.text(data ? "立ち絵を表示しない" : "立ち絵を表示する");
 	  }},
-  {code: 'tabColoredMode', type:'item', label:'メイン以外もカラフルに',
-		  click:function(e){
-			  var isStandPic = $(e.target).text()==="全タブをカラフルに";
-			  $(e.target).text(isStandPic ? "メインだけカラフルに" : "全タブをカラフルに");
-			  $(e.target).trigger(new $.Event("changeTabColor", {isTabColored:isStandPic}))
-			  com.hiyoko.tofclient.Chat.SubMenu.List.fireCloseEvent(e.target);
-		  },
-		  update:function($html, data){
-			  $html.text(data ? "メインだけカラフルに" : "全タブをカラフルに");
-		  }},
   {code: 'bar3', type:'bar'},
   {code: 'sendAlarm', type:'item', label: 'アラームを送信する',
 	  click:function(e){
