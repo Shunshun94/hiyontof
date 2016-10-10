@@ -1544,14 +1544,13 @@ com.hiyoko.tofclient.Chat.SubMenu.List = [
 		  $html.text("室内に" + data.count + "人います");
 	  }},
   {code: 'bar2', type:'bar'},
-  {code: 'displayMode', type:'item', label:'タブ毎の表示に切替',
+  {code: 'displayMode', type:'item', label:'タブ毎に表示する',
 	  click:function(e){
-		  var isShowAll = $(e.target).text()==="全表示に切替";
-		  $(e.target).text(isShowAll ? "タブ毎の表示に切替" : "全表示に切替");
+		  var isShowAll = $(e.target).text()==="全タブを表示する";
+		  $(e.target).text(isShowAll ? "タブ毎に表示する" : "全タブを表示する");
 		  $(e.target).trigger(new $.Event("changeDisplayMode", {isShowAll:isShowAll}))
 		  com.hiyoko.tofclient.Chat.SubMenu.List.fireCloseEvent(e.target);
 	  }},
-  {code: 'bar2', type:'bar'},
   {code: 'bgmMode', type:'item', label:'BGM を再生する',
 	  click:function(e){
 		  var isLoadBGM = $(e.target).text()==="BGM を再生する";
@@ -1562,7 +1561,6 @@ com.hiyoko.tofclient.Chat.SubMenu.List = [
 	  update:function($html, data){
 		  $html.text(data ? "BGM を再生しない" : "BGM を再生する");
 	  }},
-  {code: 'bar2', type:'bar'},
   {code: 'standPicMode', type:'item', label:'立ち絵を表示する',
 	  click:function(e){
 		  alert('※推奨※\n見た目の統一のために\nひよんとふの再読み込みをおすすめします');
@@ -1574,16 +1572,15 @@ com.hiyoko.tofclient.Chat.SubMenu.List = [
 	  update:function($html, data){
 		  $html.text(data ? "立ち絵を表示しない" : "立ち絵を表示する");
 	  }},
-  {code: 'bar2', type:'bar'},
+  {code: 'bar3', type:'bar'},
   {code: 'sendAlarm', type:'item', label: 'アラームを送信する',
 	  click:function(e){
 		  $(e.target).trigger(new $.Event("sendAlarm"))
 		  com.hiyoko.tofclient.Chat.SubMenu.List.fireCloseEvent(e.target);
 	  }},
-  {code: 'bar3', type:'bar'},
+  {code: 'bar4', type:'bar'},
   {code: 'lineshare', type:'link', label:'LINE で招待する',
    url:'http://line.me/R/msg/text/?' + encodeURIComponent('ここからどどんとふにアクセス! ' + location.toString())},
-  {code: 'bar4', type:'bar', disabled:function(status){return Boolean(status.pass);}},
   {code: 'twittershare', type:'link', label:'Twitter で招待する',
    url:'https://twitter.com/intent/tweet?text=' + encodeURIComponent('ここからどどんとふにアクセス! ' + location.toString()),
       disabled:function(status){return Boolean(status.pass);}}

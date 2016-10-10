@@ -56,32 +56,40 @@ ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block ui-btn-up-f
 
 #tofChat-chat-submenu {
 	position: fixed;
-	top: 80px;
+	top: 84px;
 	left: 2px;
 	background-color: #D0FFD0;
 	opacity: 0.9;
-	font-size: 150%;
+	font-size: 100%;
 	color: #90AA90;
 	border-radius: 3px;
 }
 
 #tofChat-chat-submenu-button {
-	padding:5px;
-	padding-bottom:3px;
+	padding:4px;
+	padding-bottom:2px;
 	display:block;
 }
 
 #tofChat-chat-submenu-list {
-	padding:12px;
+	padding:6px;
 	display:none;
 	color:black;
 }
 
-.tofChat-chat-submenu-list-item {
+#tofChat-chat-submenu-list>hr {
+	margin:3px;
+	height:1px;
+	background-color: gray;
+}
+
+span.tofChat-chat-submenu-list-item {
 	border: #50FF50 2px solid;
 	background-color: #C0FFC0;
-	border-radius: 12px;
-	padding:5px;
+	border-radius: 5px;
+	margin-top:2px;
+	padding:4px;
+	display:block;
 }
 
 .tofChat-chat-submenu-list-item>a {
