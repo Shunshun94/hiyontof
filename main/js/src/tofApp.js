@@ -41,6 +41,13 @@ com.hiyoko.tofclient.App = function(tof, opt_base) {
 			$base.on('com.hiyoko.tofclient.Table.DataRequest' , function(e){
 				self.table.getValuesAsync(e.promise);
 			});
+			$base.on('com.hiyoko.tofclient.Chat.GetNewMessage', function(e){
+				$($(".tofChat-tab")[0])
+				.animate({'padding-bottom':50}, 80).animate({'padding-bottom':10}, 80)
+				.animate({'padding-bottom':50}, 80).animate({'padding-bottom':10}, 80)
+				.animate({'padding-bottom':50}, 80).animate({'padding-bottom':10}, 80)
+				.animate({'padding-bottom':50}, 80).animate({'padding-bottom':10}, 80);
+			});
 		};
 	
 		this.init(this);

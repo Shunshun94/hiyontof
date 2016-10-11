@@ -51,3 +51,21 @@ com.hiyoko.tofclient.ServerList.RESTRICTION = false;
  * 初期値は10秒 (10,000ミリ秒)。
  */
 com.hiyoko.tofclient.App.MIN_UPDATE_INTERVAL = 10;
+
+/**
+ * チャットの更新発生時に音で通知するか否かを設定する。
+ * false (初期値) にしておくと音ではなく見た目で通知する。
+ * true にすれば音で通知するようになる。
+ * 音での通知は多くのスマートフォンブラウザでは動作しなかったため false 推奨
+ */
+com.hiyoko.tofclient.Chat.Display.UpdatePushActive = false;
+
+/**
+ * チャットタブが非アクティブでも更新するか否かを設定する。
+ * true (初期値) にしておくとチャットを閲覧していない時も更新する。
+ * false にしておくとチャットを閲覧していない時は更新しない。
+ * false にしておけば通信量の節約にはなる。
+ */
+com.hiyoko.tofclient.Chat.UpdateAllTime = true;
+
+

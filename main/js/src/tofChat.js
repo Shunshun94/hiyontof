@@ -288,7 +288,7 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 
 	function setAutoReload_(){
 		if(interval){
-			window.setInterval(function(){if(isActive()){getMsg_();}}, interval);
+			window.setInterval(function(){if(com.hiyoko.tofclient.Chat.UpdateAllTime || isActive()){getMsg_();}}, interval);
 		}
 		if(! options.silent) {
 			window.setInterval(function(){
@@ -297,6 +297,8 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 		}
 	}
 };
+
+com.hiyoko.tofclient.Chat.UpdateAllTime = true;
 
 /**
  * Chat Utility Part
@@ -456,7 +458,9 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 	var id = $html.attr('id');
 	var tabClass = id + '-tab';
 	var store = new com.hiyoko.tofclient.Chat.Display.PicStore();
-	var sound_updateLog = new Audio("./sound/com-hiyoko-tofclient-chat-display-updateLog.mp3");
+	var sound_updateLog = com.hiyoko.tofclient.Chat.Display.UpdatePushActive ? 
+			new Audio("./sound/com-hiyoko-tofclient-chat-display-updateLog.mp3") :
+			{play:function(){$html.trigger(new $.Event('com.hiyoko.tofclient.Chat.GetNewMessage',{}));}};
 	
 	this.lastTime = 0;
 	this.isShowAll = true;
@@ -686,6 +690,8 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 	this.eventBind_();
 
 };
+
+com.hiyoko.tofclient.Chat.Display.UpdatePushActive = false;
 
 com.hiyoko.tofclient.Chat.Display.PicStore = function(){
 	var lastCharacterUpdate = 0;
