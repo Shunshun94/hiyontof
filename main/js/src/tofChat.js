@@ -258,7 +258,7 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 		if(isAsking){return;}
 		isAsking = true;
 		status.set(msg || "Getting...");
-		tof.getRefresh(getMsgs, true, false, false, true, false, true, display.lastTime, getMsgsFail);
+		tof.getRefresh(getMsgs, display.isStandPic, false, false, display.isStandPic, false, true, display.lastTime, getMsgsFail);
 	}
 
 	function getMsgs(response){
@@ -579,7 +579,9 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 	this.append = function(responseFromTof, opt_tabs){
 		var tabs = opt_tabs || ["", "雑談"];
 		
-		store.stack(responseFromTof);
+		if(self.isStandPic){
+			store.stack(responseFromTof);
+		}
 		
 		if(responseFromTof.chatMessageDataLog.length !== 0){
 			var modifiedTofResponse = mapArray(responseFromTof.chatMessageDataLog, function(l){return com.hiyoko.tofclient.Chat.Util.fixChatMsg(l, store);});
