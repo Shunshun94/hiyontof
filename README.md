@@ -137,6 +137,13 @@ MIT ライセンスです。
 
 ひよんとふ以外での利用は不可とします。
 
+### チャット更新時の効果音
+
+[フリー音楽素材/魔王魂](http://maoudamashii.jokersounds.com/) より頂いた
+[紙01](http://maoudamashii.jokersounds.com/archives/se_maoudamashii_se_paper01.html) を使用しています。
+
+素材利用規約: http://maoudamashii.jokersounds.com/music_rule.html
+
 ## ライセンス
 
 ひよんとふは GNU GENERAL PUBLIC LICENSE Version 3 でライセンスします。

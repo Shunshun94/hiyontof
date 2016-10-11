@@ -1,18 +1,21 @@
 var com = com || {};
 com.hiyoko = com.hiyoko || {};
 com.hiyoko.tofclient = com.hiyoko.tofclient || {};
-com.hiyoko.tofclient.App = function(tof) {
+com.hiyoko.tofclient.App = function(tof, opt_base) {
 	tof.isVisitor(function(isVisitor) {
 		var interval = Number(getParam("reload", 0));
 		if(interval < com.hiyoko.tofclient.App.MIN_UPDATE_INTERVAL * 1000) {
 			interval = com.hiyoko.tofclient.App.MIN_UPDATE_INTERVAL * 1000;
 		}
 		
-		this.chat = new com.hiyoko.tofclient.Chat(tof, interval, {visitor: isVisitor, html:$("#tofChat-chat")});
+		var $base = opt_base || $('#tofChat-work');
+		var isSilentMode = Boolean(getParam("silent", false));
+		
+		this.chat = new com.hiyoko.tofclient.Chat(tof, interval, {visitor: isVisitor, html:$("#tofChat-chat"), silent: isSilentMode});
 		this.map = new com.hiyoko.tofclient.Map(tof, interval, {isDraggable: true, html:$("#tofChat-map"), debug:getParam("debug", false)});
 		this.memo = new com.hiyoko.tofclient.Memo(tof, interval, $("#tofChat-memo"));
 		this.table = new com.hiyoko.tofclient.Table(tof, interval, {html:$("#tofChat-table"), table:true, outerImage:tof.getStatus().outerImage , debug:false});
-		this.init = function(){
+		this.init = function(self){
 			$(".tofChat-button").addClass("ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block ui-btn-up-f");
 			$(".tofChat-button-heavy").addClass("ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block");
 			$(".tofChat-tab").click(function(e){
@@ -34,9 +37,20 @@ com.hiyoko.tofclient.App = function(tof) {
 					$("#tofChat-tabs").css("top", (42-$(window).scrollTop())+"px");
 				}
 			});
+			
+			$base.on('com.hiyoko.tofclient.Table.DataRequest' , function(e){
+				self.table.getValuesAsync(e.promise);
+			});
+			$base.on('com.hiyoko.tofclient.Chat.GetNewMessage', function(e){
+				$($(".tofChat-tab")[0])
+				.animate({'padding-bottom':50}, 80).animate({'padding-bottom':10}, 80)
+				.animate({'padding-bottom':50}, 80).animate({'padding-bottom':10}, 80)
+				.animate({'padding-bottom':50}, 80).animate({'padding-bottom':10}, 80)
+				.animate({'padding-bottom':50}, 80).animate({'padding-bottom':10}, 80);
+			});
 		};
 	
-		this.init();
+		this.init(this);
 	});
 };
 

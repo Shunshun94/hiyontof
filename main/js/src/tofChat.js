@@ -30,7 +30,8 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 		inputArea = new com.hiyoko.tofclient.Chat.InputArea($("#tofChat-inputArea"),
 				{	talk:$("#tofChat-input"), 
 					history:$("#" + id + "-input-history"),
-					secret:$("#" + id + "-input-secret")},
+					secret:$("#" + id + "-input-secret"),
+					chatparette:$("#" + id + "-input-chatparette")},
 				isVisitor);
 		
 		var isBgmActivate = Boolean(Number(localStorage.getItem("com.hiyoko.tofclient.Chat.Display.bgm")));
@@ -42,6 +43,10 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 		display.isStandPic = isStandPicActive;
 		subMenu.updateItem('standPicMode', isStandPicActive);
 		
+		var isTabColoredLS = localStorage.getItem("com.hiyoko.tofclient.Chat.Display.ColoredTab");
+		var isTabColored = Boolean(Number(isTabColoredLS) || isTabColoredLS === null);
+		display.isTabColored = isTabColored;
+		subMenu.updateItem('tabColoredMode', isTabColored);
 	}
 
 	function renderChat($html) {
@@ -82,7 +87,7 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 	function eventBinds(serverInfo){
 		var $inputArea = $("#tofChat-inputArea");
 
-		$inputArea.on("sendMessage", sendMsg);
+		$html.on("sendMessage", sendMsg);
 		$inputArea.on("sendMessageEvent", sendMsgEvent);
 		$inputArea.on("changeTab", function(e){
 			display.activeTab = e.tab;
@@ -100,7 +105,6 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 			subMenu.close();
 		});
 
-		$("#tofChat-log").on("sendMessage", sendMsg);
 		$("#tofChat-input-get").click(function(){getMsg_("Getting...")});
 		$("#tofChat-jump > p").click(jumpToBottom_);
 		$(window).scroll(com.hiyoko.tofclient.Chat.Util.checkScroll_);
@@ -113,6 +117,8 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 				});
 			alert(str);
 		});
+		
+		// この辺の設定系、共通のクラス作ってそいつに任せた方が良いのでは?
 		$submenu.on("changeDisplayMode", function(e){
 			display.isShowAll = e.isShowAll;
 			display.reset();
@@ -128,6 +134,10 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 			localStorage.setItem("com.hiyoko.tofclient.Chat.Display.standPic", e.isStandPic ? 1 : 0);
 		});
 		
+		$submenu.on("changeTabColor", function(e){
+			display.is = e.isTabColored;
+			localStorage.setItem("com.hiyoko.tofclient.Chat.Display.ColoredTab", e.isTabColored ? 1 : 0);
+		});
 		
 		$submenu.on("sendAlarm", function(e){
 			var timerCount = window.prompt("何秒後にアラームを鳴らしますか?", 60);
@@ -174,11 +184,13 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 		buildChildComponents();
 		eventBinds(serverInfo);	
 		var name = nameSuiter(inputArea.getName());
-		sendMsg({
-			name: 'ひよんとふ',
-			msg: '「' + name +'」がひよんとふからログインしました。',
-			color: '00AA00'
-		});
+		if(! options.silent){
+			sendMsg({
+				name: 'ひよんとふ',
+				msg: '「' + name +'」がひよんとふからログインしました。',
+				color: '00AA00'
+			});
+		}
 		getMsg_();
 		tof.getLoginUserInfo(afterBeacon, nameSuiter(inputArea.getName()));
 	}, true);
@@ -246,7 +258,7 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 		if(isAsking){return;}
 		isAsking = true;
 		status.set(msg || "Getting...");
-		tof.getRefresh(getMsgs, true, false, false, true, false, true, display.lastTime, getMsgsFail);
+		tof.getRefresh(getMsgs, display.isStandPic, false, false, display.isStandPic, false, true, display.lastTime, getMsgsFail);
 	}
 
 	function getMsgs(response){
@@ -276,13 +288,17 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 
 	function setAutoReload_(){
 		if(interval){
-			window.setInterval(function(){if(isActive()){getMsg_();}}, interval);
+			window.setInterval(function(){if(com.hiyoko.tofclient.Chat.UpdateAllTime || isActive()){getMsg_();}}, interval);
 		}
-		window.setInterval(function(){
-			tof.getLoginUserInfo(afterBeacon, nameSuiter(inputArea.getName()));
-		}, 12500);
+		if(! options.silent) {
+			window.setInterval(function(){
+				tof.getLoginUserInfo(afterBeacon, nameSuiter(inputArea.getName()));
+			}, 12500);
+		}
 	}
 };
+
+com.hiyoko.tofclient.Chat.UpdateAllTime = true;
 
 /**
  * Chat Utility Part
@@ -341,6 +357,10 @@ com.hiyoko.tofclient.Chat.Util.fixChatMsg = function(chatMsg, store){
 	
 	if(startsWith(message, '###Language:secretDice###')) {
 		message = 'シークレットダイスを振りました';
+	}
+	
+	if(startsWith(message, '###CutInCommand:getDiceBotInfos###{}')) {
+		message = 'ダイスボットを編集しました';
 	}
 	
 	if(startsWith(message, "###vote_replay_readyOK###")){
@@ -438,11 +458,15 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 	var id = $html.attr('id');
 	var tabClass = id + '-tab';
 	var store = new com.hiyoko.tofclient.Chat.Display.PicStore();
+	var sound_updateLog = com.hiyoko.tofclient.Chat.Display.UpdatePushActive ? 
+			new Audio("./sound/com-hiyoko-tofclient-chat-display-updateLog.mp3") :
+			{play:function(){$html.trigger(new $.Event('com.hiyoko.tofclient.Chat.GetNewMessage',{}));}};
 	
 	this.lastTime = 0;
 	this.isShowAll = true;
 	this.isLoadBGM = false;
 	this.isStandPic = false;
+	this.isTabColored = false;
 	this.activeTab = 0;
 	
 	this.loopBgmStop = function() {
@@ -453,7 +477,7 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 		};
 	};
 	
-	this.msgToDom = function(msg, tabs) {
+	this.msgToDom = function(msg, tabs, noMainTabColored) {
 		var $dom = $('<p></p>');
 		$dom.addClass(id + '-log');
 		$dom.addClass(tabClass + msg.tab);
@@ -485,7 +509,7 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 				msg_class = 'vote-msg';
 			} else if(msg.isCutIn) {
 				if(msg.isCutIn.bgm) {
-					var $audio = self.isLoadBGM ? $('<audio class="' + id + '-cutin-bgm" controls>') : $('<span>（BGM 再生は現在無効です）</span>');
+					var $audio = self.isLoadBGM ? $('<audio class="' + id + '-cutin-bgm" controls>') : $('<span>（BGM 再生は現在無効です。左上の MENU から有効にできます）</span>');
 					$audio.attr('src', com.hiyoko.tof.parseResourceUrl(msg.isCutIn.bgm, com.hiyoko.tofclient.Chat.Util.TofURL));
 					$audio.attr('volume', msg.isCutIn.volume);
 					if(self.isLoadBGM && msg.isCutIn.loop) {
@@ -511,7 +535,8 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 			}
 		} else {
 			$dom.addClass('notmain');
-
+			$dom.css('color', noMainTabColored(msg));
+			
 			$name = $('<span></span>');
 			$name.text(msg.name);
 
@@ -533,7 +558,7 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 			$name = $('<div></div>');
 			$name.append($nameContain);
 			$name.css("background-image",
-					"url('" + ('', store.get(msg.name, msg.status) || './image/noimage.png') + "')");
+					"url('" + (store.get(msg.name, msg.status) || './image/noimage.png') + "')");
 			$name.addClass(id + '-log-name-pic');
 		}
 		
@@ -554,17 +579,21 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 	this.append = function(responseFromTof, opt_tabs){
 		var tabs = opt_tabs || ["", "雑談"];
 		
-		store.stack(responseFromTof);
+		if(self.isStandPic){
+			store.stack(responseFromTof);
+		}
 		
 		if(responseFromTof.chatMessageDataLog.length !== 0){
 			var modifiedTofResponse = mapArray(responseFromTof.chatMessageDataLog, function(l){return com.hiyoko.tofclient.Chat.Util.fixChatMsg(l, store);});
 			var $dom = $('<div></div>');
 			$dom.addClass('tofChat-chat-log-msgContainer');
+			var noMainTabColored = self.isTabColored ? function(m){return '#'+m.color} : function(m){return 'black';};
 			$.each(modifiedTofResponse, function(index, msg){
-				$dom.append(self.msgToDom(msg, tabs));
+				$dom.append(self.msgToDom(msg, tabs, noMainTabColored));
 				this.lastTime = msg.time;
 			}.bind(this));
 			$html.append($dom);
+			sound_updateLog.play();
 		}
 		this.reset();
 		com.hiyoko.tofclient.Chat.Util.checkScroll_(null);
@@ -652,17 +681,19 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 
 	this.reset = function(){
 		if(this.isShowAll){
-			$(".log").show();
+			$('.' + id + '-log').show();
 			return;
 		}
 
-		$(".log").hide();
+		$('.' + id + '-log').hide();
 		$("."+tabClass+self.activeTab).show();
 	};
 
 	this.eventBind_();
 
 };
+
+com.hiyoko.tofclient.Chat.Display.UpdatePushActive = false;
 
 com.hiyoko.tofclient.Chat.Display.PicStore = function(){
 	var lastCharacterUpdate = 0;
@@ -746,14 +777,15 @@ com.hiyoko.tofclient.Chat.Status = function($html){
 com.hiyoko.tofclient.Chat.InputArea = function($parent, children, isVisitor){
 	var inputs = {talk:new com.hiyoko.tofclient.Chat.InputArea.Input(children.talk, isVisitor),
 	              history:new com.hiyoko.tofclient.Chat.InputArea.History(children.history),
-	              secret:new com.hiyoko.tofclient.Chat.InputArea.Secret(children.secret)};
+	              secret:new com.hiyoko.tofclient.Chat.InputArea.Secret(children.secret),
+	              parette:new com.hiyoko.tofclient.Chat.InputArea.ChatParette(children.chatparette)};
 	var current = 0;
 	var self = this;
 	var $switcher = $('#tofChat-chat-input-switch');
 	var $bot = $("#tofChat-input-dicebot");
 	
 	function eventBind(){
-		children.history.on("EditMessage", function(e){
+		$parent.on("EditMessage", function(e){
 			inputs.talk.setMessage(e);
 			self.hideAll();
 			inputs.talk.enabled();
@@ -1135,6 +1167,246 @@ com.hiyoko.tofclient.Chat.InputArea.History = function($html){
 	init();
 };
 
+com.hiyoko.tofclient.Chat.InputArea.ChatParette = function($html) {
+	var id = $html.attr('id');
+	this.disabled = function(){$html.hide()};
+	this.enabled = function(){
+		$.each($tab, function(i, v) {
+			$($tab[i]).text(load(i).name);
+		});
+		$html.show();
+	};
+	
+	var RE_VAL = /^\/\/\s*(.+)\s*=\s*(\d+)/;
+
+	var $list = $("#" + id + "-list");
+	var $edit = $("#" + id + "-edit");
+	var $editfinish = $("#" + id + "-editfinish");
+	var $send = $("#" + id + "-action-send");
+	var $editSender = $("#" + id + "-action-edit");
+	var $clear = $("#" + id + "-clear");
+	
+	var $nameEditor = $("#" + id + "-nameEditor");
+	var $colorEditor = $("#" + id + "-colorEditor");
+	var $commandEditor = $("#" + id + "-commandEditor");
+	
+	var $tab = $("." + id + "-tab");
+	
+	var $umode = $("#" + id + "-usemode");
+	var $emode = $("#" + id + "-editmode");
+	var self = this;
+	
+	this.parseMessage = function(text, vars, initTable) {
+		var regexp = /{([^}]*)}/;
+		var word;
+		var execResult;
+		var flag = true;
+		while(flag){
+			execResult = regexp.exec(text);
+			
+			flag = Boolean(execResult);
+			if(flag){
+				word = execResult[1];
+				if(vars[word]) {
+					text = text.replace(execResult[0], vars[word]);
+				} else {
+					var val = initTable.getValue(word);
+					if(val) {
+						text = text.replace(execResult[0], val);
+					} else {
+						text = text.replace(execResult[0], word);
+					}
+				}
+			}
+		}
+		
+		return text;
+	};
+	
+	function sendParsedMessage(text, json, eventType) {
+		var asyncEvent = new $.Event('com.hiyoko.tofclient.Table.DataRequest', {
+			promise: function(result) {
+				cData = result[json.name] || {getValue:function(){return false;}};
+				var parsedText = self.parseMessage(text, json.vars, cData);
+				
+				
+				$html.trigger(new $.Event(eventType, {
+					msg: parsedText,
+					color: json.color,
+					name: json.name,
+					tab: 0
+				}));	
+			}
+		});
+		
+		$html.trigger(asyncEvent);
+	}
+	
+	function activate(num) {
+		load(num);
+	}
+	
+	function load(num) {
+		var json = localStorage.getItem("com.hiyoko.tofclient.Chat.InputArea.ChatParette.Store_" + num);
+		
+		if(json) {
+			return JSON.parse(json);
+		}
+		
+		if(num === 0) {
+			return {
+				name: 'SAMPLE',
+				list: ['サンプルデータ', '2d6+{攻撃} ' + num,'{HP}-3d6'],
+				vars: {'攻撃':'32'}
+			};			
+		} else {
+			return {
+				name: '　',
+				list: [],
+				vars: {}
+			};
+		}
+	}
+	
+	function save(json, num) {
+		localStorage.setItem("com.hiyoko.tofclient.Chat.InputArea.ChatParette.Store_" + num,  JSON.stringify(json));
+	}
+	
+	function reverseCompile(json) {
+		var result = {
+				name: json.name || 'ななしのひよこ',
+				color: json.color || '000000',
+				text: ''
+		};
+		$.each(json.list, function(i, v){
+			result.text += v + '\n';
+		});
+		for(var key in json.vars) {
+			result.text += '//' + key + '=' + json.vars[key] + '\n';
+		}
+		
+		return result;
+	}
+	
+	function parse(lines, name, color) {
+		var result = {
+				name: name || 'ななしのひよこ',
+				color: color || '000000',
+				list: [],
+				vars: {}
+			};
+
+		
+		$.each(lines.split('\n'), function(i, v){
+			var text = v.trim();
+			if(text === '') {
+				return;
+			}
+			var varCand = RE_VAL.exec(text);
+			if(varCand){
+				result.vars[varCand[1]] = varCand[2];
+				return;
+			}
+			result.list.push(text);
+		});
+		return result;
+	}
+	
+	function edit(json) {
+		
+	}
+	
+	function tabByNum(num) {
+		return $($tab[Number(num)]);
+	}
+	
+	function getActiveNum() {
+		for(var i = 0; i < 6; i++) { // TAB はマックス6個なので6決めうち
+			if($($tab[i]).hasClass('active')) {
+				return i;
+			}
+		}
+	}
+	
+	function apply(json, $tab) {
+		$tab.text(json.name || '　');
+		$list.empty();
+		$.each(json.list, function(i,v){
+			var $opt = $('<option></option>');
+			
+			$opt.text(v);
+			$opt.val(v);
+			
+			$list.append($opt);
+		});
+		var caption = json.list.length ? json.list[0] : '';
+		$list.val(caption);
+		$($list.parent().find('span>span')[0]).text(caption);
+	}
+	
+	function onClickTab(num){
+		var json = load(num);
+		apply(json, tabByNum(num));
+	}
+	
+	function startEdit(){
+		var data = reverseCompile(load(getActiveNum()));
+		$commandEditor.val(data.text);
+		$nameEditor.val(data.name);
+		$colorEditor.val(data.color);
+		$colorEditor.css("background-color", "#" + data.color);
+		$umode.hide();
+		$emode.show();
+	}
+	
+	function endEdit() {
+		$umode.show();
+		$emode.hide();
+		var num = getActiveNum();
+		var json = parse($commandEditor.val(), $nameEditor.val(), $colorEditor.val());
+		save(json, num);
+		apply(json, $($tab[num]));
+	}
+	
+	function clear(){
+		var num = getActiveNum();
+		if(confirm(load(num).name + 'のチャットパレットを削除します。よろしいですか?')){
+			save({list:[]} , num);
+			apply({list:[]}, $($tab[num]));
+		}
+	}
+	
+	function eventBind(){
+		$edit.click(function(e){
+			startEdit();
+		});
+		$editfinish.click(function(e){
+			endEdit();
+		});
+		
+		$tab.click(function(e){
+			$tab.removeClass('active');
+			$(e.target).addClass('active');
+			onClickTab(getActiveNum());
+		});
+		
+		$clear.click(function(e){
+			clear();
+		});
+		
+		$editSender.click(function(e){
+			sendParsedMessage($list.val(), load(getActiveNum()), "EditMessage");
+		});
+		
+		$send.click(function(e){
+			sendParsedMessage($list.val(), load(getActiveNum()), "sendMessage");
+		});
+	}
+	
+	eventBind();
+	onClickTab(getActiveNum());
+};
+
 com.hiyoko.tofclient.Chat.InputArea.Secret = function($html) {
 	var id = $html.attr('id');
 	var self = this;
@@ -1295,15 +1567,24 @@ com.hiyoko.tofclient.Chat.SubMenu.List = [
 		  $html.text("室内に" + data.count + "人います");
 	  }},
   {code: 'bar2', type:'bar'},
-  {code: 'displayMode', type:'item', label:'タブ毎の表示に切替',
+  {code: 'displayMode', type:'item', label:'タブ毎に表示する',
 	  click:function(e){
-		  var isShowAll = $(e.target).text()==="全表示に切替";
-		  $(e.target).text(isShowAll ? "タブ毎の表示に切替" : "全表示に切替");
+		  var isShowAll = $(e.target).text()==="全タブを表示する";
+		  $(e.target).text(isShowAll ? "タブ毎に表示する" : "全タブを表示する");
 		  $(e.target).trigger(new $.Event("changeDisplayMode", {isShowAll:isShowAll}))
 		  com.hiyoko.tofclient.Chat.SubMenu.List.fireCloseEvent(e.target);
 	  }},
-  {code: 'bar2', type:'bar'},
-  {code: 'bgmMode', type:'item', label:'BGM を再生する',
+  {code: 'tabColoredMode', type:'item', label:'全タブをカラフルに',
+		  click:function(e){
+			  var isTabColored = $(e.target).text()==="全タブをカラフルに";
+			  $(e.target).text(isTabColored ? "メインだけカラフルに" : "全タブをカラフルに");
+			  $(e.target).trigger(new $.Event("changeTabColor", {isTabColored:isTabColored}));
+			  com.hiyoko.tofclient.Chat.SubMenu.List.fireCloseEvent(e.target);
+		  },
+		  update:function($html, data){
+			  $html.text(data ? "メインだけカラフルに" : "全タブをカラフルに");
+		  }},
+　　{code: 'bgmMode', type:'item', label:'BGM を再生する',
 	  click:function(e){
 		  var isLoadBGM = $(e.target).text()==="BGM を再生する";
 		  $(e.target).text(isLoadBGM ? "BGM を再生しない" : "BGM を再生する");
@@ -1313,28 +1594,26 @@ com.hiyoko.tofclient.Chat.SubMenu.List = [
 	  update:function($html, data){
 		  $html.text(data ? "BGM を再生しない" : "BGM を再生する");
 	  }},
-  {code: 'bar2', type:'bar'},
   {code: 'standPicMode', type:'item', label:'立ち絵を表示する',
 	  click:function(e){
 		  alert('※推奨※\n見た目の統一のために\nひよんとふの再読み込みをおすすめします');
 		  var isStandPic = $(e.target).text()==="立ち絵を表示する";
 		  $(e.target).text(isStandPic ? "立ち絵を表示しない" : "立ち絵を表示する");
-		  $(e.target).trigger(new $.Event("changeStandPic", {isStandPic:isStandPic}))
+		  $(e.target).trigger(new $.Event("changeStandPic", {isStandPic:isStandPic}));
 		  com.hiyoko.tofclient.Chat.SubMenu.List.fireCloseEvent(e.target);
 	  },
 	  update:function($html, data){
 		  $html.text(data ? "立ち絵を表示しない" : "立ち絵を表示する");
 	  }},
-  {code: 'bar2', type:'bar'},
+  {code: 'bar3', type:'bar'},
   {code: 'sendAlarm', type:'item', label: 'アラームを送信する',
 	  click:function(e){
 		  $(e.target).trigger(new $.Event("sendAlarm"))
 		  com.hiyoko.tofclient.Chat.SubMenu.List.fireCloseEvent(e.target);
 	  }},
-  {code: 'bar3', type:'bar'},
+  {code: 'bar4', type:'bar'},
   {code: 'lineshare', type:'link', label:'LINE で招待する',
    url:'http://line.me/R/msg/text/?' + encodeURIComponent('ここからどどんとふにアクセス! ' + location.toString())},
-  {code: 'bar4', type:'bar', disabled:function(status){return Boolean(status.pass);}},
   {code: 'twittershare', type:'link', label:'Twitter で招待する',
    url:'https://twitter.com/intent/tweet?text=' + encodeURIComponent('ここからどどんとふにアクセス! ' + location.toString()),
       disabled:function(status){return Boolean(status.pass);}}

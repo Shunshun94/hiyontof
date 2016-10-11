@@ -118,15 +118,47 @@
 							</div>
 							<div class="tofChat-help" id="tofChat-chat-input-secret-help">HELP (非公開発言の説明)</div>
 						</div>
+						<div id="tofChat-chat-input-chatparette">
+							<div id="tofChat-chat-input-chatparette-usemode">
+								<p id="tofChat-chat-input-chatparette-tabs">
+									<span title="0" class="tofChat-chat-input-chatparette-tab active">　</span><span title="1" class="tofChat-chat-input-chatparette-tab">　</span><span title="2" class="tofChat-chat-input-chatparette-tab">　</span><span title="3" class="tofChat-chat-input-chatparette-tab">　</span><span title='4' class="tofChat-chat-input-chatparette-tab">　</span><span title='5' class="tofChat-chat-input-chatparette-tab">　</span>
+								</p>
+								<select id="tofChat-chat-input-chatparette-list"><option>-</option></select>
+								<div class="tofChat-input-half">
+									<input type="button" id="tofChat-chat-input-chatparette-action-edit" value="編集して送信" />
+								</div>
+								<div class="tofChat-input-half">
+									<input type="button" id="tofChat-chat-input-chatparette-action-send" value="送信" />
+								</div>
+								<div class="tofChat-input-half">
+									<input type="button" id="tofChat-chat-input-chatparette-clear"  value="削除" />
+								</div>
+								<div class="tofChat-input-half">
+									<input type="button" id="tofChat-chat-input-chatparette-edit"  value="編集" />
+								</div>
+							</div>
+							<div id="tofChat-chat-input-chatparette-editmode">
+								<div class="tofChat-input-half">
+									色<input
+										class="jscolor {closable:true,closeText:'閉じる',onFineChange:'com.hiyoko.tofclient.Chat.Util.colorChange(this)'}"
+										type="text" placeholder="文字色" id="tofChat-chat-input-chatparette-colorEditor"
+										value="000000" size="5" maxlength="7" />
+								</div>
+								<div class="tofChat-input-half">
+									名前<input type="text" value=""  id="tofChat-chat-input-chatparette-nameEditor" />
+								</div>
+								
+								<textarea id="tofChat-chat-input-chatparette-commandEditor"></textarea>
+								<input type="button" id="tofChat-chat-input-chatparette-editfinish"  value="編集を終える" />
+							</div>
+						</div>
 						<div id="tofChat-chat-input-shared">
 							<div class="tofChat-input-half">
 								<select id="tofChat-chat-input-switch">
 									<option value="talk" label="発言">発言</option>
 									<option value="history" label="発言履歴">発言履歴</option>
 									<option value="secret" label="非公開発言">非公開発言</option>
-									<!--  
-									<option value="pallet" label="チャットパレット">チャットパレット</option>
-									-->
+									<option value="parette" label="チャットパレット">チャットパレット</option>
 								</select>
 							</div>
 							<div class="tofChat-input-half">
@@ -220,7 +252,7 @@
 
 		<div data-role="footer" data-theme="f">
 			<p>
-				<small id="tofChat-version">ひよんとふ Ver. 20160929</small><br /> 
+				<small id="tofChat-version">ひよんとふ Ver. 20161012</small><br /> 
 				<small>&copy;<a href="https://twitter.com/Shunshun94" target="_blank">Shunshun94</a></small><br /> 
 				<small><a href="http://template-party.com/" target="_blank">Web Design:Template-Party</a></small><br /> 
 				<small><a href="https://github.com/Shunshun94/hiyontof" target="_blank">github</a></small>

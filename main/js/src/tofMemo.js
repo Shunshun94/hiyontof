@@ -152,7 +152,6 @@ com.hiyoko.tofclient.Memo.TabedMemo = function(data) {
 	function setAcitveTab(){
 		self.$tabs.children().removeClass('active');
 		$(self.$tabs.children()[activeTab]).addClass('active');
-		console.log($(self.$tabs.children()[activeTab]));
 	}
 	
 	function bindEvent() {
