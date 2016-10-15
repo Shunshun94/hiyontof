@@ -410,6 +410,10 @@ span.tofChat-chat-submenu-list-item {
 	padding: 4px;
 	margin-left: 3px;
     cursor: pointer;
+    min-width: 2.4em;
+    min-height: 1em;
+    vertical-align: middle;
+    text-align: center;
 }
 
 .tofChat-memo-tabledmemo-tab-tab:hover {
@@ -438,6 +442,7 @@ span.tofChat-chat-submenu-list-item {
 	display:inline-block;
 	padding: 4px;
 	margin-left: 3px;
+    vertical-align: middle;
 }
 
 .tofChat-memo-tabledmemo-tab-button:hover {
