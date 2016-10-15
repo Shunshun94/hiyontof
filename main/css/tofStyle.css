@@ -52,6 +52,15 @@ ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block ui-btn-up-f
 	font-size: 300%;
 	color: #90AA90;
 	border-radius: 20px;
+    cursor: pointer;
+}
+
+#tofChat-jump>p:hover {
+    filter:brightness(110%); 
+}
+
+#tofChat-jump>p:active {
+    filter:brightness(90%); 
 }
 
 #tofChat-chat-submenu {
@@ -274,6 +283,22 @@ span.tofChat-chat-submenu-list-item {
 	display: inline-block;
 	width: 23%;
 	mergin-left:3px;
+    cursor: pointer;
+}
+
+.tofChat-tab:hover {
+    filter:brightness(120%); 
+}
+
+.tofChat-tab:active {
+	border-style: inset;
+    filter:brightness(90%); 
+}
+
+.tofChat-tab[class~="active"] {
+	border-style: outset;
+    filter:brightness(100%);
+    cursor: default;
 }
 
 #tofChat-map-display {
@@ -470,6 +495,16 @@ span.tofChat-chat-submenu-list-item {
 	display:inline-block;
 	position: absolute;
 	right: 0px;
+    cursor: pointer;
+}
+
+#tofChat-go-out:hover {
+    filter:brightness(120%); 
+}
+
+#tofChat-go-out:active {
+	border-style: inset;
+    filter:brightness(90%); 
 }
 
 .tofChat-help {
@@ -479,4 +514,14 @@ span.tofChat-chat-submenu-list-item {
 	padding:2px;
 	background-color: #B0FFB0;
 	color:black;
+    cursor: help;
+}
+
+.tofChat-help:hover {
+    filter:brightness(120%); 
+}
+
+.tofChat-help:active {
+	border-style: inset;
+    filter:brightness(90%); 
 }

@@ -24,4 +24,14 @@
 	background-color: #F0FFB0;
 	padding:3px;
 	border-radius: 5px;
+    cursor: pointer;
+}
+
+.tofChat-RoomList-Rooms-Room-entry:hover {
+    filter:brightness(120%); 
+}
+
+.tofChat-RoomList-Rooms-Room-entry:active {
+	border-style: inset;
+    filter:brightness(90%); 
 }
