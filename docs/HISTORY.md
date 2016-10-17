@@ -1,5 +1,11 @@
 # 更新履歴
 
+## 2016年MM月DD日
+
+- ボタンの見た目を修正
+	- [Nanasu NANA](https://github.com/NanasuNANA) さんによる修正。
+	- https://github.com/Shunshun94/hiyontof/pull/55
+
 ## 2016年10月12日
 
 - チャットパレットを追加
