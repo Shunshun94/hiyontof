@@ -5,6 +5,7 @@
 - ボタンの見た目を修正
 	- [Nanasu NANA](https://github.com/NanasuNANA) さんによる修正。
 	- https://github.com/Shunshun94/hiyontof/pull/55
+- 末尾カットインに対応
 
 ## 2016年10月12日
 
