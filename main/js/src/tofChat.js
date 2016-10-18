@@ -386,6 +386,8 @@ com.hiyoko.tofclient.Chat.Util.fixChatMsg = function(chatMsg, store){
 			pic: parsedMsg.source,
 			volume: parsedMsg.volume
 		};
+	} else {
+		cutin = store.getTailCutIn(message);
 	}
 	
 	var TAIL_NAME_REGEXP_1 = /@([^ \f\n\r\t\v​\u00a0\u1680​\u180e\u2000-\u200a​\u2028\u2029​\u202f\u205f​\u3000\ufeff@]*)$/;
@@ -700,6 +702,7 @@ com.hiyoko.tofclient.Chat.Display.PicStore = function(){
 	var lastEffectUpdate = 0;
 	
 	var store = {};
+	var tailCutIn = {};
 	
 	this.stack = function(response) {
 		var lastUpdates = response.lastUpdateTimes;
@@ -726,10 +729,29 @@ com.hiyoko.tofclient.Chat.Display.PicStore = function(){
 			if(v.type === 'standingGraphicInfos') {
 				store[v.name] = store[v.name] || {};
 				store[v.name][v.state] = com.hiyoko.tof.parseResourceUrl(v.source, com.hiyoko.tofclient.Chat.Util.TofURL);
+			} else if(v.isTail) {
+				tailCutIn[v.message] = {
+						bgm: v.soundSource,
+						loop: v.isSoundLoop,
+						pic: v.source,
+						volume: v.volume
+				};
 			}
 		});
 	};
 	
+	this.getTailCutIn = function(text) {
+		for(var key in tailCutIn) {
+			if(text.endsWith(key)) {
+				return tailCutIn[key];
+			}
+		}
+		return false;
+	};
+	
+	this.getStandPic = function(name, opt_status) {
+		return this.get(name, opt_status);
+	}
 	
 	this.get = function(name, opt_status) {
 		var status = opt_status || '通常';
