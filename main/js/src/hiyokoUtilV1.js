@@ -164,6 +164,19 @@ function splitArray(array, groupBy) {
 	return result;
 }
 
+function groupArray(array, groupBy) {
+	var result = {};
+	var length = array.length;
+	for(var i = 0; i < length; i++) {
+		groupId = groupBy(array[i], i, array);
+		if(! result[groupId]) {
+			result[groupId] = [];
+		}
+		result[groupId].push(array[i]);
+	}
+	return result;
+}
+
 /**
  * 
  * @param {Array} array
@@ -270,5 +283,30 @@ if (!String.prototype.endsWith) {
       position -= searchString.length;
       var lastIndex = subjectString.indexOf(searchString, position);
       return lastIndex !== -1 && lastIndex === position;
+  };
+}
+
+if (!Array.prototype.filter) {
+  Array.prototype.filter = function(fun /*, thisp */) {
+    "use strict";
+
+    if (this == null) throw new TypeError();
+
+    var t = Object(this),
+        len = t.length >>> 0;
+
+    if (typeof fun != "function") throw new TypeError();
+
+    var res = [],
+        thisp = arguments[1];
+
+    for (var i = 0; i < len; i++) {
+      if (i in t) {
+        var val = t[i]; // fun が this を変化させた場合に備えて
+        if (fun.call(thisp, val, i, t)) res.push(val);
+      }
+    }
+
+    return res;
   };
 }

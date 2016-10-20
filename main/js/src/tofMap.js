@@ -1,7 +1,7 @@
 var com = com || {};
 com.hiyoko = com.hiyoko || {};
 com.hiyoko.tofclient = com.hiyoko.tofclient || {};
-com.hiyoko.tofclient.Map = function(tof, interval, options){
+com.hiyoko.tofclient.Map = function(tof, interval, serverInfo, options){
 	var isDrag = options.isDraggable ? true : false;
 	var debugMode = options.debug;
 	var $html = options.html ? options.html : $("#tofChat-map");
@@ -14,10 +14,15 @@ com.hiyoko.tofclient.Map = function(tof, interval, options){
 	var $switchChar = $("#" + id + "-char-switch");
 	var $switchLine = $("#" + id + "-line-switch");
 	var $status = $('#' + id + '-status');
+	
+	var $mode = $('#' + id + '-mode');
+	var $cards = $('#' + id + '-cards');
+	var $map = $('#' + id + '-map');
 
 	var map = new com.hiyoko.tofclient.Map.MapBack($disp);
+	var card = new com.hiyoko.tofclient.Map.Cards($cards, serverInfo.cardInfos);
 	com.hiyoko.tofclient.Map.tofUrl = tof.getStatus().url;
-
+  
 	function isActive() {
 		return $html.css('display') !== 'none';
 	}
@@ -32,8 +37,21 @@ com.hiyoko.tofclient.Map = function(tof, interval, options){
 	
 	this.init = function(){
 
+		$mode.change(function(e){
+			if($mode.val() === 'map') {
+				$cards.hide();
+				$map.show();
+			} else {
+				$cards.show();
+				$map.hide();			
+			}
+		});
+		
 		$reload.click(function(e){
-			getCharacters(map.update);
+			getCharacters(function(r){
+				map.update(r);
+				card.update(r);
+			});
 		});
 		
 		$disp.on('startMoveCharacter', function(e){

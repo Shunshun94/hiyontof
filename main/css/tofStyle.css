@@ -42,6 +42,10 @@ ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block ui-btn-up-f
 	padding-top: 42px;
 }
 
+#tofChat-map-cards {
+	display:none;
+}
+
 #tofChat-jump>p {
 	position: fixed;
 	bottom: 30px;

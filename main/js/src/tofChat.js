@@ -5,7 +5,7 @@ com.hiyoko.tofclient = com.hiyoko.tofclient || {};
 /**
  * Chat Main Part
  */
-com.hiyoko.tofclient.Chat = function(tof, interval, options){
+com.hiyoko.tofclient.Chat = function(tof, interval, serverInfo, options){
 	//TODO ID の直接指定を減らしていく
 	var $html = options.html || $("#tofChat-chat");
 	var id = $html.attr('id');
@@ -180,19 +180,7 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 	}
 
 	tof.getServerInfo(function(serverInfo){
-		initializeDisplay(serverInfo);
-		buildChildComponents();
-		eventBinds(serverInfo);	
-		var name = nameSuiter(inputArea.getName());
-		if(! options.silent){
-			sendMsg({
-				name: 'ひよんとふ',
-				msg: '「' + name +'」がひよんとふからログインしました。',
-				color: '00AA00'
-			});
-		}
-		getMsg_();
-		tof.getLoginUserInfo(afterBeacon, nameSuiter(inputArea.getName()));
+
 	}, true);
 	
 	function onSendSecretEvent(e) {
@@ -296,6 +284,20 @@ com.hiyoko.tofclient.Chat = function(tof, interval, options){
 			}, 12500);
 		}
 	}
+	
+	initializeDisplay(serverInfo);
+	buildChildComponents();
+	eventBinds(serverInfo);	
+	var name = nameSuiter(inputArea.getName());
+	if(! options.silent){
+		sendMsg({
+			name: 'ひよんとふ',
+			msg: '「' + name +'」がひよんとふからログインしました。',
+			color: '00AA00'
+		});
+	}
+	getMsg_();
+	tof.getLoginUserInfo(afterBeacon, nameSuiter(inputArea.getName()));
 };
 
 com.hiyoko.tofclient.Chat.UpdateAllTime = true;
