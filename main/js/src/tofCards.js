@@ -178,13 +178,31 @@ com.hiyoko.tofclient.Map.Cards.Converter = function(_id, _url){
 			return com.hiyoko.tofclient.Map.Cards.CardRankerParser;
 		}
 		
+		if(type.startsWith('gunMetalBlaze')) {
+			return com.hiyoko.tofclient.Map.Cards.GunMetalBlazeParser;
+		}
+		
 		console.log('DefaultParser',type);
 		return com.hiyoko.tofclient.Map.Cards.DefaultParser; 
 	};
 };
 
+com.hiyoko.tofclient.Map.Cards.GunMetalBlazeParser = function(card, id) {
+	var $dom = $('<div class="' + id + '-display-card gunmetalblaze"></div>');
+	
+	if(card.isOpen) {
+		var text = card.imageName
+			.replace(/<br>/g, '###BR###')
+			.replace(/<[^>]*>/g, '').split('\t').join('<hr/>');
+		$dom.html(text.replace(/###BR###/g, '<br/>'));
+	} else {
+		$dom.text('非公開');
+	}
+	return $dom;
+};
+
 com.hiyoko.tofclient.Map.Cards.CardRankerParser = function(card, id, tof) {
-	var $dom = $('<div class="' + id + '-display-card insane"></div>');
+	var $dom = $('<div class="' + id + '-display-card cardranker"></div>');
 	if(card.isOpen) {
 		var name = card.imageName.split('\t');
 		$dom.append('<img height="246" width="150" src="'+com.hiyoko.tof.parseResourceUrl(name[0], tof)+'"/>');
@@ -197,7 +215,7 @@ com.hiyoko.tofclient.Map.Cards.CardRankerParser = function(card, id, tof) {
 };
 
 com.hiyoko.tofclient.Map.Cards.WhichQuestWitchTaroParser = function(card, id) {
-	var $dom = $('<div class="' + id + '-display-card insane"></div>');
+	var $dom = $('<div class="' + id + '-display-card whichquest"></div>');
 	if(card.isOpen) {
 		var text = (card.rotation ? '(逆)' + card.imageName.split('\t')[5] : '(正)' + card.imageName.split('\t')[4]);
 		$dom.html(text.replace(/\\n/g, '<br/><br/>'));
@@ -208,7 +226,7 @@ com.hiyoko.tofclient.Map.Cards.WhichQuestWitchTaroParser = function(card, id) {
 };
 
 com.hiyoko.tofclient.Map.Cards.WhichQuestStructureParser = function(card, id) {
-	var $dom = $('<div class="' + id + '-display-card insane"></div>');
+	var $dom = $('<div class="' + id + '-display-card whichquest"></div>');
 	if(card.isOpen) {
 		var text = card.imageName.split('\t')[4];
 		$dom.html(text.replace(/\\n/g, '<br/><br/>'));
@@ -235,7 +253,7 @@ com.hiyoko.tofclient.Map.Cards.InsaneParser =  function(card, id) {
 };
 
 com.hiyoko.tofclient.Map.Cards.AmadeusParser =  function(card, id) {
-	var $dom = $('<div class="' + id + '-display-card insane"></div>');
+	var $dom = $('<div class="' + id + '-display-card amadeus "></div>');
 	if(card.isOpen) {
 		var text = card.imageName.split('\t')[0]
 			.replace(/\s*/g, '')
