@@ -182,10 +182,27 @@ com.hiyoko.tofclient.Map.Cards.Converter = function(_id, _url){
 			return com.hiyoko.tofclient.Map.Cards.GunMetalBlazeParser;
 		}
 		
+		if(type === 'shanhaitaimakou') {
+			return com.hiyoko.tofclient.Map.Cards.ShanghaiTaimakouParser;
+		}
+		
 		console.log('DefaultParser',type);
 		return com.hiyoko.tofclient.Map.Cards.DefaultParser; 
 	};
 };
+
+com.hiyoko.tofclient.Map.Cards.ShanghaiTaimakouParser = function(card, id) {
+	var $dom = $('<div class="' + id + '-display-card shanghaitaimakou"></div>');
+	if(card.isOpen) {
+		var text = card.imageName
+			.replace(/<br>/g, '###BR###')
+			.replace(/<[^>]*>/g, '');
+		$dom.html(text.replace(/###BR###/g, '<br/>'));
+	} else {
+		$dom.text('非公開');
+	}
+	return $dom;
+}
 
 com.hiyoko.tofclient.Map.Cards.GunMetalBlazeParser = function(card, id) {
 	var $dom = $('<div class="' + id + '-display-card gunmetalblaze"></div>');
