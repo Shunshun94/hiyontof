@@ -118,7 +118,7 @@ function stringTimes(str, time){
  * @return {boolean}
  */
 function startsWith(str, prefix){
-	return (str.indexOf(prefix) === 0);
+	return str.startsWith(prefix);
 }
 
 /**
@@ -337,5 +337,12 @@ if (!Array.prototype.includes) {
       k++;
     }
     return false;
+  };
+}
+
+if (!String.prototype.startsWith) {
+    String.prototype.startsWith = function(searchString, position){
+      position = position || 0;
+      return this.substr(position, searchString.length) === searchString;
   };
 }

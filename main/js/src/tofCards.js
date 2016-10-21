@@ -74,21 +74,27 @@ com.hiyoko.tofclient.Map.Cards = function($html, cardsBaseInfo, tofUrl) {
 		
 		$.each(at, function(i, v){
 			var $cardTypeBase = $('<h3 class="' + id + '-display-card-title"></h3>');
-			$cardTypeBase.text(cardType[v] + '……捨' + cards[v].length + '枚');
-			$base.append($cardTypeBase);
-			
-			var tCards = groupArray(cards[v], function(v){
-				return v.ownerName;
-			});
-			
-			for(var key in tCards) {
-				var $owner = $('<h4 class="' + id + '-display-card-owner"></h4>');
-				$owner.text((key || '持ち主不明') + '……捨' + tCards[key].length + '枚');
-				$base.append($owner);
-				$.each(tCards[key], function(i, v){
-					$base.append(printCard(v));
+			try{
+				$cardTypeBase.text(cardType[v] + '……捨' + cards[v].length + '枚');
+				$base.append($cardTypeBase);
+				
+				var tCards = groupArray(cards[v], function(v){
+					return v.ownerName;
 				});
+				
+				for(var key in tCards) {
+					var $owner = $('<h4 class="' + id + '-display-card-owner"></h4>');
+					$owner.text((key || '持ち主不明') + '……捨' + tCards[key].length + '枚');
+					$base.append($owner);
+					$.each(tCards[key], function(i, v){
+						$base.append(printCard(v));
+					});
+				} 
+			} catch (e) {
+				$cardTypeBase.text(cardType[v] + '……捨0枚');
+				$base.append($cardTypeBase);
 			}
+
 		});
 		$trush.empty();
 		$trush.append($base);
@@ -143,19 +149,24 @@ com.hiyoko.tofclient.Map.Cards.Converter = function(_id, _url){
 	}
 	
 	this.cardToDom = function(card) {
-		return (this.selectParser(card))(card, id, _url);
+		return (this.selectParser(card))(card, id, url);
 	};
 	
 	this.selectParser = function(card) {
 		var type = card.mountName;
-		if(['insane'].includes(type)){
+		if(['insane'].includes(type)) {
 			return com.hiyoko.tofclient.Map.Cards.InsaneParser;
+		}
+		
+		if(type.startsWith('amadeus')) {
+			return com.hiyoko.tofclient.Map.Cards.AmadeusParser;
 		}
 		
 		if(['trump_swf', 'trump_swf\t1x1'].includes(type)) {
 			return com.hiyoko.tofclient.Map.Cards.TrumpParser;
 		}
 		
+		console.log('DefaultParser',type);
 		return com.hiyoko.tofclient.Map.Cards.DefaultParser;
 	};
 };
@@ -167,7 +178,23 @@ com.hiyoko.tofclient.Map.Cards.InsaneParser =  function(card, id) {
 			.replace(/\s*/g, '')
 			.replace(/<BR>/g, '###BR###')
 			.replace(/<i>Handout<\/i>/, 'Handout###BR###')
-			.replace(/FONT SIZE="42">([^<]*)<\/FONT>/, '$&###BR###')
+			.replace(/FONT SIZE="42">([^<]*)<\/FONT>/, '<strong>$&</strong>###BR###')
+			.replace(/<[^>]*>/g, '');
+		$dom.html(text.replace(/###BR###/g, '<br/>'));
+	} else {
+		$dom.text('非公開');
+	}
+	return $dom;
+};
+
+com.hiyoko.tofclient.Map.Cards.AmadeusParser =  function(card, id) {
+	var $dom = $('<div class="' + id + '-display-card insane"></div>');
+	if(card.isOpen) {
+		var text = card.imageName.split('\t')[0]
+			.replace(/\s*/g, '')
+			.replace(/<BR>/g, '###BR###')
+			.replace(/<i>脅威<\/i>/, '脅威###BR###')
+			.replace(/FONT SIZE="42">([^<]*)<\/FONT>/, '<strong>$&</strong>###BR###')
 			.replace(/<[^>]*>/g, '');
 		$dom.html(text.replace(/###BR###/g, '<br/>'));
 	} else {
