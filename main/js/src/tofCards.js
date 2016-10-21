@@ -162,13 +162,45 @@ com.hiyoko.tofclient.Map.Cards.Converter = function(_id, _url){
 			return com.hiyoko.tofclient.Map.Cards.AmadeusParser;
 		}
 		
-		if(['trump_swf', 'trump_swf\t1x1'].includes(type)) {
+		if(['trump_swf', 'trump_swf\t1x1', 'randomDungeonTrump'].includes(type)) {
 			return com.hiyoko.tofclient.Map.Cards.TrumpParser;
 		}
 		
+		if(type === 'witchQuestWitchTaro') {
+			return com.hiyoko.tofclient.Map.Cards.WhichQuestWitchTaroParser;
+		}
+		
+		if(type === 'witchQuestStructureCard') {
+			return com.hiyoko.tofclient.Map.Cards.WhichQuestStructureParser;
+		}
+		
 		console.log('DefaultParser',type);
-		return com.hiyoko.tofclient.Map.Cards.DefaultParser;
+		return com.hiyoko.tofclient.Map.Cards.DefaultParser; 
 	};
+};
+
+com.hiyoko.tofclient.Map.Cards.WhichQuestWitchTaroParser = function(card, id) {
+	var $dom = $('<div class="' + id + '-display-card insane"></div>');
+	console.log(card);
+	if(card.isOpen) {
+		var text = (card.rotation ? '(逆)' + card.imageName.split('\t')[5] : '(正)' + card.imageName.split('\t')[4]);
+		$dom.html(text.replace(/\\n/g, '<br/><br/>'));
+	} else {
+		$dom.text('非公開');
+	}
+	return $dom;	
+};
+
+com.hiyoko.tofclient.Map.Cards.WhichQuestStructureParser = function(card, id) {
+	var $dom = $('<div class="' + id + '-display-card insane"></div>');
+	console.log(card.imageName.split('\t'));
+	if(card.isOpen) {
+		var text = card.imageName.split('\t')[4];
+		$dom.html(text.replace(/\\n/g, '<br/><br/>'));
+	} else {
+		$dom.text('非公開');
+	}
+	return $dom;	
 };
 
 com.hiyoko.tofclient.Map.Cards.InsaneParser =  function(card, id) {
