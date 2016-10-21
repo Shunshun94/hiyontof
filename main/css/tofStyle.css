@@ -47,11 +47,18 @@ ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block ui-btn-up-f
 }
 
 .tofChat-map-cards-display-card {
-	width:150px;
+	max-width:150px;
 	display:inline-block;
 	border:solid 2px black;
 	border-radius: 5px;
 	padding:3px;
+}
+.trump {
+	font-size:200%;
+}
+
+.trump_red {
+	color: red;
 }
 
 #tofChat-jump>p {

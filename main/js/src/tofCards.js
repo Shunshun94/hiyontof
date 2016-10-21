@@ -148,11 +148,11 @@ com.hiyoko.tofclient.Map.Cards.Converter = function(_id, _url){
 	
 	this.selectParser = function(card) {
 		var type = card.mountName;
-		if(type === 'insane'){
+		if(['insane'].includes(type)){
 			return com.hiyoko.tofclient.Map.Cards.InsaneParser;
 		}
 		
-		if(type === 'trump_swf') {
+		if(['trump_swf', 'trump_swf\t1x1'].includes(type)) {
 			return com.hiyoko.tofclient.Map.Cards.TrumpParser;
 		}
 		
@@ -177,14 +177,23 @@ com.hiyoko.tofclient.Map.Cards.InsaneParser =  function(card, id) {
 };
 
 com.hiyoko.tofclient.Map.Cards.TrumpParser = function(card, id) {
-	var $dom = $('<div class="' + id + '-display-card trump_swf"></div>');
+	var $dom = $('<div class="' + id + '-display-card trump"></div>');
 	if(card.isOpen) {
-		$dom.text(card.imageName.split('\t')[1]);
+		var name = card.imageName.split('\t')[1].split('の');
+		$dom.html(com.hiyoko.tofclient.Map.Cards.TrumpParser.NAME[name[0]] + (name[1] || ''));
 	} else {
 		$dom.text('非公開');
 	}
 	return $dom;
 };
+
+com.hiyoko.tofclient.Map.Cards.TrumpParser.NAME = {
+		'ダイア': '<span class="trump_red">♦</span>',
+		'ハート': '<span class="trump_red">♥</span>',
+		'スペード': '♠',
+		'クラブ': '♣',
+		'ジョーカー': 'JOKER'
+}
 
 com.hiyoko.tofclient.Map.Cards.DefaultParser = function(card, id, url){
 	var $dom = $('<div class="' + id + '-display-card"></div>');
