@@ -174,14 +174,30 @@ com.hiyoko.tofclient.Map.Cards.Converter = function(_id, _url){
 			return com.hiyoko.tofclient.Map.Cards.WhichQuestStructureParser;
 		}
 		
+		if(type === 'cardRanker') {
+			return com.hiyoko.tofclient.Map.Cards.CardRankerParser;
+		}
+		
 		console.log('DefaultParser',type);
 		return com.hiyoko.tofclient.Map.Cards.DefaultParser; 
 	};
 };
 
+com.hiyoko.tofclient.Map.Cards.CardRankerParser = function(card, id, tof) {
+	var $dom = $('<div class="' + id + '-display-card insane"></div>');
+	if(card.isOpen) {
+		var name = card.imageName.split('\t');
+		$dom.append('<img height="246" width="150" src="'+com.hiyoko.tof.parseResourceUrl(name[0], tof)+'"/>');
+		$dom.append('<p>'+name[1]+'</p>');
+	} else {
+		$dom.append('<img height="246" width="150" src="'+com.hiyoko.tof.parseResourceUrl(card.imageNameBack, tof)+'"/>');
+		$dom.append('<p>非公開</p>');
+	}
+	return $dom;
+};
+
 com.hiyoko.tofclient.Map.Cards.WhichQuestWitchTaroParser = function(card, id) {
 	var $dom = $('<div class="' + id + '-display-card insane"></div>');
-	console.log(card);
 	if(card.isOpen) {
 		var text = (card.rotation ? '(逆)' + card.imageName.split('\t')[5] : '(正)' + card.imageName.split('\t')[4]);
 		$dom.html(text.replace(/\\n/g, '<br/><br/>'));
@@ -193,7 +209,6 @@ com.hiyoko.tofclient.Map.Cards.WhichQuestWitchTaroParser = function(card, id) {
 
 com.hiyoko.tofclient.Map.Cards.WhichQuestStructureParser = function(card, id) {
 	var $dom = $('<div class="' + id + '-display-card insane"></div>');
-	console.log(card.imageName.split('\t'));
 	if(card.isOpen) {
 		var text = card.imageName.split('\t')[4];
 		$dom.html(text.replace(/\\n/g, '<br/><br/>'));
