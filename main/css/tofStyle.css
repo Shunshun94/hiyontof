@@ -46,6 +46,14 @@ ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block ui-btn-up-f
 	display:none;
 }
 
+.tofChat-map-cards-display-card {
+	width:150px;
+	display:inline-block;
+	border:solid 2px black;
+	border-radius: 5px;
+	padding:3px;
+}
+
 #tofChat-jump>p {
 	position: fixed;
 	bottom: 30px;

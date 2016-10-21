@@ -20,7 +20,7 @@ com.hiyoko.tofclient.Map = function(tof, interval, serverInfo, options){
 	var $map = $('#' + id + '-map');
 
 	var map = new com.hiyoko.tofclient.Map.MapBack($disp);
-	var card = new com.hiyoko.tofclient.Map.Cards($cards, serverInfo.cardInfos);
+	var card = new com.hiyoko.tofclient.Map.Cards($cards, serverInfo.cardInfos, tof.getStatus().url);
 	com.hiyoko.tofclient.Map.tofUrl = tof.getStatus().url;
   
 	function isActive() {
@@ -77,7 +77,10 @@ com.hiyoko.tofclient.Map = function(tof, interval, serverInfo, options){
 		});
 		
 		$reset.click(function(e){
-			getMap(map.updateAll);
+			getMap(function(r){
+				map.updateAll(r);
+				card.update(r);
+			});
 		});
 		
 		if(interval){

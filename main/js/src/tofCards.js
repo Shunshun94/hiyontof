@@ -7,7 +7,7 @@ var com = com || {};
 com.hiyoko = com.hiyoko || {};
 com.hiyoko.tofclient = com.hiyoko.tofclient || {};
 com.hiyoko.tofclient.Map = com.hiyoko.tofclient.Map || {};
-com.hiyoko.tofclient.Map.Cards = function($html, cardsBaseInfo) {
+com.hiyoko.tofclient.Map.Cards = function($html, cardsBaseInfo, tofUrl) {
 	var id = $html.attr('id');
 	
 	var $disp = $('#' + id + '-display');
@@ -15,6 +15,8 @@ com.hiyoko.tofclient.Map.Cards = function($html, cardsBaseInfo) {
 	var $mount = $('#' + id + '-display-mount');
 	var $active = $('#' + id + '-display-active');
 	var $trush = $('#' + id + '-display-trush');
+	
+	var cardConverter = new com.hiyoko.tofclient.Map.Cards.Converter(id, tofUrl);
 	
 	var cardType = {};
 	$.each(cardsBaseInfo, function(i, v){
@@ -25,22 +27,53 @@ com.hiyoko.tofclient.Map.Cards = function($html, cardsBaseInfo) {
 		var activeTypes = getCardTypes(res);
 		
 		displayCardMount(res.roomInfo.cardMount, activeTypes);
-		console.log('手',extractCards(res.characters));
+		displayCardActive(res.characters, activeTypes);
 		displayCardTrush(res.roomInfo.cardTrushMount, activeTypes);
 	}
 	
 	function printCard(card) {
-		if(card.isOpen) {
-			return $('<p>└' + (card.name || card.imageName.split('\t')[1] || card.imageName) + '</p>');
-		} else {
-			return $('<p>└非公開</p>');
-		}
+		return cardConverter.cardToDom(card);
+	}
+	
+	function displayCardActive(cards, at) {
+		var $base = $('<div></div>');
+		
+		$base.append('<h2>手札</h2>');
+		
+		cards = extractCards(cards);
+		var mountNamedCards = groupArray(cards, function(c){return c.mountName;});
+		
+		
+		$.each(at, function(i, v){
+			var $cardTypeBase = $('<h3 class="' + id + '-display-card-title"></h3>');
+			$cardTypeBase.text(cardType[v] + '……手' + mountNamedCards[v].length + '枚');
+			$base.append($cardTypeBase);
+			
+			var tCards = groupArray(mountNamedCards[v], function(v){
+				return v.ownerName;
+			});
+			
+			for(var key in tCards) {
+				var $owner = $('<h4 class="' + id + '-display-card-owner"></h4>');
+				$owner.text((key || '持ち主不明') + '……手' + tCards[key].length + '枚');
+				$base.append($owner);
+				$.each(tCards[key], function(i, v){
+					$base.append(printCard(v));
+				});
+			}
+		});
+		
+		$active.empty();
+		$active.append($base);
 	}
 	
 	function displayCardTrush(cards, at) {
 		var $base = $('<div></div>');
+		
+		$base.append('<h2>捨札</h2>');
+		
 		$.each(at, function(i, v){
-			var $cardTypeBase = $('<p class="' + id + '-display-card-title"></p>');
+			var $cardTypeBase = $('<h3 class="' + id + '-display-card-title"></h3>');
 			$cardTypeBase.text(cardType[v] + '……捨' + cards[v].length + '枚');
 			$base.append($cardTypeBase);
 			
@@ -49,8 +82,8 @@ com.hiyoko.tofclient.Map.Cards = function($html, cardsBaseInfo) {
 			});
 			
 			for(var key in tCards) {
-				var $owner = $('<p class="' + id + '-display-card-owner"></p>');
-				$owner.text(key + '……捨' + tCards[key].length + '枚');
+				var $owner = $('<h4 class="' + id + '-display-card-owner"></h4>');
+				$owner.text((key || '持ち主不明') + '……捨' + tCards[key].length + '枚');
 				$base.append($owner);
 				$.each(tCards[key], function(i, v){
 					$base.append(printCard(v));
@@ -64,8 +97,10 @@ com.hiyoko.tofclient.Map.Cards = function($html, cardsBaseInfo) {
 	function displayCardMount(cards, at) {
 		var $base = $('<div></div>');
 		
+		$base.append('<h2>山札</h2>');
+		
 		$.each(at, function(i, v){
-			var $cardTypeBase = $('<p class="' + id + '-display-card-title"></p>');
+			var $cardTypeBase = $('<h3 class="' + id + '-display-card-title"></h3>');
 			$cardTypeBase.text(cardType[v] + '……残' + cards[v].length + '枚');
 			$base.append($cardTypeBase);
 		});
@@ -78,7 +113,7 @@ com.hiyoko.tofclient.Map.Cards = function($html, cardsBaseInfo) {
 		for(var key in res.roomInfo.cardMount) {
 			result.push(key);
 		}
-		return result;
+		return result.sort();
 	}
 	
 	function extractCards(cardsCand, opt_filters) {
@@ -97,3 +132,74 @@ com.hiyoko.tofclient.Map.Cards = function($html, cardsBaseInfo) {
 		}
 	}
 };
+
+com.hiyoko.tofclient.Map.Cards.Converter = function(_id, _url){
+	var self = this;
+	var id = _id;
+	var url = _url;
+	
+	this.ctd = function(card) {
+		return self.cardToDom(card);
+	}
+	
+	this.cardToDom = function(card) {
+		return (this.selectParser(card))(card, id, _url);
+	};
+	
+	this.selectParser = function(card) {
+		var type = card.mountName;
+		if(type === 'insane'){
+			return com.hiyoko.tofclient.Map.Cards.InsaneParser;
+		}
+		
+		if(type === 'trump_swf') {
+			return com.hiyoko.tofclient.Map.Cards.TrumpParser;
+		}
+		
+		return com.hiyoko.tofclient.Map.Cards.DefaultParser;
+	};
+};
+
+com.hiyoko.tofclient.Map.Cards.InsaneParser =  function(card, id) {
+	var $dom = $('<div class="' + id + '-display-card insane"></div>');
+	if(card.isOpen) {
+		var text = card.imageName.split('\t')[0]
+			.replace(/\s*/g, '')
+			.replace(/<BR>/g, '###BR###')
+			.replace(/<i>Handout<\/i>/, 'Handout###BR###')
+			.replace(/FONT SIZE="42">([^<]*)<\/FONT>/, '$&###BR###')
+			.replace(/<[^>]*>/g, '');
+		$dom.html(text.replace(/###BR###/g, '<br/>'));
+	} else {
+		$dom.text('非公開');
+	}
+	return $dom;
+};
+
+com.hiyoko.tofclient.Map.Cards.TrumpParser = function(card, id) {
+	var $dom = $('<div class="' + id + '-display-card trump_swf"></div>');
+	if(card.isOpen) {
+		$dom.text(card.imageName.split('\t')[1]);
+	} else {
+		$dom.text('非公開');
+	}
+	return $dom;
+};
+
+com.hiyoko.tofclient.Map.Cards.DefaultParser = function(card, id, url){
+	var $dom = $('<div class="' + id + '-display-card"></div>');
+	var $img = $('<img />');
+	var $title = $('<p></p>');
+	if(card.isOpen) {
+		$img.attr('src', com.hiyoko.tof.parseResourceUrl(card.imageName, url));
+		$title.text(card.name || card.imageName.split('\t')[1] || card.imageName);
+	} else {
+		$img.attr('src', com.hiyoko.tof.parseResourceUrl(card.imageNameBack, url));
+		$title.text('非公開');
+	}
+	
+	$dom.append($img);
+	$dom.append($title);
+	return $dom;
+};
+
