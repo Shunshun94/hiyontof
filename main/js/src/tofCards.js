@@ -159,13 +159,6 @@ com.hiyoko.tofclient.Map.Cards.Converter = function(_id, _url){
 	
 	this.selectParser = function(card) {
 		var type = card.mountName;
-		if(['insane'].includes(type)) {
-			return com.hiyoko.tofclient.Map.Cards.InsaneParser;
-		}
-		
-		if(type.startsWith('amadeus')) {
-			return com.hiyoko.tofclient.Map.Cards.AmadeusParser;
-		}
 		
 		if(['trump_swf', 'trump_swf\t1x1', 'randomDungeonTrump'].includes(type)) {
 			return com.hiyoko.tofclient.Map.Cards.TrumpParser;
@@ -191,28 +184,12 @@ com.hiyoko.tofclient.Map.Cards.Converter = function(_id, _url){
 			return com.hiyoko.tofclient.Map.Cards.GunMetalBlazeParser;
 		}
 		
-		if(type === 'shanhaitaimakou') {
-			return com.hiyoko.tofclient.Map.Cards.ShanghaiTaimakouParser;
-		}
-		
-		if(type.startsWith('shinnen')) {
-			return com.hiyoko.tofclient.Map.Cards.ShinnenParser;
-		}
-		
 		if(type.startsWith('torg')) {
 			return com.hiyoko.tofclient.Map.Cards.TorgParser;
 		}
 		
-		if(type.startsWith('nova')) {
-			return com.hiyoko.tofclient.Map.Cards.NovaParser;
-		}
-		
-		if(type.startsWith('chien_')) {
-			return com.hiyoko.tofclient.Map.Cards.RoadsToLordLandRelation;
-		}
-		
-		if(type.startsWith('reien_')) {
-			return com.hiyoko.tofclient.Map.Cards.RoadsToLordSpritRelation;
+		if(type === 'actCard2') {
+			return com.hiyoko.tofclient.Map.Cards.MasqueradeStyleActParser;
 		}
 		
 		console.log('DefaultParser',type);
@@ -224,7 +201,7 @@ com.hiyoko.tofclient.Map.Cards.SimpleHtmlParser = function(card, id) {
 	var $dom = $('<div class="' + id + '-display-card ' + card.mountName + '"></div>');
 	if(card.isOpen) {
 		var text = card.imageName
-			.replace(/<br>/g, '###BR###')
+			.replace(/<br>/gi, '###BR###')
 			.replace(/<[^>]*>/g, '');
 		$dom.html(text.replace(/###BR###/g, '<br/>'));
 	} else {
@@ -233,12 +210,37 @@ com.hiyoko.tofclient.Map.Cards.SimpleHtmlParser = function(card, id) {
 	return $dom;
 };
 
-com.hiyoko.tofclient.Map.Cards.RoadsToLordSpritRelation = function(card, id) {
-	return com.hiyoko.tofclient.Map.Cards.SimpleHtmlParser(card, id);
+com.hiyoko.tofclient.Map.Cards.SimpleRotationHtmlParser = function(card, id) {
+	var $dom = $('<div class="' + id + '-display-card ' + card.mountName + '"></div>');
+	if(card.isOpen) {
+		var text = (card.rotation ? '(逆)' : '(正)' ) + card.imageName.split('\t')[0]
+			.replace(/<br>/gi, '###BR###')
+			.replace(/<[^>]*>/g, '');
+		$dom.html(text.replace(/###BR###/g, '<br/>'));
+	} else {
+		$dom.text('非公開');
+	}
+	return $dom;
 };
 
-com.hiyoko.tofclient.Map.Cards.RoadsToLordLandRelation = function(card, id) {
-	return com.hiyoko.tofclient.Map.Cards.SimpleHtmlParser(card, id);
+com.hiyoko.tofclient.Map.Cards.DefaultParser = function(card, id, url){
+	console.log(card);
+	if(card.isUpDown) {
+		return com.hiyoko.tofclient.Map.Cards.SimpleRotationHtmlParser(card, id, url);
+	} else {
+		return com.hiyoko.tofclient.Map.Cards.SimpleHtmlParser(card, id, url);
+	}
+};
+
+com.hiyoko.tofclient.Map.Cards.MasqueradeStyleActParser = function(card, id, tof) {
+	var $dom = $('<div class="' + id + '-display-card masqueradestyle"></div>');
+	if(card.isOpen) {
+		var name = card.imageName;
+		$dom.append('<img height="227" width="150" src="'+com.hiyoko.tof.parseResourceUrl(name, tof)+'"/>');
+	} else {
+		$dom.append('<img height="227" width="150" src="'+com.hiyoko.tof.parseResourceUrl(card.imageNameBack, tof)+'"/>');
+	}
+	return $dom;
 };
 
 com.hiyoko.tofclient.Map.Cards.HanafudaParser = function(card, id, tof) {
@@ -272,19 +274,6 @@ com.hiyoko.tofclient.Map.Cards.HanafudaParser.NAME = [[],
 ['柳', '小野道風', '燕', '短冊'],
 ['桐', '鳳凰']];
 
-com.hiyoko.tofclient.Map.Cards.NovaParser = function(card, id) {
-	var $dom = $('<div class="' + id + '-display-card nova"></div>');
-	if(card.isOpen) {
-		var text = (card.rotation ? '(逆)' : '(正)' ) + card.imageName.split('\t')[0]
-			.replace(/<br>/g, '###BR###')
-			.replace(/<[^>]*>/g, '');
-		$dom.html(text.replace(/###BR###/g, '<br/>'));
-	} else {
-		$dom.text('非公開');
-	}
-	return $dom;
-};
-
 com.hiyoko.tofclient.Map.Cards.TorgParser = function(card, id) {
 	var $dom = $('<div class="' + id + '-display-card torg"></div>');
 	if(card.isOpen) {
@@ -297,14 +286,6 @@ com.hiyoko.tofclient.Map.Cards.TorgParser = function(card, id) {
 		$dom.text('非公開');
 	}
 	return $dom;
-};
-
-com.hiyoko.tofclient.Map.Cards.ShinnenParser = function(card, id) {
-	return com.hiyoko.tofclient.Map.Cards.SimpleHtmlParser(card, id);
-};
-
-com.hiyoko.tofclient.Map.Cards.ShanghaiTaimakouParser = function(card, id) {
-	return com.hiyoko.tofclient.Map.Cards.SimpleHtmlParser(card, id);
 };
 
 com.hiyoko.tofclient.Map.Cards.GunMetalBlazeParser = function(card, id) {
@@ -356,38 +337,6 @@ com.hiyoko.tofclient.Map.Cards.WhichQuestStructureParser = function(card, id) {
 	return $dom;	
 };
 
-com.hiyoko.tofclient.Map.Cards.InsaneParser =  function(card, id) {
-	var $dom = $('<div class="' + id + '-display-card insane"></div>');
-	if(card.isOpen) {
-		var text = card.imageName.split('\t')[0]
-			.replace(/\s*/g, '')
-			.replace(/<BR>/g, '###BR###')
-			.replace(/<i>Handout<\/i>/, 'Handout###BR###')
-			.replace(/FONT SIZE="42">([^<]*)<\/FONT>/, '<strong>$&</strong>###BR###')
-			.replace(/<[^>]*>/g, '');
-		$dom.html(text.replace(/###BR###/g, '<br/>'));
-	} else {
-		$dom.text('非公開');
-	}
-	return $dom;
-};
-
-com.hiyoko.tofclient.Map.Cards.AmadeusParser =  function(card, id) {
-	var $dom = $('<div class="' + id + '-display-card amadeus "></div>');
-	if(card.isOpen) {
-		var text = card.imageName.split('\t')[0]
-			.replace(/\s*/g, '')
-			.replace(/<BR>/g, '###BR###')
-			.replace(/<i>脅威<\/i>/, '脅威###BR###')
-			.replace(/FONT SIZE="42">([^<]*)<\/FONT>/, '<strong>$&</strong>###BR###')
-			.replace(/<[^>]*>/g, '');
-		$dom.html(text.replace(/###BR###/g, '<br/>'));
-	} else {
-		$dom.text('非公開');
-	}
-	return $dom;
-};
-
 com.hiyoko.tofclient.Map.Cards.TrumpParser = function(card, id) {
 	var $dom = $('<div class="' + id + '-display-card trump"></div>');
 	if(card.isOpen) {
@@ -406,24 +355,3 @@ com.hiyoko.tofclient.Map.Cards.TrumpParser.NAME = {
 		'クラブ': '♣',
 		'ジョーカー': 'JOKER'
 }
-
-com.hiyoko.tofclient.Map.Cards.DefaultParser = function(card, id, url){
-	console.log(card);
-	console.log(card.imageName.split('\t'))
-	
-	var $dom = $('<div class="' + id + '-display-card"></div>');
-	var $img = $('<img />');
-	var $title = $('<p></p>');
-	if(card.isOpen) {
-		$img.attr('src', com.hiyoko.tof.parseResourceUrl(card.imageName, url));
-		$title.text(card.name || card.imageName.split('\t')[1] || card.imageName);
-	} else {
-		$img.attr('src', com.hiyoko.tof.parseResourceUrl(card.imageNameBack, url));
-		$title.text('非公開');
-	}
-	
-	$dom.append($img);
-	$dom.append($title);
-	return $dom;
-};
-
