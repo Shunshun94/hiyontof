@@ -128,9 +128,11 @@ com.hiyoko.tofclient.Map.MapBack = function($base) {
 	this.update = function(info) {
 		drawMapMasks(info.characters);
 		drawMapMakers(info.characters);
+		drawCards(info.characters);
 		drawCharacters(info.characters);
 		drawDiceSymbols(info.characters);
 		drawChits(info.characters);
+		
 		$base.trigger(new $.Event('updateEvent'));
 	};
 	
@@ -184,6 +186,16 @@ com.hiyoko.tofclient.Map.MapBack = function($base) {
 			if(chit.type === "chit"){
 				var newChit = new com.hiyoko.tofclient.Map.Chit(chit, boxSize, id);
 				$base.append(newChit.$elem);
+			}
+		});
+	}
+	
+	function drawCards(cData) {
+		$('.' + id + '-card').remove();
+		$.each(cData, function(ind, card){
+			if(card.type === "Card"){
+				var newCard = new com.hiyoko.tofclient.Map.Card(card, boxSize, id);
+				$base.append(newCard.$elem);
 			}
 		});
 	}
@@ -347,6 +359,60 @@ com.hiyoko.tofclient.Map.FloorTile = function(tile, size, parentId) {
 	};
 	rend();	
 };
+
+com.hiyoko.tofclient.Map.Card = function(card, size, parentId) {
+	this.$elem = $("<div class='" + parentId + "-card'></div>");
+	var self = this;
+	var parseUrl = com.hiyoko.tof.parseResourceUrl;
+	
+	var position = {
+			x: Math.floor(card.x/50),
+			y: Math.floor(card.y/50)
+	};
+	
+	function rend() {
+		self.$elem.css({
+			"position": "absolute",
+			"width": (2 * (size) - 8) + "px",
+			"height": (3 * (size) - 8) + "px",
+			"top": (1 + position.y * (size)) + "px",
+			"left": (1 + position.x * (size)) + "px",
+			"border": "3px solid black",
+			"border-radius": "6px",
+			"opacity": "0.8",
+			"background-color": "white"
+		});
+		
+		var name = card.imageName.split('\t')[0];
+		
+		if(card.isText){
+			if(card.isOpen) {
+				if(card.isUpDown) {
+					self.$elem.text((Boolean(card.rotation) ? '(逆)' : '(正)') + name.replace(/<br>/gi, '').replace(/<[^>]*>/g, ''));
+				} else {
+					var execResult = /FONT SIZE="42">([^<]*)<\/FONT>/.exec(name);
+					if(execResult) {
+						self.$elem.text(execResult[1]);
+					} else {
+						self.$elem.html(name.replace(/<br>/gi, '###BR###').replace(/■■■■/g, '■■').replace(/<[^>]*>/g, '').replace(/###BR###/g, '<br/>'));
+					}
+				}
+			} else {
+				self.$elem.text(非公開);
+			}
+		} else {
+			if(card.isOpen){
+				self.$elem.css("background-image",
+					"url('" + parseUrl(name, com.hiyoko.tofclient.Map.tofUrl) + "')");
+			} else {
+				self.$elem.css("background-image",
+					"url('" + parseUrl(card.imageNameBack, com.hiyoko.tofclient.Map.tofUrl) + "')");
+			}
+		}
+		
+	};
+	rend();
+}
 
 com.hiyoko.tofclient.Map.Character = function(char, boxsize, parentId) {
 	this.$elem = $("<div class='" + parentId + "-char'></div>");

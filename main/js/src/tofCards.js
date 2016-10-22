@@ -191,8 +191,7 @@ com.hiyoko.tofclient.Map.Cards.Converter = function(_id, _url){
 		if(type === 'actCard2') {
 			return com.hiyoko.tofclient.Map.Cards.MasqueradeStyleActParser;
 		}
-		
-		console.log('DefaultParser',type);
+
 		return com.hiyoko.tofclient.Map.Cards.DefaultParser; 
 	};
 };
@@ -235,8 +234,6 @@ com.hiyoko.tofclient.Map.Cards.SimpleRotationHtmlParser = function(card, id) {
 };
 
 com.hiyoko.tofclient.Map.Cards.DefaultParser = function(card, id, url){
-	console.log(card);
-	console.log(card.imageName.split('\t'));
 	if(card.isText){
 		if(card.isUpDown) {
 			return com.hiyoko.tofclient.Map.Cards.SimpleRotationHtmlParser(card, id, url);

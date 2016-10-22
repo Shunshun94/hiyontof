@@ -360,6 +360,11 @@ span.tofChat-chat-submenu-list-item {
 	position:absolute;
 }
 
+.tofChat-map-display-card {
+	background-size:contain;
+	background-repeat:no-repeat;
+}
+
 .tofChat-map-display-char-pop {
 	border:1px yellow solid;
 	background-color:yellow;
