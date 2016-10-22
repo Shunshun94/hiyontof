@@ -197,10 +197,21 @@ com.hiyoko.tofclient.Map.Cards.Converter = function(_id, _url){
 	};
 };
 
+com.hiyoko.tofclient.Map.Cards.SimplePictParser = function(card, id, tof) {
+	var $dom = $('<div class="' + id + '-display-card ' + card.mountName + '"></div>');
+	if(card.isOpen) {
+		var name = card.imageName.split('\t');
+		$dom.append('<img height="227" width="150" src="'+com.hiyoko.tof.parseResourceUrl(name[0], tof)+'"/>');
+	} else {
+		$dom.append('<img height="227" width="150" src="'+com.hiyoko.tof.parseResourceUrl(card.imageNameBack, tof)+'"/>');
+	}
+	return $dom;
+};
+
 com.hiyoko.tofclient.Map.Cards.SimpleHtmlParser = function(card, id) {
 	var $dom = $('<div class="' + id + '-display-card ' + card.mountName + '"></div>');
 	if(card.isOpen) {
-		var text = card.imageName
+		var text = card.imageName.split('\t').join('###BR######BR###')
 			.replace(/<br>/gi, '###BR###')
 			.replace(/<[^>]*>/g, '');
 		$dom.html(text.replace(/###BR###/g, '<br/>'));
@@ -225,14 +236,20 @@ com.hiyoko.tofclient.Map.Cards.SimpleRotationHtmlParser = function(card, id) {
 
 com.hiyoko.tofclient.Map.Cards.DefaultParser = function(card, id, url){
 	console.log(card);
-	if(card.isUpDown) {
-		return com.hiyoko.tofclient.Map.Cards.SimpleRotationHtmlParser(card, id, url);
+	console.log(card.imageName.split('\t'));
+	if(card.isText){
+		if(card.isUpDown) {
+			return com.hiyoko.tofclient.Map.Cards.SimpleRotationHtmlParser(card, id, url);
+		} else {
+			return com.hiyoko.tofclient.Map.Cards.SimpleHtmlParser(card, id, url);
+		}
 	} else {
-		return com.hiyoko.tofclient.Map.Cards.SimpleHtmlParser(card, id, url);
+		return com.hiyoko.tofclient.Map.Cards.SimplePictParser(card, id, url);
 	}
 };
 
 com.hiyoko.tofclient.Map.Cards.MasqueradeStyleActParser = function(card, id, tof) {
+	// クラス名の自動取得がうまくいかないので独自パーサ
 	var $dom = $('<div class="' + id + '-display-card masqueradestyle"></div>');
 	if(card.isOpen) {
 		var name = card.imageName;
