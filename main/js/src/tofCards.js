@@ -178,6 +178,10 @@ com.hiyoko.tofclient.Map.Cards.Converter = function(_id, _url){
 			return com.hiyoko.tofclient.Map.Cards.CardRankerParser;
 		}
 		
+		if(type.startsWith('hanafuda')) {
+			return com.hiyoko.tofclient.Map.Cards.HanafudaParser;
+		}
+		
 		if(type.startsWith('gunMetalBlaze')) {
 			return com.hiyoko.tofclient.Map.Cards.GunMetalBlazeParser;
 		}
@@ -186,13 +190,25 @@ com.hiyoko.tofclient.Map.Cards.Converter = function(_id, _url){
 			return com.hiyoko.tofclient.Map.Cards.ShanghaiTaimakouParser;
 		}
 		
+		if(type.startsWith('shinnen')) {
+			return com.hiyoko.tofclient.Map.Cards.ShinnenParser;
+		}
+		
+		if(type.startsWith('torg')) {
+			return com.hiyoko.tofclient.Map.Cards.TorgParser;
+		}
+		
+		if(type.startsWith('nova')) {
+			return com.hiyoko.tofclient.Map.Cards.NovaParser;
+		}
+		
 		console.log('DefaultParser',type);
 		return com.hiyoko.tofclient.Map.Cards.DefaultParser; 
 	};
 };
 
-com.hiyoko.tofclient.Map.Cards.ShanghaiTaimakouParser = function(card, id) {
-	var $dom = $('<div class="' + id + '-display-card shanghaitaimakou"></div>');
+com.hiyoko.tofclient.Map.Cards.SimpleHtmlParser = function(card, id) {
+	var $dom = $('<div class="' + id + '-display-card ' + card.mountName + '"></div>');
 	if(card.isOpen) {
 		var text = card.imageName
 			.replace(/<br>/g, '###BR###')
@@ -202,7 +218,73 @@ com.hiyoko.tofclient.Map.Cards.ShanghaiTaimakouParser = function(card, id) {
 		$dom.text('非公開');
 	}
 	return $dom;
-}
+};
+
+com.hiyoko.tofclient.Map.Cards.HanafudaParser = function(card, id, tof) {
+	var $dom = $('<div class="' + id + '-display-card cardranker"></div>');
+	if(card.isOpen) {
+		var name = card.imageName;
+		$dom.append('<img height="225" width="150" src="'+com.hiyoko.tof.parseResourceUrl(name, tof)+'"/>');
+		var execResult = /(\d\d)(\d\d)/.exec(name);
+		
+		$dom.append('<p>'+
+				com.hiyoko.tofclient.Map.Cards.HanafudaParser.NAME[[Number(execResult[1])]][0] + 'の' +
+				(com.hiyoko.tofclient.Map.Cards.HanafudaParser.NAME[[Number(execResult[1])]][Number(execResult[2])] || 'カス') + '</p>');
+	} else {
+		$dom.append('<img height="225" width="150" src="'+com.hiyoko.tof.parseResourceUrl(card.imageNameBack, tof)+'"/>');
+		$dom.append('<p>非公開</p>');
+	}
+	return $dom;
+};
+
+com.hiyoko.tofclient.Map.Cards.HanafudaParser.NAME = [[],
+['松', '鶴', '赤短'],
+['梅', '鶯', '赤短'],
+['桜', '幕', '赤短'],
+['藤', '不如帰', '短冊'],
+['菖蒲', '八橋', '短冊'],
+['牡丹', '蝶', '青短'],
+['萩', '猪', '短冊'],
+['芒', '月', '雁'],
+['菊', '盃', '青短'],
+['紅葉', '鹿', '青短'],
+['柳', '小野道風', '燕', '短冊'],
+['桐', '鳳凰']];
+
+com.hiyoko.tofclient.Map.Cards.NovaParser = function(card, id) {
+	var $dom = $('<div class="' + id + '-display-card nova"></div>');
+	if(card.isOpen) {
+		var text = (card.rotation ? '(逆)' : '(正)' ) + card.imageName.split('\t')[0]
+			.replace(/<br>/g, '###BR###')
+			.replace(/<[^>]*>/g, '');
+		$dom.html(text.replace(/###BR###/g, '<br/>'));
+	} else {
+		$dom.text('非公開');
+	}
+	return $dom;
+};
+
+com.hiyoko.tofclient.Map.Cards.TorgParser = function(card, id) {
+	var $dom = $('<div class="' + id + '-display-card torg"></div>');
+	if(card.isOpen) {
+		var text = card.imageName
+			.replace(/<br>/g, '###BR###')
+			.replace(/■■■■/g, '■■')
+			.replace(/<[^>]*>/g, '');
+		$dom.html(text.replace(/###BR###/g, '<br/>'));
+	} else {
+		$dom.text('非公開');
+	}
+	return $dom;
+};
+
+com.hiyoko.tofclient.Map.Cards.ShinnenParser = function(card, id) {
+	return com.hiyoko.tofclient.Map.Cards.SimpleHtmlParser(card, id);
+};
+
+com.hiyoko.tofclient.Map.Cards.ShanghaiTaimakouParser = function(card, id) {
+	return com.hiyoko.tofclient.Map.Cards.SimpleHtmlParser(card, id);
+};
 
 com.hiyoko.tofclient.Map.Cards.GunMetalBlazeParser = function(card, id) {
 	var $dom = $('<div class="' + id + '-display-card gunmetalblaze"></div>');
@@ -305,6 +387,9 @@ com.hiyoko.tofclient.Map.Cards.TrumpParser.NAME = {
 }
 
 com.hiyoko.tofclient.Map.Cards.DefaultParser = function(card, id, url){
+	console.log(card);
+	console.log(card.imageName.split('\t'))
+	
 	var $dom = $('<div class="' + id + '-display-card"></div>');
 	var $img = $('<img />');
 	var $title = $('<p></p>');
