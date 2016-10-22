@@ -46,20 +46,25 @@ com.hiyoko.tofclient.Map.Cards = function($html, cardsBaseInfo, tofUrl) {
 		
 		$.each(at, function(i, v){
 			var $cardTypeBase = $('<h3 class="' + id + '-display-card-title"></h3>');
-			$cardTypeBase.text(cardType[v] + '……手' + mountNamedCards[v].length + '枚');
-			$base.append($cardTypeBase);
-			
-			var tCards = groupArray(mountNamedCards[v], function(v){
-				return v.ownerName;
-			});
-			
-			for(var key in tCards) {
-				var $owner = $('<h4 class="' + id + '-display-card-owner"></h4>');
-				$owner.text((key || '持ち主不明') + '……手' + tCards[key].length + '枚');
-				$base.append($owner);
-				$.each(tCards[key], function(i, v){
-					$base.append(printCard(v));
+			try{
+				$cardTypeBase.text(cardType[v] + '……手' + mountNamedCards[v].length + '枚');
+				$base.append($cardTypeBase);
+				
+				var tCards = groupArray(mountNamedCards[v], function(v){
+					return v.ownerName;
 				});
+				
+				for(var key in tCards) {
+					var $owner = $('<h4 class="' + id + '-display-card-owner"></h4>');
+					$owner.text((key || '持ち主不明') + '……手' + tCards[key].length + '枚');
+					$base.append($owner);
+					$.each(tCards[key], function(i, v){
+						$base.append(printCard(v));
+					});
+				}
+			} catch (e) {
+				$cardTypeBase.text(cardType[v] + '……手0枚');
+				$base.append($cardTypeBase);
 			}
 		});
 		
@@ -202,6 +207,14 @@ com.hiyoko.tofclient.Map.Cards.Converter = function(_id, _url){
 			return com.hiyoko.tofclient.Map.Cards.NovaParser;
 		}
 		
+		if(type.startsWith('chien_')) {
+			return com.hiyoko.tofclient.Map.Cards.RoadsToLordLandRelation;
+		}
+		
+		if(type.startsWith('reien_')) {
+			return com.hiyoko.tofclient.Map.Cards.RoadsToLordSpritRelation;
+		}
+		
 		console.log('DefaultParser',type);
 		return com.hiyoko.tofclient.Map.Cards.DefaultParser; 
 	};
@@ -218,6 +231,14 @@ com.hiyoko.tofclient.Map.Cards.SimpleHtmlParser = function(card, id) {
 		$dom.text('非公開');
 	}
 	return $dom;
+};
+
+com.hiyoko.tofclient.Map.Cards.RoadsToLordSpritRelation = function(card, id) {
+	return com.hiyoko.tofclient.Map.Cards.SimpleHtmlParser(card, id);
+};
+
+com.hiyoko.tofclient.Map.Cards.RoadsToLordLandRelation = function(card, id) {
+	return com.hiyoko.tofclient.Map.Cards.SimpleHtmlParser(card, id);
 };
 
 com.hiyoko.tofclient.Map.Cards.HanafudaParser = function(card, id, tof) {
