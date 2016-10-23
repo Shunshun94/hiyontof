@@ -18,7 +18,11 @@ com.hiyoko.tofclient.Map.Cards = function($html, cardsBaseInfo, tofUrl) {
 	
 	var cardConverter = new com.hiyoko.tofclient.Map.Cards.Converter(id, tofUrl);
 	
-	var cardType = {};
+	var cardType = {
+			// 何故か Card.mountName が cardBaseInfo にないものがあるのでその対策で初期値を入れておく
+			'trump': 'トランプ',
+			'trump	1x1': 'トランプ'
+	};
 	$.each(cardsBaseInfo, function(i, v){
 		cardType[v.type] = v.title;
 	});
@@ -160,7 +164,7 @@ com.hiyoko.tofclient.Map.Cards.Converter = function(_id, _url){
 	this.selectParser = function(card) {
 		var type = card.mountName;
 		
-		if(['trump_swf', 'trump_swf\t1x1', 'randomDungeonTrump'].includes(type)) {
+		if(type.startsWith('trump') || type === 'randomDungeonTrump') {
 			return com.hiyoko.tofclient.Map.Cards.TrumpParser;
 		}
 		

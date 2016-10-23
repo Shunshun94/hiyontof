@@ -68,6 +68,15 @@ com.hiyoko.tofclient.Map = function(tof, interval, serverInfo, options){
 			$update.text('Map Last Update： ' + now.getHours() + '：' + now.getMinutes() + '：' + now.getSeconds());
 		});
 		
+		$disp.click(function(e){
+			alert('disp clicked');
+			var $dom = $(e.target);
+			console.log($dom.attr('class'));
+			if($dom.hasClass(id + "-display-card") && $dom.text()) {
+				alert($dom.text());
+			}
+		});
+		
 		$switchChar.click(function(e){
 			map.toggleName();
 		});
@@ -370,45 +379,63 @@ com.hiyoko.tofclient.Map.Card = function(card, size, parentId) {
 			y: Math.floor(card.y/50)
 	};
 	
+	var isNormalSize = Boolean(card.mountName.indexOf('1x1') === -1);
+	
+	var cardSize = isNormalSize ? {
+		w:2,h:3
+	} : {
+		w:1,h:1
+	};
+	
 	function rend() {
 		self.$elem.css({
 			"position": "absolute",
-			"width": (2 * (size) - 8) + "px",
-			"height": (3 * (size) - 8) + "px",
+			"width": (cardSize.w * (size) - 4) + "px",
+			"height": (cardSize.h * (size) - 4) + "px",
 			"top": (1 + position.y * (size)) + "px",
 			"left": (1 + position.x * (size)) + "px",
-			"border": "3px solid black",
-			"border-radius": "6px",
+			"border": "1px solid black",
+			"border-radius": "2px",
 			"opacity": "0.8",
 			"background-color": "white"
 		});
-		
+		var $name = $("<div class='" + parentId + "-object-name " + parentId + "-card' style='height:"+(cardSize.h * (size) - 4)+"px'></div>");
 		var name = card.imageName.split('\t')[0];
 		
 		if(card.isText){
 			if(card.isOpen) {
 				if(card.isUpDown) {
-					self.$elem.text((Boolean(card.rotation) ? '(逆)' : '(正)') + name.replace(/<br>/gi, '').replace(/<[^>]*>/g, ''));
+					$name.html((Boolean(card.rotation) ? '(逆)' : '(正)') + name.replace(/<br>/gi, '').replace(/<[^>]*>/g, ''));
 				} else {
 					var execResult = /FONT SIZE="42">([^<]*)<\/FONT>/.exec(name);
 					if(execResult) {
-						self.$elem.text(execResult[1]);
+						$name.text(execResult[1]);
 					} else {
-						self.$elem.html(name.replace(/<br>/gi, '###BR###').replace(/■■■■/g, '■■').replace(/<[^>]*>/g, '').replace(/###BR###/g, '<br/>'));
+						$name.html(name.replace(/<br>/gi, '###BR###').replace(/■■■■/g, '■■').replace(/<[^>]*>/g, '').replace(/###BR###/g, '<br/>'));
 					}
 				}
 			} else {
-				self.$elem.text(非公開);
+				$name.text('非公開');
 			}
 		} else {
-			if(card.isOpen){
-				self.$elem.css("background-image",
-					"url('" + parseUrl(name, com.hiyoko.tofclient.Map.tofUrl) + "')");
+			if(card.mountName.startsWith('trump') || card.mountName === 'randomDungeonTrump') {
+				if(card.isOpen){
+					$name.text(card.imageName.split('\t')[1]);
+				} else {
+					$name.text('非公開');
+				}
 			} else {
-				self.$elem.css("background-image",
-					"url('" + parseUrl(card.imageNameBack, com.hiyoko.tofclient.Map.tofUrl) + "')");
+				$name = '';
+				if(card.isOpen){
+					self.$elem.css("background-image",
+						"url('" + parseUrl(name, com.hiyoko.tofclient.Map.tofUrl) + "')");
+				} else {
+					self.$elem.css("background-image",
+						"url('" + parseUrl(card.imageNameBack, com.hiyoko.tofclient.Map.tofUrl) + "')");
+				}
 			}
 		}
+		self.$elem.append($name);
 		
 	};
 	rend();
