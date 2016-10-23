@@ -42,6 +42,25 @@ ui-btn ui-shadow ui-btn-corner-all ui-fullsize ui-btn-block ui-btn-up-f
 	padding-top: 42px;
 }
 
+#tofChat-map-cards {
+	display:none;
+}
+
+.tofChat-map-cards-display-card {
+	max-width:150px;
+	display:inline-block;
+	border:solid 2px black;
+	border-radius: 5px;
+	padding:3px;
+}
+.trump {
+	font-size:200%;
+}
+
+.trump_red {
+	color: red;
+}
+
 #tofChat-jump>p {
 	position: fixed;
 	bottom: 30px;
@@ -341,6 +360,15 @@ span.tofChat-chat-submenu-list-item {
 	position:absolute;
 }
 
+.tofChat-map-display-card {
+	background-size:contain;
+	background-repeat:no-repeat;
+	border:1px outset black;
+	border-radius:2px;
+	opacity: 0.8;
+	background-color:white;
+}
+
 .tofChat-map-display-char-pop {
 	border:1px yellow solid;
 	background-color:yellow;
@@ -370,6 +398,12 @@ span.tofChat-chat-submenu-list-item {
 .tofChat-map-display-object-name {
 	display:none;
 	background-color: white;
+	font-size: 60%;
+	opacity: 0.7;
+	overflow:hidden;
+}
+
+.tofChat-map-display-object-name-card {
 	font-size: 60%;
 	opacity: 0.7;
 	overflow:hidden;

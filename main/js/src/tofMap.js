@@ -1,7 +1,7 @@
 var com = com || {};
 com.hiyoko = com.hiyoko || {};
 com.hiyoko.tofclient = com.hiyoko.tofclient || {};
-com.hiyoko.tofclient.Map = function(tof, interval, options){
+com.hiyoko.tofclient.Map = function(tof, interval, serverInfo, options){
 	var isDrag = options.isDraggable ? true : false;
 	var debugMode = options.debug;
 	var $html = options.html ? options.html : $("#tofChat-map");
@@ -14,10 +14,15 @@ com.hiyoko.tofclient.Map = function(tof, interval, options){
 	var $switchChar = $("#" + id + "-char-switch");
 	var $switchLine = $("#" + id + "-line-switch");
 	var $status = $('#' + id + '-status');
+	
+	var $mode = $('#' + id + '-mode');
+	var $cards = $('#' + id + '-cards');
+	var $map = $('#' + id + '-map');
 
 	var map = new com.hiyoko.tofclient.Map.MapBack($disp);
+	var card = new com.hiyoko.tofclient.Map.Cards($cards, serverInfo.cardInfos, tof.getStatus().url);
 	com.hiyoko.tofclient.Map.tofUrl = tof.getStatus().url;
-
+  
 	function isActive() {
 		return $html.css('display') !== 'none';
 	}
@@ -32,8 +37,21 @@ com.hiyoko.tofclient.Map = function(tof, interval, options){
 	
 	this.init = function(){
 
+		$mode.change(function(e){
+			if($mode.val() === 'map') {
+				$cards.hide();
+				$map.show();
+			} else {
+				$cards.show();
+				$map.hide();			
+			}
+		});
+		
 		$reload.click(function(e){
-			getCharacters(map.update);
+			getCharacters(function(r){
+				map.update(r);
+				card.update(r);
+			});
 		});
 		
 		$disp.on('startMoveCharacter', function(e){
@@ -59,7 +77,10 @@ com.hiyoko.tofclient.Map = function(tof, interval, options){
 		});
 		
 		$reset.click(function(e){
-			getMap(map.updateAll);
+			getMap(function(r){
+				map.updateAll(r);
+				card.update(r);
+			});
 		});
 		
 		if(interval){
@@ -107,9 +128,11 @@ com.hiyoko.tofclient.Map.MapBack = function($base) {
 	this.update = function(info) {
 		drawMapMasks(info.characters);
 		drawMapMakers(info.characters);
+		drawCards(info.characters);
 		drawCharacters(info.characters);
 		drawDiceSymbols(info.characters);
 		drawChits(info.characters);
+		
 		$base.trigger(new $.Event('updateEvent'));
 	};
 	
@@ -163,6 +186,16 @@ com.hiyoko.tofclient.Map.MapBack = function($base) {
 			if(chit.type === "chit"){
 				var newChit = new com.hiyoko.tofclient.Map.Chit(chit, boxSize, id);
 				$base.append(newChit.$elem);
+			}
+		});
+	}
+	
+	function drawCards(cData) {
+		$('.' + id + '-card').remove();
+		$.each(cData, function(ind, card){
+			if(card.type === "Card"){
+				var newCard = new com.hiyoko.tofclient.Map.Card(card, boxSize, id);
+				$base.append(newCard.$elem);
 			}
 		});
 	}
@@ -325,6 +358,80 @@ com.hiyoko.tofclient.Map.FloorTile = function(tile, size, parentId) {
 		});
 	};
 	rend();	
+};
+
+com.hiyoko.tofclient.Map.Card = function(card, size, parentId) {
+	this.$elem = $("<div class='" + parentId + "-card'></div>");
+	var self = this;
+	var parseUrl = com.hiyoko.tof.parseResourceUrl;
+	
+	var position = {
+			x: Math.floor(card.x/50),
+			y: Math.floor(card.y/50)
+	};
+	
+	var isNormalSize = Boolean(card.mountName.indexOf('1x1') === -1);
+	
+	var cardSize = isNormalSize ? {
+		w:2,h:3
+	} : {
+		w:1,h:1
+	};
+	
+	function rend() {
+		self.$elem.css({
+			"position": "absolute",
+			"width": (cardSize.w * (size) - 4) + "px",
+			"height": (cardSize.h * (size) - 4) + "px",
+			"top": (1 + position.y * (size)) + "px",
+			"left": (1 + position.x * (size)) + "px",
+		});
+		var $name = $("<div class='" + parentId + "-object-name-card' style='height:"+(cardSize.h * (size) - 4)+"px'></div>");
+		var name = card.imageName.split('\t')[0];
+		
+		if(card.isText){
+			if(card.isOpen) {
+				if(card.isUpDown) {
+					$name.html((Boolean(card.rotation) ? '(逆)' : '(正)') + name.replace(/<br>/gi, '').replace(/<[^>]*>/g, ''));
+				} else {
+					var execResult = /FONT SIZE="42">([^<]*)<\/FONT>/.exec(name);
+					if(execResult) {
+						$name.text(execResult[1]);
+					} else {
+						$name.html(name.replace(/<br>/gi, '###BR###').replace(/■■■■/g, '■■').replace(/<[^>]*>/g, '').replace(/###BR###/g, '<br/>'));
+					}
+				}
+			} else {
+				$name.text('非公開');
+			}
+		} else {
+			if(card.mountName.startsWith('trump') || card.mountName === 'randomDungeonTrump') {
+				if(card.isOpen){
+					$name.text(card.imageName.split('\t')[1]);
+				} else {
+					$name.text('非公開');
+				}
+			} else {
+				$name = '';
+				if(card.isOpen){
+					self.$elem.css("background-image",
+						"url('" + parseUrl(name, com.hiyoko.tofclient.Map.tofUrl) + "')");
+				} else {
+					self.$elem.css("background-image",
+						"url('" + parseUrl(card.imageNameBack, com.hiyoko.tofclient.Map.tofUrl) + "')");
+				}
+			}
+		}
+		self.$elem.click(com.hiyoko.tofclient.Map.Card.Clicked);
+		self.$elem.append($name);
+	};
+	rend();
+};
+
+com.hiyoko.tofclient.Map.Card.Clicked = function(e) {
+	if($(e.target).text() !== '') {
+		alert($(e.target).text());
+	}
 };
 
 com.hiyoko.tofclient.Map.Character = function(char, boxsize, parentId) {
