@@ -363,6 +363,10 @@ span.tofChat-chat-submenu-list-item {
 .tofChat-map-display-card {
 	background-size:contain;
 	background-repeat:no-repeat;
+	border:1px outset black;
+	border-radius:2px;
+	opacity: 0.8;
+	background-color:white;
 }
 
 .tofChat-map-display-char-pop {
@@ -394,6 +398,12 @@ span.tofChat-chat-submenu-list-item {
 .tofChat-map-display-object-name {
 	display:none;
 	background-color: white;
+	font-size: 60%;
+	opacity: 0.7;
+	overflow:hidden;
+}
+
+.tofChat-map-display-object-name-card {
 	font-size: 60%;
 	opacity: 0.7;
 	overflow:hidden;

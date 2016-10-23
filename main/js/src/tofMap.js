@@ -68,15 +68,6 @@ com.hiyoko.tofclient.Map = function(tof, interval, serverInfo, options){
 			$update.text('Map Last Update： ' + now.getHours() + '：' + now.getMinutes() + '：' + now.getSeconds());
 		});
 		
-		$disp.click(function(e){
-			alert('disp clicked');
-			var $dom = $(e.target);
-			console.log($dom.attr('class'));
-			if($dom.hasClass(id + "-display-card") && $dom.text()) {
-				alert($dom.text());
-			}
-		});
-		
 		$switchChar.click(function(e){
 			map.toggleName();
 		});
@@ -394,12 +385,8 @@ com.hiyoko.tofclient.Map.Card = function(card, size, parentId) {
 			"height": (cardSize.h * (size) - 4) + "px",
 			"top": (1 + position.y * (size)) + "px",
 			"left": (1 + position.x * (size)) + "px",
-			"border": "1px solid black",
-			"border-radius": "2px",
-			"opacity": "0.8",
-			"background-color": "white"
 		});
-		var $name = $("<div class='" + parentId + "-object-name " + parentId + "-card' style='height:"+(cardSize.h * (size) - 4)+"px'></div>");
+		var $name = $("<div class='" + parentId + "-object-name-card' style='height:"+(cardSize.h * (size) - 4)+"px'></div>");
 		var name = card.imageName.split('\t')[0];
 		
 		if(card.isText){
@@ -435,11 +422,17 @@ com.hiyoko.tofclient.Map.Card = function(card, size, parentId) {
 				}
 			}
 		}
+		self.$elem.click(com.hiyoko.tofclient.Map.Card.Clicked);
 		self.$elem.append($name);
-		
 	};
 	rend();
-}
+};
+
+com.hiyoko.tofclient.Map.Card.Clicked = function(e) {
+	if($(e.target).text() !== '') {
+		alert($(e.target).text());
+	}
+};
 
 com.hiyoko.tofclient.Map.Character = function(char, boxsize, parentId) {
 	this.$elem = $("<div class='" + parentId + "-char'></div>");
