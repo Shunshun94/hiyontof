@@ -44,10 +44,10 @@ com.hiyoko.tofclient.App = function(tof, opt_base) {
 				});
 				$base.on('com.hiyoko.tofclient.Chat.GetNewMessage', function(e){
 					$($(".tofChat-tab")[0])
-					.animate({'padding-bottom':50}, 80).animate({'padding-bottom':10}, 80)
-					.animate({'padding-bottom':50}, 80).animate({'padding-bottom':10}, 80)
-					.animate({'padding-bottom':50}, 80).animate({'padding-bottom':10}, 80)
-					.animate({'padding-bottom':50}, 80).animate({'padding-bottom':10}, 80);
+					.animate({'padding-bottom':0}, 80).animate({'padding-bottom':10}, 80)
+					.animate({'padding-bottom':0}, 80).animate({'padding-bottom':10}, 80)
+					.animate({'padding-bottom':0}, 80).animate({'padding-bottom':10}, 80)
+					.animate({'padding-bottom':0}, 80).animate({'padding-bottom':10}, 80);
 				});
 			};
 		
