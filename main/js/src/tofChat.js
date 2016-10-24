@@ -1280,7 +1280,7 @@ com.hiyoko.tofclient.Chat.InputArea.ChatParette = function($html) {
 		if(num === 0) {
 			return {
 				name: 'SAMPLE',
-				list: ['サンプルデータ', '2d6+{攻撃} ' + num,'{HP}-3d6'],
+				list: ['サンプルデータ', '2d6+{攻撃} ' + num,'{HP}-3d6', '{イニシアティブ}+10', '「{その他}」'],
 				vars: {'攻撃':'32'}
 			};			
 		} else {
