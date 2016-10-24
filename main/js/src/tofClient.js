@@ -430,7 +430,7 @@ com.hiyoko.tof.room = function(urlInput, roomInput, passInput, callback){
 			roomUrl += "&password=" + pass;
 		}
 		
-		return new com.hiyoko.tof.room.Character(cdata.name, roomUrl, counter);
+		return new com.hiyoko.tof.room.Character(cdata.name, roomUrl, counter, cdata.initiative, cdata.info);
 	};
 
 	this.getRefresh = function(callback, characters, map, time, effects, roomInfo, chat, chatLastTime, opt_failCallBack){
