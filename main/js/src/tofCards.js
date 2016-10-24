@@ -208,9 +208,9 @@ com.hiyoko.tofclient.Map.Cards.SimplePictParser = function(card, id, tof) {
 	var $dom = $('<div class="' + id + '-display-card ' + card.mountName + '"></div>');
 	if(card.isOpen) {
 		var name = card.imageName.split('\t');
-		$dom.append('<img height="212" width="150" src="'+com.hiyoko.tof.parseResourceUrl(name[0], tof)+'"/>');
+		$dom.append('<img height="212" width="140" src="'+com.hiyoko.tof.parseResourceUrl(name[0], tof)+'"/>');
 	} else {
-		$dom.append('<img height="212" width="150" src="'+com.hiyoko.tof.parseResourceUrl(card.imageNameBack, tof)+'"/>');
+		$dom.append('<img height="212" width="140" src="'+com.hiyoko.tof.parseResourceUrl(card.imageNameBack, tof)+'"/>');
 	}
 	return $dom;
 };
@@ -273,9 +273,9 @@ com.hiyoko.tofclient.Map.Cards.MasqueradeStyleActParser = function(card, id, tof
 	var $dom = $('<div class="' + id + '-display-card masqueradestyle"></div>');
 	if(card.isOpen) {
 		var name = card.imageName;
-		$dom.append('<img height="212" width="150" src="'+com.hiyoko.tof.parseResourceUrl(name, tof)+'"/>');
+		$dom.append('<img height="212" width="140" src="'+com.hiyoko.tof.parseResourceUrl(name, tof)+'"/>');
 	} else {
-		$dom.append('<img height="212" width="150" src="'+com.hiyoko.tof.parseResourceUrl(card.imageNameBack, tof)+'"/>');
+		$dom.append('<img height="212" width="140" src="'+com.hiyoko.tof.parseResourceUrl(card.imageNameBack, tof)+'"/>');
 	}
 	return $dom;
 };
