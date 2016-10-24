@@ -164,6 +164,10 @@ com.hiyoko.tofclient.Map.Cards.Converter = function(_id, _url){
 	this.selectParser = function(card) {
 		var type = card.mountName;
 		
+		if(['insane'].includes(type) || type.startsWith('amadeus')) {
+			return com.hiyoko.tofclient.Map.Cards.ComplexHtmlParser;
+		}
+		
 		if(type.startsWith('trump') || type === 'randomDungeonTrump') {
 			return com.hiyoko.tofclient.Map.Cards.TrumpParser;
 		}
@@ -204,12 +208,27 @@ com.hiyoko.tofclient.Map.Cards.SimplePictParser = function(card, id, tof) {
 	var $dom = $('<div class="' + id + '-display-card ' + card.mountName + '"></div>');
 	if(card.isOpen) {
 		var name = card.imageName.split('\t');
-		$dom.append('<img height="227" width="150" src="'+com.hiyoko.tof.parseResourceUrl(name[0], tof)+'"/>');
+		$dom.append('<img height="212" width="140" src="'+com.hiyoko.tof.parseResourceUrl(name[0], tof)+'"/>');
 	} else {
-		$dom.append('<img height="227" width="150" src="'+com.hiyoko.tof.parseResourceUrl(card.imageNameBack, tof)+'"/>');
+		$dom.append('<img height="212" width="140" src="'+com.hiyoko.tof.parseResourceUrl(card.imageNameBack, tof)+'"/>');
 	}
 	return $dom;
 };
+
+com.hiyoko.tofclient.Map.Cards.ComplexHtmlParser = function(card, id) {
+	var $dom = $('<div class="' + id + '-display-card ' + card.mountName + '"></div>');
+	if(card.isOpen) {
+		var text = card.imageName.split('\t')[0]
+			.replace(/\s*/g, '')
+			.replace(/<BR>/gi, '###BR###')
+			.replace(/FONT SIZE="42">([^<]*)<\/FONT>/, '<strong>$&</strong>###BR###')
+			.replace(/<[^>]*>/g, '');
+		$dom.html(text.replace(/###BR###/g, '<br/>'));
+	} else {
+		$dom.text('非公開');
+	}
+	return $dom;
+}
 
 com.hiyoko.tofclient.Map.Cards.SimpleHtmlParser = function(card, id) {
 	var $dom = $('<div class="' + id + '-display-card ' + card.mountName + '"></div>');
@@ -254,9 +273,9 @@ com.hiyoko.tofclient.Map.Cards.MasqueradeStyleActParser = function(card, id, tof
 	var $dom = $('<div class="' + id + '-display-card masqueradestyle"></div>');
 	if(card.isOpen) {
 		var name = card.imageName;
-		$dom.append('<img height="227" width="150" src="'+com.hiyoko.tof.parseResourceUrl(name, tof)+'"/>');
+		$dom.append('<img height="212" width="140" src="'+com.hiyoko.tof.parseResourceUrl(name, tof)+'"/>');
 	} else {
-		$dom.append('<img height="227" width="150" src="'+com.hiyoko.tof.parseResourceUrl(card.imageNameBack, tof)+'"/>');
+		$dom.append('<img height="212" width="140" src="'+com.hiyoko.tof.parseResourceUrl(card.imageNameBack, tof)+'"/>');
 	}
 	return $dom;
 };
@@ -265,14 +284,14 @@ com.hiyoko.tofclient.Map.Cards.HanafudaParser = function(card, id, tof) {
 	var $dom = $('<div class="' + id + '-display-card cardranker"></div>');
 	if(card.isOpen) {
 		var name = card.imageName;
-		$dom.append('<img height="225" width="150" src="'+com.hiyoko.tof.parseResourceUrl(name, tof)+'"/>');
+		$dom.append('<img height="210" width="140" src="'+com.hiyoko.tof.parseResourceUrl(name, tof)+'"/>');
 		var execResult = /(\d\d)(\d\d)/.exec(name);
 		
 		$dom.append('<p>'+
 				com.hiyoko.tofclient.Map.Cards.HanafudaParser.NAME[[Number(execResult[1])]][0] + 'の' +
 				(com.hiyoko.tofclient.Map.Cards.HanafudaParser.NAME[[Number(execResult[1])]][Number(execResult[2])] || 'カス') + '</p>');
 	} else {
-		$dom.append('<img height="225" width="150" src="'+com.hiyoko.tof.parseResourceUrl(card.imageNameBack, tof)+'"/>');
+		$dom.append('<img height="210" width="140" src="'+com.hiyoko.tof.parseResourceUrl(card.imageNameBack, tof)+'"/>');
 		$dom.append('<p>非公開</p>');
 	}
 	return $dom;
@@ -324,10 +343,10 @@ com.hiyoko.tofclient.Map.Cards.CardRankerParser = function(card, id, tof) {
 	var $dom = $('<div class="' + id + '-display-card cardranker"></div>');
 	if(card.isOpen) {
 		var name = card.imageName.split('\t');
-		$dom.append('<img height="246" width="150" src="'+com.hiyoko.tof.parseResourceUrl(name[0], tof)+'"/>');
+		$dom.append('<img height="210" width="140" src="'+com.hiyoko.tof.parseResourceUrl(name[0], tof)+'"/>');
 		$dom.append('<p>'+name[1]+'</p>');
 	} else {
-		$dom.append('<img height="246" width="150" src="'+com.hiyoko.tof.parseResourceUrl(card.imageNameBack, tof)+'"/>');
+		$dom.append('<img height="210" width="140" src="'+com.hiyoko.tof.parseResourceUrl(card.imageNameBack, tof)+'"/>');
 		$dom.append('<p>非公開</p>');
 	}
 	return $dom;
