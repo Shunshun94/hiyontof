@@ -665,7 +665,7 @@ com.hiyoko.tof.room.CharacterBuilder = function(getRoomUrl, getName, counters){
 		sendMsg += "&isHide=" + isHide;
 		sendMsg += "&url=" + url;
 		
-		var resultCharacter = new com.hiyoko.tof.room.Character(name, roomUrl, counters);
+		var resultCharacter = new com.hiyoko.tof.room.Character(name, roomUrl, counters, initiative, info);
 		$.ajax({
 			type:'get',
 			url: sendMsg,
@@ -682,10 +682,12 @@ com.hiyoko.tof.room.CharacterBuilder = function(getRoomUrl, getName, counters){
 	};
 };
 
-com.hiyoko.tof.room.Character = function(targetName_input, url_input, counters_input){
+com.hiyoko.tof.room.Character = function(targetName_input, url_input, counters_input, _initiative, _info){
 	var targetName = targetName_input;
 	var url = url_input;
 	var counters = counters_input;
+	var initiative = _initiative;
+	var info = _info;
 
 	this.getName = function(){return targetName;};
 
@@ -725,6 +727,13 @@ com.hiyoko.tof.room.Character = function(targetName_input, url_input, counters_i
 	};
 	
 	this.getValue = function(name) {
+		if(['initiative', 'イニシアティブ', 'イニシアチブ'].includes(name)) {
+			return initiative;
+		}
+		if(['info', 'その他'].includes(name)) {
+			return info;
+		}
+		
 		for(var i = 0; i < counters.length; i++) {
 			if(counters[i].name === name){
 				return counters[i].value;
@@ -740,8 +749,10 @@ com.hiyoko.tof.room.Character = function(targetName_input, url_input, counters_i
 
 			if(name === "initiative") {
 				sendMsg += "&initiative=" + value;
+				initiative = value;
 			} else if(name ==="info") {
 				sendMsg += "&info=" + value;
+				info = value;
 			} else if(name === 'image') {
 				sendMsg += '&image=' + value;
 			}else {
