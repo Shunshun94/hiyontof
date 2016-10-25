@@ -169,19 +169,32 @@
 
 				</div>
 				<div id="tofChat-map" class="tofChat-tabContent">
-					<div id="tofChat-map-lastupdate">未取得</div>
-					<div class="tofChat-input-half">
-						<div id="tofChat-map-char-switch" class="tofChat-button">名前表示切替</div>
+					<select id="tofChat-map-mode">
+						<option value="map" label="マップを表示">マップを表示</option>
+						<option value="card" label="カードのみを表示">カードのみを表示</option>
+					</select>
+					<div id="tofChat-map-map">
+						<div id="tofChat-map-lastupdate">未取得</div>
+						<div class="tofChat-input-half">
+							<div id="tofChat-map-char-switch" class="tofChat-button">名前表示切替</div>
+						</div>
+						<div class="tofChat-input-half">
+							<div id="tofChat-map-line-switch" class="tofChat-button">罫線表示切替</div>
+						</div>
+						<div id="tofChat-map-display"></div>
+						<div id="tofChat-map-status"></div>
+						<div id="tofChat-map-reset" class="tofChat-button-heavy">背景再読み込み</div>
+						<div class="tofChat-help" id="tofChat-map-help">HELP (マップの説明)</div>
 					</div>
-					<div class="tofChat-input-half">
-						<div id="tofChat-map-line-switch" class="tofChat-button">罫線表示切替</div>
+					<div id="tofChat-map-cards">
+						<br/>
+						<div id="tofChat-map-cards-display">
+							<div id="tofChat-map-cards-display-mount"></div>
+							<div id="tofChat-map-cards-display-active"></div>
+							<div id="tofChat-map-cards-display-trush"></div>
+						</div>
 					</div>
-					<div id="tofChat-map-display"></div>
-					<div id="tofChat-map-status"></div>
 					<div id="tofChat-map-reload" class="tofChat-button">更新</div>
-					<br />
-					<div id="tofChat-map-reset" class="tofChat-button-heavy">背景再読み込み</div>
-					<div class="tofChat-help" id="tofChat-map-help">HELP (マップの説明)</div>
 				</div>
 				<div id="tofChat-table" class="tofChat-tabContent">
 					<div id="tofChat-table-lastupdate">未取得</div>
@@ -252,7 +265,7 @@
 
 		<div data-role="footer" data-theme="f">
 			<p>
-				<small id="tofChat-version">ひよんとふ Ver. 20161012</small><br /> 
+				<small id="tofChat-version">ひよんとふ Ver. 20161026</small><br /> 
 				<small>&copy;<a href="https://twitter.com/Shunshun94" target="_blank">Shunshun94</a></small><br /> 
 				<small><a href="http://template-party.com/" target="_blank">Web Design:Template-Party</a></small><br /> 
 				<small><a href="https://github.com/Shunshun94/hiyontof" target="_blank">github</a></small>
@@ -271,6 +284,7 @@
 	<script src="js/src/tofClient.js"></script>
 	<script src="js/src/tofChat.js"></script>
 	<script src="js/src/tofMap.js"></script>
+	<script src="js/src/tofCards.js"></script>
 	<script src="js/src/tofTable.js"></script>
 	<script src="js/src/tofMemo.js"></script>
 	<script src="js/src/tofApp.js"></script>
