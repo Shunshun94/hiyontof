@@ -1,6 +1,6 @@
 # 更新履歴
 
-## 2016年MM月DD日
+## 2016年10月26日
 
 - ボタンの見た目を修正
 	- [Nanasu NANA](https://github.com/NanasuNANA) さんによる修正。
