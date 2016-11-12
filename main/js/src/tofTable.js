@@ -102,7 +102,7 @@ com.hiyoko.tofclient.Table = function(tof, interval, options){
 	var rendCharacterTable = function(charCandidates){
 		chars = [];
 		var list = charCandidates.filter(function(cc){
-			return cc.type === "characterData";
+			return cc.type === "characterData" && cc.isHide === false;
 		}).sort(function(a, b){
 			return b.initiative - a.initiative;
 		});
