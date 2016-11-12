@@ -67,9 +67,9 @@ com.hiyoko.tofclient.Memo = function(tof, interval, opt_$html){
 		}
 		
 		for(var key in list) {
-			if(list[key].updateTime !== time) {
+			if(list[key] && list[key].updateTime !== time) {
 				list[key].$elem.remove();
-				list[key] = null;
+				list[key] = undefined;
 			}
 		}
 	};

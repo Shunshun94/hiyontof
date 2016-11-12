@@ -126,10 +126,11 @@ com.hiyoko.tofclient.Map.MapBack = function($base) {
 	};
 	
 	this.update = function(info) {
+		drawCharacters(info.characters, true, true);
 		drawMapMasks(info.characters);
 		drawMapMakers(info.characters);
 		drawCards(info.characters);
-		drawCharacters(info.characters);
+		drawCharacters(info.characters, false);
 		drawDiceSymbols(info.characters);
 		drawChits(info.characters);
 		
@@ -157,11 +158,14 @@ com.hiyoko.tofclient.Map.MapBack = function($base) {
 		$base.empty();
 	}
 	
-	function drawCharacters(cData) {
+	function drawCharacters(cData, opt_isHideStatus, opt_supressReset) {
 		var chars = {};
-		$('.' + id + '-char').remove();
+		var isHideStatus = opt_isHideStatus || false;
+		
+		if(opt_supressReset){$('.' + id + '-char').remove();}
+		
 		$.each(cData, function(ind, char){
-			if(char.type === "characterData"){
+			if(char.type === "characterData" && char.isHide === isHideStatus){
 				var newCharacter = new com.hiyoko.tofclient.Map.Character(char, boxSize, id);
 				chars[newCharacter.name] = newCharacter;
 				$base.append(newCharacter.$elem);
