@@ -165,7 +165,6 @@ com.hiyoko.tofclient.Map.MapBack = function($base) {
 		if(opt_supressReset){$('.' + id + '-char').remove();}
 		
 		$.each(cData, function(ind, char){
-			console.log(char.isHide, '===', isHideStatus, char.isHide === isHideStatus, char.name);
 			if(char.type === "characterData" && char.isHide === isHideStatus){
 				var newCharacter = new com.hiyoko.tofclient.Map.Character(char, boxSize, id);
 				chars[newCharacter.name] = newCharacter;
