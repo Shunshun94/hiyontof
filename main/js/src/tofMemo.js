@@ -31,7 +31,6 @@ com.hiyoko.tofclient.Memo = function(tof, interval, opt_$html){
 		});
 		
 		$disp.on("updateMemo", function(e) {
-			console.log(e.memo.getText());
 			tof.changeMemo(e.memo.getText(), e.memo.getId());
 		});
 
