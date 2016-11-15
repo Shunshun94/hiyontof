@@ -1235,7 +1235,7 @@ com.hiyoko.tofclient.Chat.InputArea.ChatParette = function($html) {
 					text = text.replace(execResult[0], vars[word]);
 				} else {
 					var val = initTable.getValue(word);
-					if(val) {
+					if(val !== undefined) {
 						text = text.replace(execResult[0], val);
 					} else {
 						text = text.replace(execResult[0], word);
