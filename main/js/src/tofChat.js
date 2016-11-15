@@ -388,7 +388,8 @@ com.hiyoko.tofclient.Chat.Util.fixChatMsg = function(chatMsg, store){
 			pic: parsedMsg.source,
 			volume: parsedMsg.volume
 		};
-	} else {
+	} else if(store) {
+		
 		cutin = store.getTailCutIn(message);
 	}
 	
