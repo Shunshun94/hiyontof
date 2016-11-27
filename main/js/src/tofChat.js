@@ -185,8 +185,7 @@ com.hiyoko.tofclient.Chat = function(tof, interval, serverInfo, options){
 						}
 					});
 				},
-				nameSuiter(e.name), e.msg, e.color, e.tab,
-				inputArea.getBot() === 'default' ? false : inputArea.getBot());
+				nameSuiter(e.name), e.msg, e.color, e.tab, inputArea.getBot());
 	}
 
 	function sendMsg(e){
@@ -787,6 +786,8 @@ com.hiyoko.tofclient.Chat.InputArea = function($parent, children, isVisitor, ser
 	              parette:new com.hiyoko.tofclient.Chat.InputArea.ChatParette(children.chatparette)};
 	var current = 0;
 	var self = this;
+	var systemInfo = {};
+	
 	var $switcher = $('#tofChat-chat-input-switch');
 	var $bot = $("#tofChat-input-dicebot");
 	var $botHelp = $("#tofChat-chat-input-shared-dicebot-help");
@@ -818,7 +819,10 @@ com.hiyoko.tofclient.Chat.InputArea = function($parent, children, isVisitor, ser
 		});
 		
 		$botHelp.click(function(e){
-			
+			var system = inputs.talk.getDiceBot();
+			$.each(systemInfo[system].split('\n\n'), function(i, v){
+				alert(v);
+			});
 		});
 	}
 	
@@ -838,7 +842,7 @@ com.hiyoko.tofclient.Chat.InputArea = function($parent, children, isVisitor, ser
 	};
 	
 	this.getBot = function(){
-		return $bot.val();
+		return inputs.talk.getDiceBot();
 	};
 	
 	this.stackSecret = function(msg, key){
@@ -850,13 +854,13 @@ com.hiyoko.tofclient.Chat.InputArea = function($parent, children, isVisitor, ser
 			inputs[key].disabled();
 		}
 	};
-	
 	$.each(serverInfo.diceBotInfos, function(ind, bot){
 		var newBot = $("<option></option>");
 		newBot.text(bot.name);
 		newBot.val(bot.gameType);
 		newBot.attr('label', bot.name);
 		$bot.append(newBot);
+		systemInfo[bot.gameType] = bot.info;
 	});
 	
 	eventBind();
@@ -921,7 +925,7 @@ com.hiyoko.tofclient.Chat.InputArea.Input = function($html, isVisitor, tofStatus
 					color: self.getColor(),
 					name: self.getName(),
 					tab: Number($("#"+id+"-tablist").val()),
-					bot: ($("#"+id+"-dicebot").val() !== "default") ? $("#"+id+"-dicebot").val() : false
+					bot: self.getDiceBot()
 				}));
 			} else {
 				$html.trigger(new $.Event("sendMessageEvent", {
@@ -962,7 +966,9 @@ com.hiyoko.tofclient.Chat.InputArea.Input = function($html, isVisitor, tofStatus
 		});
 	}
 
-	
+	this.getDiceBot = function() {
+		return ($("#"+id+"-dicebot").val() !== "default") ? $("#"+id+"-dicebot").val() : tofStatus.game;
+	};
 
 	this.getName = function(){
 		return $name.val();
