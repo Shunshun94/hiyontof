@@ -153,6 +153,20 @@ span.tofChat-chat-submenu-list-item {
 	margin-right: 0px;
 }
 
+.tofChat-input-longer {
+	position:relative;
+	display: inline-block;
+	width: 85%;
+	margin-left: 0px;
+}
+
+.tofChat-input-shorter {
+	position:relative;
+	display: inline-block;
+	width: 12%;
+	margin-right: 0px;
+}
+
 #tofChat-chat-input-history {
 	background-color:#A0FFA0;
 	border-radius: 12px;
@@ -576,6 +590,18 @@ span.tofChat-chat-submenu-list-item {
 #tofChat-go-out:active {
 	border-style: inset;
     filter:brightness(90%); 
+}
+
+#tofChat-chat-input-shared-dicebot-help {
+	position:absolute;
+	text-align:center;
+	border:3px green outset;
+	border-radius: 1ex;
+	padding:8px;
+	top:-36px;
+	background-color: #B0FFB0;
+	color:black;
+    cursor: help;
 }
 
 .tofChat-help {
