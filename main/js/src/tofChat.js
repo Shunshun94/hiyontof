@@ -873,7 +873,9 @@ com.hiyoko.tofclient.Chat.InputArea.Input = function($html, isVisitor, tofStatus
 
 	this.disabled = function(){$html.hide()};
 	this.enabled = function(){$html.show()};
+	
 	var $msg = $("#"+id+"-msg");
+	var $name_color = $('#tofChat-chat-input-input-name');
 	var $color = $("#"+id+"-color");
 	var $name = $("#"+id+"-name");
 	var $tabs = $("#"+id+"-tablist")
@@ -963,6 +965,10 @@ com.hiyoko.tofclient.Chat.InputArea.Input = function($html, isVisitor, tofStatus
 				action: "callroll"
 			});
 			$html.trigger(event);
+		});
+		
+		$('.tofChat-chat-input-input-name-hide').click(function(e) {
+			$name_color.hide();
 		});
 	}
 

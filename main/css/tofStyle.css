@@ -141,6 +141,11 @@ span.tofChat-chat-submenu-list-item {
 	width: 48%;
 }
 
+.tofChat-input-half-short {
+	display: inline-block;
+	width: 40%;
+}
+
 .tofChat-input-long {
 	display: inline-block;
 	width: 65%;
@@ -165,6 +170,31 @@ span.tofChat-chat-submenu-list-item {
 	display: inline-block;
 	width: 12%;
 	margin-right: 0px;
+}
+
+.tofChat-input-half-sidebutton {
+	display: inline-block;
+	width: 4%;
+}
+
+#tofChat-chat-input-input-name {
+	position:relative;
+}
+
+.tofChat-chat-input-input-name-hide {
+	border:2px green outset;
+	height:50px;
+	vertical-align:center;
+	text-align:center;
+	border-radius: 1ex;
+	background-color: #B0FFB0;
+	color:black;
+ cursor: pointer;
+}
+
+#tofChat-chat-input-input-name-hide-right {
+	position:absolute;
+	right:0px;
 }
 
 #tofChat-chat-input-history {
