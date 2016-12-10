@@ -141,6 +141,11 @@ span.tofChat-chat-submenu-list-item {
 	width: 48%;
 }
 
+.tofChat-input-half-short {
+	display: inline-block;
+	width: 40%;
+}
+
 .tofChat-input-long {
 	display: inline-block;
 	width: 65%;
@@ -163,8 +168,51 @@ span.tofChat-chat-submenu-list-item {
 .tofChat-input-shorter {
 	position:relative;
 	display: inline-block;
-	width: 12%;
+	width: 8%;
 	margin-right: 0px;
+}
+
+.tofChat-input-half-sidebutton {
+	display: inline-block;
+	width: 4%;
+	font-size:15%;
+	line-height:1em;
+}
+
+#tofChat-chat-input-input-name {
+	position:relative;
+}
+
+.tofChat-chat-input-input-name-show {
+	border:2px green outset;
+	height:50px;
+	vertical-align:top;
+	text-align:center;
+	border-radius: 1ex;
+	background-color: #B0FFB0;
+	color:black;
+ cursor: pointer;
+ display: none;
+}
+
+.tofChat-chat-input-input-name-hide {
+	border:2px green outset;
+	height:50px;
+	vertical-align:top;
+	text-align:center;
+	border-radius: 1ex;
+	background-color: #B0FFB0;
+	color:black;
+ cursor: pointer;
+}
+
+#tofChat-chat-input-input-name-hide-right {
+	position:absolute;
+	right:0px;
+}
+
+#tofChat-chat-input-input-msg {
+	display:inline-block;
 }
 
 #tofChat-chat-input-history {
@@ -598,10 +646,10 @@ span.tofChat-chat-submenu-list-item {
 	border:3px green outset;
 	border-radius: 1ex;
 	padding:8px;
-	top:-36px;
+	top:-38px;
 	background-color: #B0FFB0;
 	color:black;
-    cursor: help;
+ cursor: help;
 }
 
 .tofChat-help {

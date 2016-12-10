@@ -873,10 +873,18 @@ com.hiyoko.tofclient.Chat.InputArea.Input = function($html, isVisitor, tofStatus
 
 	this.disabled = function(){$html.hide()};
 	this.enabled = function(){$html.show()};
-	var $msg = $("#"+id+"-msg");
+	
+	var $msg = $("#tofChat-chat-input-input-msg");
+	var $name_color = $('#tofChat-chat-input-input-name');
 	var $color = $("#"+id+"-color");
 	var $name = $("#"+id+"-name");
 	var $tabs = $("#"+id+"-tablist")
+	
+	var $hideLeft = $('#tofChat-chat-input-input-name-hide-left');
+	var $hideRight = $('#tofChat-chat-input-input-name-hide-right');
+	var $showLeft = $('#tofChat-chat-input-input-show-name-left');
+	var $showRight = $('#tofChat-chat-input-input-show-name-right');
+	var $showNameColor = $('.tofChat-chat-input-input-name-show');
 	
 	var self = this;
 	
@@ -963,6 +971,25 @@ com.hiyoko.tofclient.Chat.InputArea.Input = function($html, isVisitor, tofStatus
 				action: "callroll"
 			});
 			$html.trigger(event);
+		});
+		
+		$hideLeft.click(function(e) {
+			$name_color.hide();
+			$msg.css('width', '87%');
+			$showLeft.css('display', 'inline-block');
+		});
+		
+		$hideRight.click(function(e) {
+			$name_color.hide();
+			$msg.css('width', '87%');
+			$showRight.css('display', 'inline-block');
+		});
+		
+		$showNameColor.click(function(e) {
+			$name_color.show();
+			$showNameColor.hide();
+			$msg.css('width', '97%');
+			
 		});
 	}
 
