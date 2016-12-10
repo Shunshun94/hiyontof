@@ -645,10 +645,10 @@ span.tofChat-chat-submenu-list-item {
 	border:3px green outset;
 	border-radius: 1ex;
 	padding:8px;
-	top:-36px;
+	top:-38px;
 	background-color: #B0FFB0;
 	color:black;
-    cursor: help;
+ cursor: help;
 }
 
 .tofChat-help {
