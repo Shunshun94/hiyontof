@@ -183,6 +183,7 @@ MIT ライセンスです。
 - 2016年03月26日 [スマホでどどんとふ！: セッションもぐもぐ](http://nomit.seesaa.net/article/435670815.html)
 - 2016年05月08日 [スマホでTRPG「 ひよこどどんとふクライアント」 | こかげ工房](https://cokage.works/trpg/hiyoco-dodontof/)
 - 2016年11月16日 [ひよんとふ140](https://twitter.com/i/moments/798415028697399296)
+- 2016年12月08日 [【ひよこどどんとふクライアントとは】 スマートフォンからでもどどんとふ - レビュア](https://revua.jp/tips-knowhow/analoggame-knowledge/hiyontof/)
 
 ### 設置サーバ (直接連絡を頂いたもののみ)
 
