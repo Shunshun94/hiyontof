@@ -23,7 +23,7 @@ com.hiyoko.tofclient.Chat = function(tof, interval, serverInfo, options){
 		return $html.css('display') !== 'none';
 	}
 	
-	function buildChildComponents() {
+	function buildChildComponents(serverInfo) {
 		subMenu = new com.hiyoko.tofclient.Chat.SubMenu($("#" + id + "-submenu"), tof.getStatus());
 		status = new com.hiyoko.tofclient.Chat.Status($("#tofChat-connection-status"));
 		display = new com.hiyoko.tofclient.Chat.Display($("#" + id + "-log"));
@@ -32,7 +32,8 @@ com.hiyoko.tofclient.Chat = function(tof, interval, serverInfo, options){
 					history:$("#" + id + "-input-history"),
 					secret:$("#" + id + "-input-secret"),
 					chatparette:$("#" + id + "-input-chatparette")},
-				isVisitor);
+				isVisitor,
+				serverInfo, tof.getStatus());
 		
 		var isBgmActivate = Boolean(Number(localStorage.getItem("com.hiyoko.tofclient.Chat.Display.bgm")));
 		display.isLoadBGM = isBgmActivate;
@@ -62,26 +63,6 @@ com.hiyoko.tofclient.Chat = function(tof, interval, serverInfo, options){
 		var status = tof.getStatus();
 		$("#tofChat-Title").text(isVisitor ? '【見学】' + status.name : status.name);
 		$("#tofChat-Title").append('<div id="tofChat-go-out">【退室する】</div>');
-		
-		
-		// TODO これらって com.hiyoko.tofclient.Chat.InputArea の持ち物だよね
-		$.each(status.tabs, function(ind, tabName){
-			if(ind === 0) {return; }
-			var newTab = $("<option></option>");
-			newTab.text(tabName);
-			newTab.val(ind);
-			newTab.attr('label', tabName);
-			$("#tofChat-input-tablist").append(newTab);
-		});
-		$.each(serverInfo.diceBotInfos, function(ind, bot){
-			var newBot = $("<option></option>");
-			newBot.text(bot.name);
-			newBot.val(bot.gameType);
-			newBot.attr('label', bot.name);
-			$("#tofChat-input-dicebot").append(newBot);
-		});
-		
-		
 	}
 
 	function eventBinds(serverInfo){
@@ -204,8 +185,7 @@ com.hiyoko.tofclient.Chat = function(tof, interval, serverInfo, options){
 						}
 					});
 				},
-				nameSuiter(e.name), e.msg, e.color, e.tab,
-				inputArea.getBot() === 'default' ? false : inputArea.getBot());
+				nameSuiter(e.name), e.msg, e.color, e.tab, inputArea.getBot());
 	}
 
 	function sendMsg(e){
@@ -286,7 +266,7 @@ com.hiyoko.tofclient.Chat = function(tof, interval, serverInfo, options){
 	}
 	
 	initializeDisplay(serverInfo);
-	buildChildComponents();
+	buildChildComponents(serverInfo);
 	eventBinds(serverInfo);	
 	var name = nameSuiter(inputArea.getName());
 	if(! options.silent){
@@ -799,15 +779,18 @@ com.hiyoko.tofclient.Chat.Status = function($html){
 /**
  * Chat User Console Part
  */
-com.hiyoko.tofclient.Chat.InputArea = function($parent, children, isVisitor){
-	var inputs = {talk:new com.hiyoko.tofclient.Chat.InputArea.Input(children.talk, isVisitor),
+com.hiyoko.tofclient.Chat.InputArea = function($parent, children, isVisitor, serverInfo, tofStatus){
+	var inputs = {talk:new com.hiyoko.tofclient.Chat.InputArea.Input(children.talk, isVisitor, tofStatus),
 	              history:new com.hiyoko.tofclient.Chat.InputArea.History(children.history),
 	              secret:new com.hiyoko.tofclient.Chat.InputArea.Secret(children.secret),
 	              parette:new com.hiyoko.tofclient.Chat.InputArea.ChatParette(children.chatparette)};
 	var current = 0;
 	var self = this;
+	var systemInfo = {};
+	
 	var $switcher = $('#tofChat-chat-input-switch');
 	var $bot = $("#tofChat-input-dicebot");
+	var $botHelp = $("#tofChat-chat-input-shared-dicebot-help");
 	
 	function eventBind(){
 		$parent.on("EditMessage", function(e){
@@ -834,6 +817,13 @@ com.hiyoko.tofclient.Chat.InputArea = function($parent, children, isVisitor){
 			self.hideAll();
 			inputs[$(e.target).val()].enabled();
 		});
+		
+		$botHelp.click(function(e){
+			var system = inputs.talk.getDiceBot();
+			$.each(systemInfo[system].split('\n\n'), function(i, v){
+				alert(v);
+			});
+		});
 	}
 	
 	this.changeSwitcherEventless = function(key){
@@ -852,7 +842,7 @@ com.hiyoko.tofclient.Chat.InputArea = function($parent, children, isVisitor){
 	};
 	
 	this.getBot = function(){
-		return $bot.val();
+		return inputs.talk.getDiceBot();
 	};
 	
 	this.stackSecret = function(msg, key){
@@ -864,19 +854,37 @@ com.hiyoko.tofclient.Chat.InputArea = function($parent, children, isVisitor){
 			inputs[key].disabled();
 		}
 	};
+	$.each(serverInfo.diceBotInfos, function(ind, bot){
+		var newBot = $("<option></option>");
+		newBot.text(bot.name);
+		newBot.val(bot.gameType);
+		newBot.attr('label', bot.name);
+		$bot.append(newBot);
+		systemInfo[bot.gameType] = bot.info;
+	});
+	
 	eventBind();
 	this.hideAll();
 	inputs.talk.enabled();
 };
 
-com.hiyoko.tofclient.Chat.InputArea.Input = function($html, isVisitor){
+com.hiyoko.tofclient.Chat.InputArea.Input = function($html, isVisitor, tofStatus){
 	var id = $html.attr('id');
 
 	this.disabled = function(){$html.hide()};
 	this.enabled = function(){$html.show()};
-	var $msg = $("#"+id+"-msg");
+	
+	var $msg = $("#tofChat-chat-input-input-msg");
+	var $name_color = $('#tofChat-chat-input-input-name');
 	var $color = $("#"+id+"-color");
 	var $name = $("#"+id+"-name");
+	var $tabs = $("#"+id+"-tablist")
+	
+	var $hideLeft = $('#tofChat-chat-input-input-name-hide-left');
+	var $hideRight = $('#tofChat-chat-input-input-name-hide-right');
+	var $showLeft = $('#tofChat-chat-input-input-show-name-left');
+	var $showRight = $('#tofChat-chat-input-input-show-name-right');
+	var $showNameColor = $('.tofChat-chat-input-input-name-show');
 	
 	var self = this;
 	
@@ -885,6 +893,15 @@ com.hiyoko.tofclient.Chat.InputArea.Input = function($html, isVisitor){
 		$('#'+id+'-sendQuestion').parent().hide();
 		$('#'+id+'-send').parent().removeClass('tofChat-input-short');		
 	}
+	
+	$.each(tofStatus.tabs, function(ind, tabName){
+		if(ind === 0) {return; }
+		var newTab = $("<option></option>");
+		newTab.text(tabName);
+		newTab.val(ind);
+		newTab.attr('label', tabName);
+		$tabs.append(newTab);
+	});
 
 
 	function eventBind(){
@@ -916,7 +933,7 @@ com.hiyoko.tofclient.Chat.InputArea.Input = function($html, isVisitor){
 					color: self.getColor(),
 					name: self.getName(),
 					tab: Number($("#"+id+"-tablist").val()),
-					bot: ($("#"+id+"-dicebot").val() !== "default") ? $("#"+id+"-dicebot").val() : false
+					bot: self.getDiceBot()
 				}));
 			} else {
 				$html.trigger(new $.Event("sendMessageEvent", {
@@ -955,9 +972,30 @@ com.hiyoko.tofclient.Chat.InputArea.Input = function($html, isVisitor){
 			});
 			$html.trigger(event);
 		});
+		
+		$hideLeft.click(function(e) {
+			$name_color.hide();
+			$msg.css('width', '87%');
+			$showLeft.css('display', 'inline-block');
+		});
+		
+		$hideRight.click(function(e) {
+			$name_color.hide();
+			$msg.css('width', '87%');
+			$showRight.css('display', 'inline-block');
+		});
+		
+		$showNameColor.click(function(e) {
+			$name_color.show();
+			$showNameColor.hide();
+			$msg.css('width', '97%');
+			
+		});
 	}
 
-	
+	this.getDiceBot = function() {
+		return ($("#"+id+"-dicebot").val() !== "default") ? $("#"+id+"-dicebot").val() : tofStatus.game;
+	};
 
 	this.getName = function(){
 		return $name.val();

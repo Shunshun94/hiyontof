@@ -48,17 +48,27 @@
 					</p>
 					<input type="button" id="tofChat-input-get" value="更新" />
 					<div id="tofChat-inputArea">
-						<div id="tofChat-input">
-							<div class="tofChat-input-half">
-								色<input
-									class="jscolor {closable:true,closeText:'閉じる',onFineChange:'com.hiyoko.tofclient.Chat.Util.colorChange(this)'}"
-									type="text" placeholder="文字色" id="tofChat-input-color"
-									value="000000" size="5" maxlength="7" />
+						<div id="tofChat-input"> <!-- tofChat-chat-input-input にいつかかえる -->
+							<div id="tofChat-chat-input-input-name">
+								<div id="tofChat-chat-input-input-name-hide-left"
+								class="tofChat-input-half-sidebutton tofChat-chat-input-input-name-hide">名前欄隠す</div>
+								<div class="tofChat-input-half-short">
+									色<input
+										class="jscolor {closable:true,closeText:'閉じる',onFineChange:'com.hiyoko.tofclient.Chat.Util.colorChange(this)'}"
+										type="text" placeholder="文字色" id="tofChat-input-color"
+										value="000000" size="5" maxlength="7" />
+								</div>
+								<div class="tofChat-input-half-short">
+									名前<input type="text" placeholder="名前" id="tofChat-input-name" />
+								</div>
+								<div id="tofChat-chat-input-input-name-hide-right"
+								class="tofChat-input-half-sidebutton tofChat-chat-input-input-name-hide">名前欄隠す</div>
 							</div>
-							<div class="tofChat-input-half">
-								名前<input type="text" placeholder="名前" id="tofChat-input-name" />
-							</div>
-							<textarea rows="7" placeholder="発言内容を入力" id="tofChat-input-msg"></textarea>
+							<div id="tofChat-chat-input-input-show-name-left"
+								class="tofChat-input-half-sidebutton tofChat-chat-input-input-name-show">名前欄表示</div>
+							<textarea rows="7" placeholder="発言内容を入力" id="tofChat-chat-input-input-msg"></textarea>
+							<div id="tofChat-chat-input-input-show-name-right"
+								class="tofChat-input-half-sidebutton tofChat-chat-input-input-name-show">名前欄表示</div>
 							<br />
 							<div>
 								<div class="tofChat-input-short">
@@ -162,7 +172,12 @@
 								</select>
 							</div>
 							<div class="tofChat-input-half">
-								<select id="tofChat-input-dicebot"><option value="default" label="デフォルト">部屋指定のダイスボット</option></select>
+								<div class="tofChat-input-longer">
+									<select id="tofChat-input-dicebot"><option value="default" label="デフォルト">部屋指定のダイスボット</option></select>
+								</div>
+								<div class="tofChat-input-shorter">
+									<div id="tofChat-chat-input-shared-dicebot-help">?</div>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -265,7 +280,7 @@
 
 		<div data-role="footer" data-theme="f">
 			<p>
-				<small id="tofChat-version">ひよんとふ Ver. 20161116</small><br /> 
+				<small id="tofChat-version">ひよんとふ Ver. 20161211</small><br /> 
 				<small>&copy;<a href="https://twitter.com/Shunshun94" target="_blank">Shunshun94</a></small><br /> 
 				<small><a href="http://template-party.com/" target="_blank">Web Design:Template-Party</a></small><br /> 
 				<small><a href="https://github.com/Shunshun94/hiyontof" target="_blank">github</a></small>
