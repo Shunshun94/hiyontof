@@ -33,9 +33,7 @@ com.hiyoko.tofclient.ServerList.SERVER_LIST = {
 		'http://dodontof.incoglab.com/DodontoF.swf':'インコグ・ラボ',
 		'https://d1.trpg.net/DodontoF.swf':'TRPG.NET 第1',
 		'https://d2.trpg.net/DodontoF.swf':'TRPG.NET 第2',
-		'https://d3.trpg.net/DodontoF.swf':'TRPG.NET 第3',
 		'http://trpg.gigafreaks.com/dodontof/DodontoF.swf':'如月翔也さん',
-		'http://egotex.net/DodontoF/DodontoF.swf':'EGOTEX',
 		'https://dodontof.cokage.works/': 'こかげサーバ'
 };
 
