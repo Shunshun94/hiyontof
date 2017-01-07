@@ -14,7 +14,7 @@ com.hiyoko.tofclient.Table = function(tof, interval, options){
 	var $disp = $("#tofChat-table-display");
 	var $read = $("#tofChat-table-reload");
 	var $update = $("#tofChat-table-lastupdate");
-	
+
 	var chars = [];
 	
 	function isActive() {
@@ -114,14 +114,17 @@ com.hiyoko.tofclient.Table = function(tof, interval, options){
 		var keysV = [];
 		var keysB = [];
 		var keys = tof.getStatus().counters;
-		for(key in keys){
-			if(startsWith(keys[key], "*")){
-				keysB.push(keys[key].substring(1));
+
+		$.each(keys, function(i, v){
+			if(startsWith(v, "*")){
+				keysB.push(v.substring(1));
 			} else {
-				keysV.push(keys[key]);
+				keysV.push(v);
 			}
-		}
+		})
+
 		$table = table ? drawTable(keysV, keysB, list) : drawAccordion(keysV, keysB, list);
+
 		$disp.append($table);
 	};
 	
