@@ -82,7 +82,7 @@
 			"&room="  + $("#tofChat-init-room").val()+
 			"&pass="  + $("#tofChat-init-pass").val()+
 			"&reload="+ (Number($("#tofChat-init-reload").val())*1000)+
-			"&name="+ $("#tofChat-init-name").val()+
+			"&name="+ ($("#tofChat-init-name").val()  || 'ななしのひよこ') +
 			"&"+$("#tofChat-init-time input:checked").val()
 		});
 	}	
