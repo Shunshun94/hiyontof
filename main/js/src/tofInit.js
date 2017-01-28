@@ -59,6 +59,8 @@
 		if(initData.url ){$("#tofChat-init-url").val(initData.url);  }
 		if(initData.room){$("#tofChat-init-room").val(initData.room);}
 		if(initData.pass){$("#tofChat-init-pass").val(initData.pass);}
+		$("#tofChat-init-name").val(localStorage.getItem("name") || 'ななしのひよこ');
+		
 		$("#tofChat-init-advanced-toggle").click(function(e){
 			if($("#tofChat-init-advanced").css("display") === "block"){
 				$("#tofChat-init-advanced-toggle").text("追加メニューを表示▼");
@@ -80,6 +82,7 @@
 			"&room="  + $("#tofChat-init-room").val()+
 			"&pass="  + $("#tofChat-init-pass").val()+
 			"&reload="+ (Number($("#tofChat-init-reload").val())*1000)+
+			"&name="+ $("#tofChat-init-name").val()+
 			"&"+$("#tofChat-init-time input:checked").val()
 		});
 	}	

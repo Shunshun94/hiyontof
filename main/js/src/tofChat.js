@@ -1013,8 +1013,8 @@ com.hiyoko.tofclient.Chat.InputArea.Input = function($html, isVisitor, tofStatus
 	};
 	
 	// Initialize
-	$color.val(localStorage.getItem("color"));
-	$name.val(localStorage.getItem("name"));
+	$color.val(localStorage.getItem("color") || '000000');
+	$name.val(decodeURI(getParam("name")) || localStorage.getItem("name") || 'ななしのひよこ');
 	eventBind();
 	$color.css("background-color", "#" + self.getColor());
 };
