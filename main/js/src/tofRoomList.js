@@ -1,6 +1,9 @@
 var com = com || {};
 com.hiyoko = com.hiyoko || {};
 com.hiyoko.tofclient = com.hiyoko.tofclient || {};
+com.hiyoko.tofclient.App = {};
+com.hiyoko.tofclient.Chat = {};
+com.hiyoko.tofclient.Chat.Display = {};
 
 com.hiyoko.tofclient.URL = './hiyontof.html';
 
@@ -54,6 +57,8 @@ com.hiyoko.tofclient.RoomList = function(serverListModule, opt_$html) {
 		var tofUrl = $serverList.val();
 		var pass = '';
 		
+		var name = window.prompt('名前を入力してください', (localStorage.getItem("name") || 'ななしのひよこ'));
+		
 		if($button.hasClass('password')) {
 			var pass = window.prompt('パスワードを入力してください');
 		}
@@ -62,6 +67,7 @@ com.hiyoko.tofclient.RoomList = function(serverListModule, opt_$html) {
 		
 		hiyontof += '?url=' + tofUrl;
 		hiyontof += '&room=' + roomNumber;
+		hiyontof += '&name=' + (name || 'ななしのひよこ');
 		if(pass){ hiyontof += '&pass=' + pass}
 		hiyontof += '&reload=15000';
 		document.location = hiyontof;
