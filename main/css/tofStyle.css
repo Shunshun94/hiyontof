@@ -357,7 +357,9 @@ span.tofChat-chat-submenu-list-item {
 
 .tofChat-tab {
 	text-align:center;
-	border:3px green outset;
+	border-color:green;
+	border-style: outset;
+	border-width: 2px 1px;
 	border-radius: 1ex;
 	background-color: #B0FFB0;
 	color:black;
@@ -366,7 +368,7 @@ span.tofChat-chat-submenu-list-item {
 	display: inline-block;
 	width: 23%;
 	mergin-left:3px;
-    cursor: pointer;
+ cursor: pointer;
 }
 
 .tofChat-tab:hover {
@@ -374,16 +376,16 @@ span.tofChat-chat-submenu-list-item {
 }
 
 .tofChat-tab:active {
-    color: white;
+ color: white;
 	background-color: #305030;
 	border-style: inset;
-    filter:brightness(90%); 
+ filter:brightness(90%); 
 }
 
 .tofChat-tab[class~="active"] {
 	border-style: inset;
-    filter:brightness(100%);
-    cursor: default;
+ filter:brightness(100%);
+ cursor: default;
 }
 
 #tofChat-map-display {
