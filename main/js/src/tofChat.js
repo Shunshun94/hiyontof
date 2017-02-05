@@ -61,8 +61,7 @@ com.hiyoko.tofclient.Chat = function(tof, interval, serverInfo, options){
 
 	function initializeDisplay(serverInfo){
 		var status = tof.getStatus();
-		$("#tofChat-Title").text(isVisitor ? '【見学】' + status.name : status.name);
-		$("#tofChat-Title").append('<div id="tofChat-go-out">【退室する】</div>');
+		$("#tofChat-Title-roomName").text('部屋名：' + (isVisitor ? '【見学】' + status.name : status.name));
 	}
 
 	function eventBinds(serverInfo){
