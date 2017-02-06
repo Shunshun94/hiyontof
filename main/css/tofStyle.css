@@ -132,9 +132,7 @@
 }
 
 #tofChat-chat-submenu {
-	position: fixed;
-	top: 84px;
-	left: 2px;
+	display:inline-block;
 	background-color: #D0FFD0;
 	opacity: 0.9;
 	font-size: 100%;

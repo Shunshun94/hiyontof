@@ -9,7 +9,6 @@ com.hiyoko.tofclient.Chat = function(tof, interval, serverInfo, options){
 	//TODO ID の直接指定を減らしていく
 	var $html = options.html || $("#tofChat-chat");
 	var id = $html.attr('id');
-	renderChat($html);
 	com.hiyoko.tofclient.Chat.Util.TofURL = tof.getStatus().url;
 	var isAsking = false;
 	var isVisitor = Boolean(options.visitor);
@@ -49,10 +48,6 @@ com.hiyoko.tofclient.Chat = function(tof, interval, serverInfo, options){
 		display.isTabColored = isTabColored;
 		subMenu.updateItem('tabColoredMode', isTabColored);
 	}
-
-	function renderChat($html) {
-		$html.append("<div id='" + id + "-submenu'></div>");
-	};
 	
 	function nameSuiter(name) {
 		var newName = name ? name : 'ななしのひよこ';
@@ -1548,8 +1543,6 @@ com.hiyoko.tofclient.Chat.SubMenu = function($html, tofStatus){
 	var menuItemClass = idBase + "-list-item";
 	var items = {};
 
-	$html.append("<span id='"+idBase + "-button"+"'>MENU</span>" +
-			"<div id='"+idBase + "-list"+"'></div>");
 	var $menu = $("#" + idBase + "-list");
 
 	function initializeList() {
