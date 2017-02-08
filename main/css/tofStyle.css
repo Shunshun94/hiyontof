@@ -82,6 +82,19 @@
 
 #tofChat-chat {
 	padding-top: 42px;
+	position:relative;
+}
+
+#tofChat-inputArea {
+	position:fixed;
+	background-color:white;
+	z-index:3;
+	top:92px;
+	left:0px;
+}
+
+#tofChat-inputArea-showButtonBase {
+	display:none;
 }
 
 #tofChat-map, #tofChat-table, #tofChat-memo {
@@ -138,12 +151,14 @@
 	font-size: 100%;
 	color: #90AA90;
 	border-radius: 3px;
+	vertical-align:middle;
 }
 
 #tofChat-chat-submenu-button {
 	padding:4px;
 	padding-bottom:2px;
 	display:block;
+	height:25px;
 }
 
 #tofChat-chat-submenu-list {

@@ -61,7 +61,7 @@ com.hiyoko.tofclient.Chat = function(tof, interval, serverInfo, options){
 
 	function eventBinds(serverInfo){
 		var $inputArea = $("#tofChat-inputArea");
-
+		
 		$html.on("sendMessage", sendMsg);
 		$inputArea.on("sendMessageEvent", sendMsgEvent);
 		$inputArea.on("changeTab", function(e){
@@ -127,6 +127,11 @@ com.hiyoko.tofclient.Chat = function(tof, interval, serverInfo, options){
 				$submenu.css("top", "40px");
 			} else {
 				$submenu.css("top", (80-$(window).scrollTop())+"px");
+			}
+			if($(window).scrollTop() > 42){
+				$inputArea.css("top", "50px");
+			} else {
+				$inputArea.css("top", (92-$(window).scrollTop())+"px");
 			}
 		});
 		
@@ -785,8 +790,25 @@ com.hiyoko.tofclient.Chat.InputArea = function($parent, children, isVisitor, ser
 	var $switcher = $('#tofChat-chat-input-switch');
 	var $bot = $("#tofChat-input-dicebot");
 	var $botHelp = $("#tofChat-chat-input-shared-dicebot-help");
+	var $showBase = $('#tofChat-inputArea-showButtonBase');
+	var $hideBase = $('#tofChat-inputArea-hideButtonBase');
+	var $inputArea = $('#tofChat-inputArea-display');
+	
+	$parent.width($(window).width());
 	
 	function eventBind(){
+		$showBase.find('input').click(function(e){
+			$showBase.hide();
+			$hideBase.show();
+			$inputArea.show();
+		});
+		
+		$hideBase.find('input').click(function(e){
+			$hideBase.hide();
+			$showBase.show();
+			$inputArea.hide();
+		});
+		
 		$parent.on("EditMessage", function(e){
 			inputs.talk.setMessage(e);
 			self.hideAll();
