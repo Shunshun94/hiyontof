@@ -123,11 +123,6 @@ com.hiyoko.tofclient.Chat = function(tof, interval, serverInfo, options){
 		});
 		
 		$(window).scroll(function(e){
-			if($(window).scrollTop() > 40){
-				$submenu.css("top", "40px");
-			} else {
-				$submenu.css("top", (80-$(window).scrollTop())+"px");
-			}
 			if($(window).scrollTop() > 42){
 				$inputArea.css("top", "50px");
 			} else {
