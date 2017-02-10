@@ -788,13 +788,13 @@ com.hiyoko.tofclient.Chat.InputArea = function($parent, children, isVisitor, ser
 	$parent.width($(window).width());
 	
 	function eventBind(){
-		$showBase.find('input').click(function(e){
+		$showBase.find('span').click(function(e){
 			$showBase.hide();
 			$hideBase.show();
 			$inputArea.show();
 		});
 		
-		$hideBase.find('input').click(function(e){
+		$hideBase.find('span').click(function(e){
 			$hideBase.hide();
 			$showBase.show();
 			$inputArea.hide();
