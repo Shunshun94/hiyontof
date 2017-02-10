@@ -827,8 +827,9 @@ com.hiyoko.tofclient.Chat.InputArea = function($parent, children, isVisitor, ser
 		
 		$botHelp.click(function(e){
 			var system = inputs.talk.getDiceBot();
+			var title = $bot.find('[value="' + system + '"]').text();
 			$.each(systemInfo[system].split('\n\n'), function(i, v){
-				alert(v);
+				alert(title + 'のダイスボット\n-------\n'　+ v);
 			});
 		});
 	}
