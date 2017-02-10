@@ -238,7 +238,7 @@ com.hiyoko.tofclient.Chat = function(tof, interval, serverInfo, options){
 	function jumpToBottom_(e){
 		try{
 			// http://kachibito.net/snippets/footer-starter
-			$('html,body').animate({scrollTop: $("#tofChat-inputArea").offset().top},'slow');
+			$('html,body').animate({scrollTop: $("#tofChat-version").offset().top},'slow');
 		}catch(e){
 			alert("ERROR @Shunshun94 にこの文字列 (ないし画面) を送ってください: " + e.stack);
 		}
