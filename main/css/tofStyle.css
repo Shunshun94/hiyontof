@@ -152,13 +152,18 @@
 	color: #90AA90;
 	border-radius: 3px;
 	vertical-align:middle;
+	position:absolute;
+	top:26px;
+	right:2px;
+	z-index:4;
+	padding:0px;
 }
 
 #tofChat-chat-submenu-button {
-	padding:4px;
-	padding-bottom:2px;
+	padding:2px;
 	display:block;
-	height:25px;
+	height:18px;
+	margin:5px;
 }
 
 #tofChat-chat-submenu-list {

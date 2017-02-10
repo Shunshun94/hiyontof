@@ -128,7 +128,7 @@ com.hiyoko.tofclient.Chat = function(tof, interval, serverInfo, options){
 			} else {
 				$inputArea.css("top", (92-$(window).scrollTop())+"px");
 			}
-		});
+		});  
 		
 		function preventGoOut(e){
 			return '退室してよろしいですか?';
@@ -153,10 +153,6 @@ com.hiyoko.tofclient.Chat = function(tof, interval, serverInfo, options){
 
 		setAutoReload_();
 	}
-
-	tof.getServerInfo(function(serverInfo){
-
-	}, true);
 	
 	function onSendSecretEvent(e) {
 		tof.sendMessage(
@@ -1525,11 +1521,6 @@ com.hiyoko.tofclient.Chat.InputArea.Secret = function($html) {
 		});
 	};
 	
-	this.load = function(){
-		
-		
-	};
-	
 	this.stack = function(msg, key){
 		var stackedMsg = msg.msg.replace(' ' + key, '');
 		var hashValue = CryptoJS.SHA256(stackedMsg);
@@ -1547,7 +1538,6 @@ com.hiyoko.tofclient.Chat.InputArea.Secret = function($html) {
 		return hashValue;
 	};
 	
-	this.load();
 	this.eventBind();
 };
 
