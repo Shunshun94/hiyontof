@@ -124,9 +124,9 @@ com.hiyoko.tofclient.Chat = function(tof, interval, serverInfo, options){
 		
 		$(window).scroll(function(e){
 			if($(window).scrollTop() > 42){
-				$inputArea.css("top", "50px");
+				$inputArea.css("top", "39px");
 			} else {
-				$inputArea.css("top", (92-$(window).scrollTop())+"px");
+				$inputArea.css("top", (81-$(window).scrollTop())+"px");
 			}
 		});  
 		
