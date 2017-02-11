@@ -97,40 +97,32 @@
 #tofChat-inputArea-showButtonBase {
 	display:none;
 	position:relative;
-	border-bottom:1px solid black;
+	border-bottom:3px inset black;
 	text-align:center;
+	top:-34px;
+	vertical-align:bottom;
 }
 
-#tofChat-inputArea-showButtonBase-button {
+#tofChat-inputArea-showButtonBase-button,
+#tofChat-inputArea-hideButtonBase-button {
 	position:relative;
 	display:inline-block;
-	border-bottom:1px solid black;
-	border-bottom-left-radius: 12px;
-	border-bottom-right-radius: 12px;
-	height:22px;
-	width:22px;
-	top:11px;
+	border-bottom:3px solid black;
+	border-bottom-left-radius: 36px;
+	border-bottom-right-radius: 36px;
+	height:66px;
+	width:66px;
+	top:33px; 
+	font-size:300%; 
 	background-color:white;
 }
 
 #tofChat-inputArea-hideButtonBase {
 	position:relative;
-	border-bottom:1px solid black;
+	border-bottom:3px inset black;
 	text-align:center;
-	top:-18px;
+	top:-41px;
 	vertical-align:bottom;
-}
-
-#tofChat-inputArea-hideButtonBase-button {
-	position:relative;
-	display:inline-block;
-	border-bottom:1px solid black;
-	border-bottom-left-radius: 12px;
-	border-bottom-right-radius: 12px;
-	height:22px;
-	width:22px;
-	top:11px;
-	background-color:white;
 }
 
 #tofChat-map, #tofChat-table, #tofChat-memo {
@@ -244,7 +236,8 @@ span.tofChat-chat-submenu-list-item {
 
 .tofChat-input-half-short {
 	display: inline-block;
-	width: 40%;
+	width: 35%;
+	padding:5px;
 }
 
 .tofChat-input-long {
@@ -454,6 +447,7 @@ span.tofChat-chat-submenu-list-item {
 	background-color: white;
 	position: fixed;
 	width: 100%;
+	z-index:4;
 }
 
 .tofChat-tab {
