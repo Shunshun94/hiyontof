@@ -47,7 +47,7 @@
 		});
 	}else{
 		$('#tofChat-init-reload').attr('min', com.hiyoko.tofclient.App.MIN_UPDATE_INTERVAL);
-		
+		$('#tofChat-go-out').remove();
 		for(var key in serverList) {
 			$("#tofChat-init-url-list").append(
 					"<option value=\""+key+"\">"+serverList[key]+"</option>"

@@ -9,7 +9,6 @@ com.hiyoko.tofclient.Chat = function(tof, interval, serverInfo, options){
 	//TODO ID の直接指定を減らしていく
 	var $html = options.html || $("#tofChat-chat");
 	var id = $html.attr('id');
-	renderChat($html);
 	com.hiyoko.tofclient.Chat.Util.TofURL = tof.getStatus().url;
 	var isAsking = false;
 	var isVisitor = Boolean(options.visitor);
@@ -49,10 +48,6 @@ com.hiyoko.tofclient.Chat = function(tof, interval, serverInfo, options){
 		display.isTabColored = isTabColored;
 		subMenu.updateItem('tabColoredMode', isTabColored);
 	}
-
-	function renderChat($html) {
-		$html.append("<div id='" + id + "-submenu'></div>");
-	};
 	
 	function nameSuiter(name) {
 		var newName = name ? name : 'ななしのひよこ';
@@ -61,13 +56,12 @@ com.hiyoko.tofclient.Chat = function(tof, interval, serverInfo, options){
 
 	function initializeDisplay(serverInfo){
 		var status = tof.getStatus();
-		$("#tofChat-Title").text(isVisitor ? '【見学】' + status.name : status.name);
-		$("#tofChat-Title").append('<div id="tofChat-go-out">【退室する】</div>');
+		$("#tofChat-Title-roomName").text('部屋名：' + (isVisitor ? '【見学】' + status.name : status.name));
 	}
 
 	function eventBinds(serverInfo){
 		var $inputArea = $("#tofChat-inputArea");
-
+		
 		$html.on("sendMessage", sendMsg);
 		$inputArea.on("sendMessageEvent", sendMsgEvent);
 		$inputArea.on("changeTab", function(e){
@@ -129,12 +123,12 @@ com.hiyoko.tofclient.Chat = function(tof, interval, serverInfo, options){
 		});
 		
 		$(window).scroll(function(e){
-			if($(window).scrollTop() > 40){
-				$submenu.css("top", "40px");
+			if($(window).scrollTop() > 42){
+				$inputArea.css("top", "39px");
 			} else {
-				$submenu.css("top", (80-$(window).scrollTop())+"px");
+				$inputArea.css("top", (81-$(window).scrollTop())+"px");
 			}
-		});
+		});  
 		
 		function preventGoOut(e){
 			return '退室してよろしいですか?';
@@ -159,10 +153,6 @@ com.hiyoko.tofclient.Chat = function(tof, interval, serverInfo, options){
 
 		setAutoReload_();
 	}
-
-	tof.getServerInfo(function(serverInfo){
-
-	}, true);
 	
 	function onSendSecretEvent(e) {
 		tof.sendMessage(
@@ -248,7 +238,7 @@ com.hiyoko.tofclient.Chat = function(tof, interval, serverInfo, options){
 	function jumpToBottom_(e){
 		try{
 			// http://kachibito.net/snippets/footer-starter
-			$('html,body').animate({scrollTop: $("#tofChat-inputArea").offset().top},'slow');
+			$('html,body').animate({scrollTop: $("#tofChat-version").offset().top},'slow');
 		}catch(e){
 			alert("ERROR @Shunshun94 にこの文字列 (ないし画面) を送ってください: " + e.stack);
 		}
@@ -494,7 +484,7 @@ com.hiyoko.tofclient.Chat.Display = function($html){
 				msg_class = 'vote-msg';
 			} else if(msg.isCutIn) {
 				if(msg.isCutIn.bgm) {
-					var $audio = self.isLoadBGM ? $('<audio class="' + id + '-cutin-bgm" controls>') : $('<span>（BGM 再生は現在無効です。左上の MENU から有効にできます）</span>');
+					var $audio = self.isLoadBGM ? $('<audio class="' + id + '-cutin-bgm" controls>') : $('<span>（BGM 再生は現在無効です。名前入力欄右の MENU から有効にできます）</span>');
 					$audio.attr('src', com.hiyoko.tof.parseResourceUrl(msg.isCutIn.bgm, com.hiyoko.tofclient.Chat.Util.TofURL));
 					$audio.attr('volume', msg.isCutIn.volume);
 					if(self.isLoadBGM && msg.isCutIn.loop) {
@@ -791,8 +781,25 @@ com.hiyoko.tofclient.Chat.InputArea = function($parent, children, isVisitor, ser
 	var $switcher = $('#tofChat-chat-input-switch');
 	var $bot = $("#tofChat-input-dicebot");
 	var $botHelp = $("#tofChat-chat-input-shared-dicebot-help");
+	var $showBase = $('#tofChat-inputArea-showButtonBase');
+	var $hideBase = $('#tofChat-inputArea-hideButtonBase');
+	var $inputArea = $('#tofChat-inputArea-display');
+	
+	$parent.width($(window).width());
 	
 	function eventBind(){
+		$showBase.find('span').click(function(e){
+			$showBase.hide();
+			$hideBase.show();
+			$inputArea.show();
+		});
+		
+		$hideBase.find('span').click(function(e){
+			$hideBase.hide();
+			$showBase.show();
+			$inputArea.hide();
+		});
+		
 		$parent.on("EditMessage", function(e){
 			inputs.talk.setMessage(e);
 			self.hideAll();
@@ -820,8 +827,9 @@ com.hiyoko.tofclient.Chat.InputArea = function($parent, children, isVisitor, ser
 		
 		$botHelp.click(function(e){
 			var system = inputs.talk.getDiceBot();
+			var title = $bot.find('[value="' + system + '"]').text();
 			$.each(systemInfo[system].split('\n\n'), function(i, v){
-				alert(v);
+				alert(title + 'のダイスボット\n-------\n'　+ v);
 			});
 		});
 	}
@@ -1514,11 +1522,6 @@ com.hiyoko.tofclient.Chat.InputArea.Secret = function($html) {
 		});
 	};
 	
-	this.load = function(){
-		
-		
-	};
-	
 	this.stack = function(msg, key){
 		var stackedMsg = msg.msg.replace(' ' + key, '');
 		var hashValue = CryptoJS.SHA256(stackedMsg);
@@ -1536,7 +1539,6 @@ com.hiyoko.tofclient.Chat.InputArea.Secret = function($html) {
 		return hashValue;
 	};
 	
-	this.load();
 	this.eventBind();
 };
 
@@ -1549,8 +1551,6 @@ com.hiyoko.tofclient.Chat.SubMenu = function($html, tofStatus){
 	var menuItemClass = idBase + "-list-item";
 	var items = {};
 
-	$html.append("<span id='"+idBase + "-button"+"'>MENU</span>" +
-			"<div id='"+idBase + "-list"+"'></div>");
 	var $menu = $("#" + idBase + "-list");
 
 	function initializeList() {
