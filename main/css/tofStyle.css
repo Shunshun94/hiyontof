@@ -89,9 +89,16 @@
 #tofChat-inputArea {
 	position:fixed;
 	background-color:white;
-	z-index:3;
+	z-index:2;
 	top:92px;
 	left:0px;
+}
+
+#tofChat-input-sendCallRoll,
+#tofChat-input-sendQuestion,
+#tofChat-input-send
+ {
+	z-index:3;
 }
 
 #tofChat-inputArea-showButtonBase {
