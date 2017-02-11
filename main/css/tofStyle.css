@@ -103,8 +103,14 @@
 
 #tofChat-inputArea-showButtonBase-button {
 	position:relative;
-	padding:3px;
+	display:inline-block;
 	border-bottom:1px solid black;
+	border-bottom-left-radius: 12px;
+	border-bottom-right-radius: 12px;
+	height:22px;
+	width:22px;
+	top:11px;
+	background-color:white;
 }
 
 #tofChat-inputArea-hideButtonBase {
