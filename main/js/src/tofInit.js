@@ -3,6 +3,7 @@
 			url: getParam("url", false),
 			room: getParam("room", false),
 			pass: getParam("pass",false),
+			name: getParam("name",false)
 	};
 	
 	var serverListModule = new com.hiyoko.tofclient.ServerList();
@@ -59,7 +60,7 @@
 		if(initData.url ){$("#tofChat-init-url").val(initData.url);  }
 		if(initData.room){$("#tofChat-init-room").val(initData.room);}
 		if(initData.pass){$("#tofChat-init-pass").val(initData.pass);}
-		$("#tofChat-init-name").val(localStorage.getItem("name") || 'ななしのひよこ');
+		$("#tofChat-init-name").val(decodeURI(initData.name || localStorage.getItem("name") || 'ななしのひよこ'));
 		
 		$("#tofChat-init-advanced-toggle").click(function(e){
 			if($("#tofChat-init-advanced").css("display") === "block"){
