@@ -6,7 +6,7 @@ com.hiyoko.HiyoLogger = com.hiyoko.HiyoLogger || function(){
 com.hiyoko.tofclient = com.hiyoko.tofclient || {};
 com.hiyoko.tofclient.Table = function(tof, interval, options){
 	var $html = options.html ? options.html : $("#tofChat-table");
-	var outerImage = options.outerImage;
+	
 	var debug = options.debug ? true : false;
 	
 	var logger = new com.hiyoko.HiyoLogger(debug, debug);
@@ -19,6 +19,20 @@ com.hiyoko.tofclient.Table = function(tof, interval, options){
 	function isActive() {
 		return $html.css('display') !== 'none';
 	}
+	
+	this.generateServerImageButton = function() {
+		var url = com.hiyoko.tof.getImageJsonUrl(tof.getStatus().url);
+		console.log(url);
+		if(! Boolean(url)) {
+			return '';
+		}
+		
+		return '<button class="tofChat-table-display-serverImageButton">画像変更</button>';
+	};
+	
+	
+	var outerImage = options.outerImage;
+	var serverImageButton = this.generateServerImageButton();
 	
 	this.getValuesAsync = function(opt_callback) {
 		tof.getRefresh(function(result){rend(result.characters, function(){
@@ -181,20 +195,23 @@ com.hiyoko.tofclient.Table = function(tof, interval, options){
 				$ct.append($tr);
 			});
 			
-			if(outerImage) {
+			if(outerImage || serverImageButton) {
 				var $picTr = $('<tr></tr>');
 				$picTr.append('<th>画像</th>');
 				
 				var $picTd = $('<td></td>');
-				var $picInput = $('<input />');
 				
-				$picInput.attr({
-					name: 'image',
-					type: 'text',
-					value: c.imageName
-				});
-				$picTd.append($picInput);
-				
+				if(outerImage) {
+					var $picInput = $('<input />');
+					
+					$picInput.attr({
+						name: 'image',
+						type: 'text',
+						value: c.imageName
+					});
+					$picTd.append($picInput);
+				}
+				$picTd.append(serverImageButton);
 				$picTr.append($picTd);
 				$ct.append($picTr);
 			}
