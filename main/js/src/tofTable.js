@@ -6,7 +6,6 @@ com.hiyoko.HiyoLogger = com.hiyoko.HiyoLogger || function(){
 com.hiyoko.tofclient = com.hiyoko.tofclient || {};
 com.hiyoko.tofclient.Table = function(tof, interval, options){
 	var $html = options.html ? options.html : $("#tofChat-table");
-	var table = options.table ? false : true;
 	var outerImage = options.outerImage;
 	var debug = options.debug ? true : false;
 	
@@ -123,7 +122,7 @@ com.hiyoko.tofclient.Table = function(tof, interval, options){
 			}
 		})
 
-		$table = table ? drawTable(keysV, keysB, list) : drawAccordion(keysV, keysB, list);
+		$table = drawAccordion(keysV, keysB, list);
 
 		$disp.append($table);
 	};
@@ -215,45 +214,6 @@ com.hiyoko.tofclient.Table = function(tof, interval, options){
 			$base.append($ct);
 		});
 		return $base;
-	};
-	
-	var drawTable = function(keysV, keysB, list) {
-		var $table = $("<table border='1'></table>");
-		var $titleLine = $("<tr><th>名前</th><th>イニシアティブ</th></tr>");
-		$.each(keysV, function(i, k){
-			$titleLine.append("<th>" + k + "</th>");
-		});
-		$.each(keysB, function(i, k){
-			$titleLine.append("<th>" + k + "</th>");
-		});
-		$titleLine.append("<th>その他</th>");
-		
-		$table.append($titleLine);
-		
-		$.each(list, function(i, c){
-			chars.push(tof.generateCharacterFromResult(c));
-			var $cLine = $("<tr><th>" + c.name +"</th></tr>");
-			$cLine.append("<td><input name='initiative' type='number' value='" + c.initiative + "' /></td>");
-			var cTable = c.counters;
-			$.each(keysV, function(i, k){
-				$cLine.append("<td><input name='" + k +"' type='number' value='" + cTable[k] + "' /></td>");
-			});
-			$.each(keysB, function(i, k){
-				$cLine.append("<td><input name='*" + k +"' type='checkbox' " + ( cTable["*" + k] === "1" ? "checked='checked'" : "" )  + " /></td>");
-			});
-			$cLine.append("<td><input name='info' type='text' value='" + c.info + "' /></td>");
-			
-			$cLine.change(function(e){
-				var $tag = $(e.target);
-				if($tag.attr("type") !== "checkbox"){
-					chars[i].setValue($(e.target).attr("name"), $tag.val());
-				} else {
-					chars[i].setValue('*' + $(e.target).attr("name"), $tag.prop("checked") ? "1" : "0");
-				}
-			});
-			$table.append($cLine);
-		});
-		return $table;
 	};
 	
 	this.init();
