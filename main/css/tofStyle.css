@@ -406,12 +406,12 @@ span.tofChat-chat-submenu-list-item {
 
 #tofChat-chat-log-cutin-pic {
 	display:none;
-    position:fixed;
-    left: 50%;
-    top:0;
-    margin: 0;
-    padding: 0;
-    z-index:1001;
+ position:fixed;
+ left: 50%;
+ top:0;
+ margin: 0;
+ padding: 0;
+ z-index:1001;
 }
 
 .tofChat-chat-log-cutin-pic {
@@ -695,6 +695,29 @@ span.tofChat-chat-submenu-list-item {
  hegith:20px;
 }
 
+.tofChat-table-display-serverImageList {
+	display:none;
+ position:fixed;
+ top: 0;
+ left: 0;
+ height: 100%;
+ width: 100%;
+ background:black;
+ opacity: 0.90;
+ margin: 0;
+ padding: 0;
+ z-index:1000;
+ overflow:scroll;
+}
+
+.tofChat-table-display-serverImageList-image{
+	width:80px;
+	height:80px;
+	display:inline-block;
+	background-size:contain;
+	background-repeat:no-repeat;
+}
+
 .active {
 	border:3px green inset;
 	background-color: #305030;
@@ -703,8 +726,8 @@ span.tofChat-chat-submenu-list-item {
 
 .vote-button-ready {
 	background: -moz-linear-gradient(top,#F0FFF0 0%,#B0FFB0);
-    background: -webkit-gradient(linear, left top, left bottom, from(#F0FFF0), to(#B0FFB0));
-    background: linear-gradient(top,#F0FFF0 0%,#B0FFB0);
+ background: -webkit-gradient(linear, left top, left bottom, from(#F0FFF0), to(#B0FFB0));
+ background: linear-gradient(top,#F0FFF0 0%,#B0FFB0);
 	border:3px green double;
 	border-radius: 5px;
 	padding:3px;
@@ -713,8 +736,8 @@ span.tofChat-chat-submenu-list-item {
 
 .vote-button-yes {
 	background: -moz-linear-gradient(top,#F0F0FF 0%,#B0B0FF);
-    background: -webkit-gradient(linear, left top, left bottom, from(#F0F0FF), to(#B0B0FF));
-    background: linear-gradient(top,#F0F0FF 0%,#B0B0FF);
+ background: -webkit-gradient(linear, left top, left bottom, from(#F0F0FF), to(#B0B0FF));
+ background: linear-gradient(top,#F0F0FF 0%,#B0B0FF);
 	border:3px blue double;
 	border-radius: 5px;
 	padding:3px;
@@ -724,8 +747,8 @@ span.tofChat-chat-submenu-list-item {
 
 .vote-button-no {
 	background: -moz-linear-gradient(top,#FFF0F0 0%,#FFB0B0);
-    background: -webkit-gradient(linear, left top, left bottom, from(#FFF0F0), to(#FFB0B0));
-    background: linear-gradient(top,#FFF0F0 0%,#FFB0B0);
+ background: -webkit-gradient(linear, left top, left bottom, from(#FFF0F0), to(#FFB0B0));
+ background: linear-gradient(top,#FFF0F0 0%,#FFB0B0);
 	border:3px red double;
 	border-radius: 5px;
 	padding:3px;
@@ -756,11 +779,11 @@ span.tofChat-chat-submenu-list-item {
 	padding:2px;
 	background-color: #B0FFB0;
 	color:black;
-    cursor: help;
+ cursor: help;
 }
 
 .tofChat-help:hover {
-    filter:brightness(120%); 
+ filter:brightness(120%); 
 }
 
 .tofChat-help:active {

@@ -22,12 +22,12 @@ com.hiyoko.tofclient.Table = function(tof, interval, options){
 	
 	this.generateServerImageButton = function() {
 		var url = com.hiyoko.tof.getImageJsonUrl(tof.getStatus().url);
-		console.log(url);
 		if(! Boolean(url)) {
 			return '';
 		}
 		
-		return '<button class="tofChat-table-display-serverImageButton">画像変更</button>';
+		return '<span class="' + $html.attr('id') + '-display-serverImageButton">画像変更</span>' +
+				'<div class="' + $html.attr('id') + '-display-serverImageList"></div>';
 	};
 	
 	
@@ -200,17 +200,15 @@ com.hiyoko.tofclient.Table = function(tof, interval, options){
 				$picTr.append('<th>画像</th>');
 				
 				var $picTd = $('<td></td>');
+				var $picInput = $('<input />');
 				
-				if(outerImage) {
-					var $picInput = $('<input />');
-					
-					$picInput.attr({
-						name: 'image',
-						type: 'text',
-						value: c.imageName
-					});
-					$picTd.append($picInput);
-				}
+				$picInput.attr({
+					name: 'image',
+					type: 'text',
+					value: c.imageName,
+					style: (outerImage ? '' : 'display:none;')
+				});
+				$picTd.append($picInput);
 				$picTd.append(serverImageButton);
 				$picTr.append($picTd);
 				$ct.append($picTr);
@@ -232,6 +230,16 @@ com.hiyoko.tofclient.Table = function(tof, interval, options){
 		});
 		return $base;
 	};
+	
+	$html.click(function(e) {
+		if($(e.target).hasClass($html.attr('id') + '-display-serverImageButton')) {
+			new com.hiyoko.tofclient.ServerImageList(
+					$(e.target).parent().find('.' + $html.attr('id') + '-display-serverImageList'),
+					com.hiyoko.tof.getImageJsonUrl(tof.getStatus().url),
+					tof.getStatus().url.replace('DodontoFServer.rb?', ''));
+		}
+		
+	});
 	
 	this.init();
 };
