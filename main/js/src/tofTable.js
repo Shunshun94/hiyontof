@@ -225,6 +225,12 @@ com.hiyoko.tofclient.Table = function(tof, interval, options){
 				}
 				$tag.css('opacity', '0').animate({opacity:'1'}, 800);
 			});
+			$ct.on('ServerImageListSelect', function(e){
+				var $image = $ct.find('input[name="image"]');
+				$image.val(e.url);
+				$image.change();
+			}.bind(this));
+			
 			$base.append($cn);
 			$base.append($ct);
 		});

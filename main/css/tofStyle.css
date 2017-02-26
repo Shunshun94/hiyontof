@@ -692,7 +692,7 @@ span.tofChat-chat-submenu-list-item {
  cursor: pointer;
  display:block;
  min-width:59px;
- hegith:20px;
+ height:20px;
 }
 
 .tofChat-table-display-serverImageList {
@@ -702,7 +702,7 @@ span.tofChat-chat-submenu-list-item {
  left: 0;
  height: 100%;
  width: 100%;
- background:black;
+ background-color:black;
  opacity: 0.90;
  margin: 0;
  padding: 0;
@@ -716,6 +716,18 @@ span.tofChat-chat-submenu-list-item {
 	display:inline-block;
 	background-size:contain;
 	background-repeat:no-repeat;
+}
+
+.tofChat-table-display-serverImageList-close {
+	text-align:center;
+	vertical-align:bottom;
+	padding:2px;
+	margin:5px;
+	border:2px #B0FFB0 outset;
+	border-radius: 1ex;
+	background-color: green;
+	color:white;
+ cursor: pointer;
 }
 
 .active {
