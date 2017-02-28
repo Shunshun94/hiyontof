@@ -799,3 +799,31 @@ com.hiyoko.tof.parseResourceUrl = function(picUrl, urlBase){
 	}
 	return urlBase.replace("DodontoFServer.rb?", "/" + picUrl);
 };
+
+com.hiyoko.tof.getImageJsonUrl = function(url, opt_crossDomain) {
+	var host = location.host;
+	var urlParsed = new URL(url);
+	if((urlParsed.host !== host) && (! opt_crossDomain)) {
+		return false;
+	}
+	
+	if(com.hiyoko.tof.IMAGEJSONURL) {
+		return com.hiyoko.tof.IMAGEJSONURL;
+	}
+	
+	if(url.endsWith('/DodontoF/DodontoFServer.rb?')) {
+		return url.replace('/DodontoF/DodontoFServer.rb?', '/imageUploadSpace/imageInfo.json');
+	}
+	
+	var officialRegExc = /\/DodontoF(.*)\/DodontoFServer.rb\?$/;
+	if(officialRegExc.test(url)) {
+		var execResult = officialRegExc.exec(url);
+		return url.replace(execResult[0], '/imageUploadSpace' + execResult[1] + '/imageInfo.json');
+	}
+	
+	if(url === urlParsed.origin + '/DodontoFServer.rb?') {
+		return urlParsed.origin + '/imageUploadSpace/imageInfo.json';
+	}
+	
+	return false;
+};
