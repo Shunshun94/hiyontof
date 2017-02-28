@@ -11,7 +11,6 @@ var com = com || {};
 com.hiyoko = com.hiyoko || {};
 com.hiyoko.tofclient = com.hiyoko.tofclient || {};
 
-
 /** 
  * ログインできるサーバ一覧
  */
@@ -43,6 +42,15 @@ com.hiyoko.tofclient.ServerList.SERVER_LIST = {
  * true にすると com.hiyoko.tofclient.ServerList.SERVER_LIST に登録されているサーバにしかアクセスできないようになる。
  */
 com.hiyoko.tofclient.ServerList.RESTRICTION = false;
+
+com.hiyoko.tof = com.hiyoko.tof || {};
+
+/**
+ * com.hiyoko.tof.getImageJsonUrl で得られる URL を指定する。
+ * 何も設定しないと com.hiyoko.tof.getImageJsonUrl　は推測した URL を返す。
+ * 指定した場合、ひよんとふ設置サーバとひよんとふの接続先が同一ドメインならば、ここで指定した URL を返す。
+ */
+com.hiyoko.tof.IMAGEJSONURL = '';
 
 /**
  * 許容する最小更新間隔。秒で設定する。
