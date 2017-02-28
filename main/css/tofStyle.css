@@ -86,13 +86,22 @@
 	position:relative;
 }
 
+#tofChat-connection {
+	position:absolute;
+	bottom:-5px;
+	background-color:white;
+}
+
 #tofChat-inputArea {
 	position:fixed;
-	background-color:white;
 	z-index:2;
 	padding-top:5px;
 	top:81px;
 	left:0px;
+}
+
+#tofChat-inputArea-display {
+	background-color:white;
 }
 
 #tofChat-input-sendCallRoll,
@@ -109,6 +118,7 @@
 	text-align:center;
 	top:-34px;
 	vertical-align:bottom;
+	background-color:white;
 }
 
 #tofChat-inputArea-showButtonBase-button,
@@ -131,6 +141,7 @@
 	text-align:center;
 	top:-41px;
 	vertical-align:bottom;
+	background-color:white;
 }
 
 #tofChat-map, #tofChat-table, #tofChat-memo {
