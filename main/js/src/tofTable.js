@@ -6,8 +6,7 @@ com.hiyoko.HiyoLogger = com.hiyoko.HiyoLogger || function(){
 com.hiyoko.tofclient = com.hiyoko.tofclient || {};
 com.hiyoko.tofclient.Table = function(tof, interval, options){
 	var $html = options.html ? options.html : $("#tofChat-table");
-	var table = options.table ? false : true;
-	var outerImage = options.outerImage;
+	
 	var debug = options.debug ? true : false;
 	
 	var logger = new com.hiyoko.HiyoLogger(debug, debug);
@@ -20,6 +19,20 @@ com.hiyoko.tofclient.Table = function(tof, interval, options){
 	function isActive() {
 		return $html.css('display') !== 'none';
 	}
+	
+	this.generateServerImageButton = function() {
+		var url = com.hiyoko.tof.getImageJsonUrl(tof.getStatus().url);
+		if(! Boolean(url)) {
+			return '';
+		}
+		
+		return '<span class="' + $html.attr('id') + '-display-serverImageButton">画像変更</span>' +
+				'<div class="' + $html.attr('id') + '-display-serverImageList"></div>';
+	};
+	
+	
+	var outerImage = options.outerImage;
+	var serverImageButton = this.generateServerImageButton();
 	
 	this.getValuesAsync = function(opt_callback) {
 		tof.getRefresh(function(result){rend(result.characters, function(){
@@ -43,9 +56,15 @@ com.hiyoko.tofclient.Table = function(tof, interval, options){
 		});
 		if(interval){
 			window.setInterval(function(){
-				if(isActive()){
-					$read.click();
+				if((! isActive()) ||
+					$(document.activeElement).is('#tofChat-table-display input') ||
+					$(document.activeElement).is('#tofChat-table-display textarea') ||
+					$('.tofChat-table-display-serverImageList').filter(function(i, dom){
+						return $(dom).css('display') === 'block'
+					}).length ) {
+					return;
 				}
+				$read.click();
 			}, interval);
 		}
 		// 少し時間をおいてロードしないと先頭項目のチェックボックスが変になる
@@ -123,7 +142,7 @@ com.hiyoko.tofclient.Table = function(tof, interval, options){
 			}
 		})
 
-		$table = table ? drawTable(keysV, keysB, list) : drawAccordion(keysV, keysB, list);
+		$table = drawAccordion(keysV, keysB, list);
 
 		$disp.append($table);
 	};
@@ -182,7 +201,7 @@ com.hiyoko.tofclient.Table = function(tof, interval, options){
 				$ct.append($tr);
 			});
 			
-			if(outerImage) {
+			if(outerImage || serverImageButton) {
 				var $picTr = $('<tr></tr>');
 				$picTr.append('<th>画像</th>');
 				
@@ -192,10 +211,11 @@ com.hiyoko.tofclient.Table = function(tof, interval, options){
 				$picInput.attr({
 					name: 'image',
 					type: 'text',
-					value: c.imageName
+					value: c.imageName,
+					style: (outerImage ? '' : 'display:none;')
 				});
 				$picTd.append($picInput);
-				
+				$picTd.append(serverImageButton);
 				$picTr.append($picTd);
 				$ct.append($picTr);
 			}
@@ -211,50 +231,27 @@ com.hiyoko.tofclient.Table = function(tof, interval, options){
 				}
 				$tag.css('opacity', '0').animate({opacity:'1'}, 800);
 			});
+			$ct.on('ServerImageListSelect', function(e){
+				var $image = $ct.find('input[name="image"]');
+				$image.val(e.url);
+				$image.change();
+			}.bind(this));
+			
 			$base.append($cn);
 			$base.append($ct);
 		});
 		return $base;
 	};
 	
-	var drawTable = function(keysV, keysB, list) {
-		var $table = $("<table border='1'></table>");
-		var $titleLine = $("<tr><th>名前</th><th>イニシアティブ</th></tr>");
-		$.each(keysV, function(i, k){
-			$titleLine.append("<th>" + k + "</th>");
-		});
-		$.each(keysB, function(i, k){
-			$titleLine.append("<th>" + k + "</th>");
-		});
-		$titleLine.append("<th>その他</th>");
+	$html.click(function(e) {
+		if($(e.target).hasClass($html.attr('id') + '-display-serverImageButton')) {
+			new com.hiyoko.tofclient.ServerImageList(
+					$(e.target).parent().find('.' + $html.attr('id') + '-display-serverImageList'),
+					com.hiyoko.tof.getImageJsonUrl(tof.getStatus().url),
+					tof.getStatus().url.replace('DodontoFServer.rb?', ''));
+		}
 		
-		$table.append($titleLine);
-		
-		$.each(list, function(i, c){
-			chars.push(tof.generateCharacterFromResult(c));
-			var $cLine = $("<tr><th>" + c.name +"</th></tr>");
-			$cLine.append("<td><input name='initiative' type='number' value='" + c.initiative + "' /></td>");
-			var cTable = c.counters;
-			$.each(keysV, function(i, k){
-				$cLine.append("<td><input name='" + k +"' type='number' value='" + cTable[k] + "' /></td>");
-			});
-			$.each(keysB, function(i, k){
-				$cLine.append("<td><input name='*" + k +"' type='checkbox' " + ( cTable["*" + k] === "1" ? "checked='checked'" : "" )  + " /></td>");
-			});
-			$cLine.append("<td><input name='info' type='text' value='" + c.info + "' /></td>");
-			
-			$cLine.change(function(e){
-				var $tag = $(e.target);
-				if($tag.attr("type") !== "checkbox"){
-					chars[i].setValue($(e.target).attr("name"), $tag.val());
-				} else {
-					chars[i].setValue('*' + $(e.target).attr("name"), $tag.prop("checked") ? "1" : "0");
-				}
-			});
-			$table.append($cLine);
-		});
-		return $table;
-	};
+	});
 	
 	this.init();
 };

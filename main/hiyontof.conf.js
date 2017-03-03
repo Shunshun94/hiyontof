@@ -11,7 +11,6 @@ var com = com || {};
 com.hiyoko = com.hiyoko || {};
 com.hiyoko.tofclient = com.hiyoko.tofclient || {};
 
-
 /** 
  * ログインできるサーバ一覧
  */
@@ -29,6 +28,8 @@ com.hiyoko.tofclient.ServerList.SERVER_LIST = {
 		'https://www.taruki.com/DodontoF_srv2/DodontoF.swf':'公式第三世代第弐鯖',
 		'https://www.taruki.com/DodontoF_srv3/DodontoF.swf':'公式第三世代第参鯖',
 		'https://www.taruki.com/DodontoF_srv4/DodontoF.swf':'公式第三世代第四鯖',
+		'https://www.taruki.com/DodontoF_srv5/DodontoF.swf':'公式第三世代第五鯖',
+		'https://www.taruki.com/DodontoF_srv6/DodontoF.swf':'公式第三世代第六鯖',
 		'http://onse01.wtrpg.com/DodontoF/DodontoF.swf':'クラウドゲート公式',
 		'http://dodontof.incoglab.com/DodontoF.swf':'インコグ・ラボ',
 		'https://d1.trpg.net/DodontoF.swf':'TRPG.NET 第1',
@@ -43,6 +44,15 @@ com.hiyoko.tofclient.ServerList.SERVER_LIST = {
  * true にすると com.hiyoko.tofclient.ServerList.SERVER_LIST に登録されているサーバにしかアクセスできないようになる。
  */
 com.hiyoko.tofclient.ServerList.RESTRICTION = false;
+
+com.hiyoko.tof = com.hiyoko.tof || {};
+
+/**
+ * com.hiyoko.tof.getImageJsonUrl で得られる URL を指定する。
+ * 何も設定しないと com.hiyoko.tof.getImageJsonUrl　は推測した URL を返す。
+ * 指定した場合、ひよんとふ設置サーバとひよんとふの接続先が同一ドメインならば、ここで指定した URL を返す。
+ */
+com.hiyoko.tof.IMAGEJSONURL = '';
 
 /**
  * 許容する最小更新間隔。秒で設定する。

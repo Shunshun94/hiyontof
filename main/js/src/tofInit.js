@@ -3,6 +3,7 @@
 			url: getParam("url", false),
 			room: getParam("room", false),
 			pass: getParam("pass",false),
+			name: getParam("name",false)
 	};
 	
 	var serverListModule = new com.hiyoko.tofclient.ServerList();
@@ -47,7 +48,7 @@
 		});
 	}else{
 		$('#tofChat-init-reload').attr('min', com.hiyoko.tofclient.App.MIN_UPDATE_INTERVAL);
-		
+		$('#tofChat-go-out').remove();
 		for(var key in serverList) {
 			$("#tofChat-init-url-list").append(
 					"<option value=\""+key+"\">"+serverList[key]+"</option>"
@@ -59,7 +60,7 @@
 		if(initData.url ){$("#tofChat-init-url").val(initData.url);  }
 		if(initData.room){$("#tofChat-init-room").val(initData.room);}
 		if(initData.pass){$("#tofChat-init-pass").val(initData.pass);}
-		$("#tofChat-init-name").val(localStorage.getItem("name") || 'ななしのひよこ');
+		$("#tofChat-init-name").val(decodeURI(initData.name || localStorage.getItem("name") || 'ななしのひよこ'));
 		
 		$("#tofChat-init-advanced-toggle").click(function(e){
 			if($("#tofChat-init-advanced").css("display") === "block"){

@@ -1,6 +1,17 @@
 <!DOCTYPE html>
 <html>
-<head>
+<head
+	　prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
+<meta property="og:title" content="ひよんとふ機能一覧" />
+<meta property="og:type" content="website" />
+<meta property="og:image"
+	content="http://shunshun94.web.fc2.com/material/hiyontof.png" />
+<meta property="og:site_name" content="ひよんとふ機能一覧" />
+<meta property="og:description"
+	content="ひよんとふに何ができて、何ができないのかをまとめたページです" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@Shunshun94" />
+
 <style type="text/css">
 td:nth-child(even) {
 	width:70px;
@@ -146,7 +157,9 @@ td:nth-child(odd) {
 </tr>
 </table>
 <p>※4 イニシアティブ表の機能で可能</p>
-<p>※5 外部 URL を許可している部屋のみ、画像 URL の直接入力によって可能</p>
+<p>※5 外部 URL を許可している部屋のみ、画像 URL の直接入力によって可能<br/>
+また、ひよんとふがおかれているサーバと同じサーバにどどんとふがおかれている場合、<br/>
+画像一覧から画像を選択して変更が可能</p>
 
 <h2>イニシアティブ表</h2>
 <table border="1">
@@ -176,5 +189,31 @@ td:nth-child(odd) {
 </tr>
 </table>
 
+<h2>鍵付きの部屋・見学</h2>
+<table border="1">
+<tr>
+	<td>鍵無しの部屋への入室</td>
+	<td>〇</td>
+</tr>
+<tr>
+	<td>鍵有り・見学可の部屋への入室</td>
+	<td>〇※6</td>
+</tr>
+<tr>
+	<td>鍵有り・見学可の部屋での見学</td>
+	<td>〇※7</td>
+</tr>
+<tr>
+	<td>鍵有り・見学不可の部屋への入室</td>
+	<td>〇※8</td>
+</tr>
+<tr>
+	<td>鍵有り・見学不可の部屋での見学</td>
+	<td>×</td>
+</tr>
+</table>
+<p>※6 パスワードが間違っている場合は見学になる</p>
+<p>※7 パスワードは不要</p>
+<p>※8 パスワードが間違っている場合は入室できない</p>
 </body>
 </html>
