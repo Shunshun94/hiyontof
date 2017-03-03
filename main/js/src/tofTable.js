@@ -56,9 +56,15 @@ com.hiyoko.tofclient.Table = function(tof, interval, options){
 		});
 		if(interval){
 			window.setInterval(function(){
-				if(isActive()){
-					$read.click();
+				if((! isActive()) ||
+					$(document.activeElement).is('#tofChat-table-display input') ||
+					$(document.activeElement).is('#tofChat-table-display textarea') ||
+					$('.tofChat-table-display-serverImageList').filter(function(i, dom){
+						return $(dom).css('display') === 'block'
+					}).length ) {
+					return;
 				}
+				$read.click();
 			}, interval);
 		}
 		// 少し時間をおいてロードしないと先頭項目のチェックボックスが変になる
