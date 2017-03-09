@@ -123,10 +123,10 @@ com.hiyoko.tofclient.Chat = function(tof, interval, serverInfo, options){
 		});
 		
 		$(window).scroll(function(e){
-			if($(window).scrollTop() > 42){
-				$inputArea.css("top", "39px");
+			if($(window).scrollTop() > 40){
+				$submenu.css("top", "50px");
 			} else {
-				$inputArea.css("top", (81-$(window).scrollTop())+"px");
+				$submenu.css("top", (90-$(window).scrollTop())+"px");
 			}
 		});  
 		
@@ -784,8 +784,6 @@ com.hiyoko.tofclient.Chat.InputArea = function($parent, children, isVisitor, ser
 	var $showBase = $('#tofChat-inputArea-showButtonBase');
 	var $hideBase = $('#tofChat-inputArea-hideButtonBase');
 	var $inputArea = $('#tofChat-inputArea-display');
-	
-	$parent.width($(window).width());
 	
 	function eventBind(){
 		$showBase.find('span').click(function(e){

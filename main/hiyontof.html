@@ -36,7 +36,17 @@
 		<div data-role="content">
 			<div id="tofChat-work">
 				<div id="tofChat-chat" class="tofChat-tabContent">
-					<div id="tofChat-inputArea">
+					<div id="tofChat-chat-submenu"><span id="tofChat-chat-submenu-button">MENU</span><div id="tofChat-chat-submenu-list"></div></div>
+					<div id ="tofChat-chat-log">
+						<div id="tofChat-chat-log-cutin"></div>
+						<img id="tofChat-chat-log-cutin-pic" />
+					</div>
+					<p id="tofChat-connection">Status: <span id="tofChat-connection-status"></span></p>
+					<input type="button" id="tofChat-input-get" value="更新" />
+					<div id="tofChat-jump">
+						<p>▼</p>
+					</div>
+				<div id="tofChat-inputArea">
 						<div id="tofChat-inputArea-display">
 							<div id="tofChat-chat-input-shared">
 								<div class="tofChat-input-half">
@@ -67,7 +77,6 @@
 											label="メイン">メイン</option></select>
 								</div>
 								<div id="tofChat-chat-input-input-name">
-									<div id="tofChat-chat-submenu"><span id="tofChat-chat-submenu-button" class="tofChat-button">MENU</span><div id="tofChat-chat-submenu-list"></div></div>
 									<div class="tofChat-input-half-short">
 										色<input
 											class="jscolor {closable:true,closeText:'閉じる',onFineChange:'com.hiyoko.tofclient.Chat.Util.colorChange(this)'}"
@@ -164,22 +173,16 @@
 								</div>
 							</div>
 						</div>
+						<!--  
 						<div id="tofChat-inputArea-showButtonBase">
 							<span id="tofChat-inputArea-showButtonBase-button">▼</span>
 						</div>
 						<div id="tofChat-inputArea-hideButtonBase">
 							<span id="tofChat-inputArea-hideButtonBase-button">▲</span>
 						</div>
-						<p id="tofChat-connection">Status: <span id="tofChat-connection-status"></span></p>
+						-->
 					</div>
-					<div id ="tofChat-chat-log">
-						<div id="tofChat-chat-log-cutin"></div>
-						<img id="tofChat-chat-log-cutin-pic" />
-					</div>
-					<input type="button" id="tofChat-input-get" value="更新" />
-					<div id="tofChat-jump">
-						<p>▼</p>
-					</div>
+					
 				</div>
 				<div id="tofChat-map" class="tofChat-tabContent">
 					<select id="tofChat-map-mode">
