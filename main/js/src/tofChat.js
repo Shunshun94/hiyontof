@@ -28,6 +28,7 @@ com.hiyoko.tofclient.Chat = function(tof, interval, serverInfo, options){
 		display = new com.hiyoko.tofclient.Chat.Display($("#" + id + "-log"));
 		inputArea = new com.hiyoko.tofclient.Chat.InputArea($("#tofChat-inputArea"),
 				{	talk:$("#tofChat-input"), 
+					simple:$("#" + id + "-input-simple"),
 					history:$("#" + id + "-input-history"),
 					secret:$("#" + id + "-input-secret"),
 					chatparette:$("#" + id + "-input-chatparette")},
@@ -123,10 +124,10 @@ com.hiyoko.tofclient.Chat = function(tof, interval, serverInfo, options){
 		});
 		
 		$(window).scroll(function(e){
-			if($(window).scrollTop() > 42){
-				$inputArea.css("top", "39px");
+			if($(window).scrollTop() > 40){
+				$submenu.css("top", "50px");
 			} else {
-				$inputArea.css("top", (81-$(window).scrollTop())+"px");
+				$submenu.css("top", (90-$(window).scrollTop())+"px");
 			}
 		});  
 		
@@ -188,7 +189,9 @@ com.hiyoko.tofclient.Chat = function(tof, interval, serverInfo, options){
 				function(r){
 					getMsg_("Sending...Done! Getting...")
 				},
-				nameSuiter(e.name), e.msg, e.color, e.tab,e.bot);
+				nameSuiter(e.name || inputArea.getName()), e.msg,
+				(e.color || inputArea.getColor()), e.tab,
+				(e.bot || inputArea.getBot()));
 	};
 
 	function sendMsgEvent(e) {
@@ -349,7 +352,7 @@ com.hiyoko.tofclient.Chat.Util.fixChatMsg = function(chatMsg, store){
 		tab = 0;
 	}
 	if(startsWith(message, '###CutInMovie###')) {
-		var parsedMsg = com.hiyoko.tofclient.Chat.Util.parseCommand(message, '###CutInMovie###');
+		var parsedMsg = com.hiyoko.tofclient.Chat.Util.parseCommand(message.replace(/\t/gm, '  '), '###CutInMovie###');
 		
 		message = parsedMsg.message;
 		cutin = {
@@ -359,7 +362,6 @@ com.hiyoko.tofclient.Chat.Util.fixChatMsg = function(chatMsg, store){
 			volume: parsedMsg.volume
 		};
 	} else if(store) {
-		
 		cutin = store.getTailCutIn(message);
 	}
 	
@@ -771,6 +773,7 @@ com.hiyoko.tofclient.Chat.Status = function($html){
  */
 com.hiyoko.tofclient.Chat.InputArea = function($parent, children, isVisitor, serverInfo, tofStatus){
 	var inputs = {talk:new com.hiyoko.tofclient.Chat.InputArea.Input(children.talk, isVisitor, tofStatus),
+				  simple:new com.hiyoko.tofclient.Chat.InputArea.Simple(children.simple),
 	              history:new com.hiyoko.tofclient.Chat.InputArea.History(children.history),
 	              secret:new com.hiyoko.tofclient.Chat.InputArea.Secret(children.secret),
 	              parette:new com.hiyoko.tofclient.Chat.InputArea.ChatParette(children.chatparette)};
@@ -784,8 +787,6 @@ com.hiyoko.tofclient.Chat.InputArea = function($parent, children, isVisitor, ser
 	var $showBase = $('#tofChat-inputArea-showButtonBase');
 	var $hideBase = $('#tofChat-inputArea-hideButtonBase');
 	var $inputArea = $('#tofChat-inputArea-display');
-	
-	$parent.width($(window).width());
 	
 	function eventBind(){
 		$showBase.find('span').click(function(e){
@@ -997,7 +998,6 @@ com.hiyoko.tofclient.Chat.InputArea.Input = function($html, isVisitor, tofStatus
 			$name_color.show();
 			$showNameColor.hide();
 			$msg.css('width', '97%');
-			
 		});
 	}
 
@@ -1025,6 +1025,31 @@ com.hiyoko.tofclient.Chat.InputArea.Input = function($html, isVisitor, tofStatus
 	$name.val(decodeURI(getParam("name")) || localStorage.getItem("name") || 'ななしのひよこ');
 	eventBind();
 	$color.css("background-color", "#" + self.getColor());
+};
+
+com.hiyoko.tofclient.Chat.InputArea.Simple = function($html) {
+	this.disabled = function(){$html.hide();};
+	this.enabled = function(){$html.show();adjustHeight();};
+	var id = $html.attr('id');
+	var $t = $('#' + id + '-text');
+	var $s = $('#' + id + '-send');
+	
+	function adjustHeight() {
+		$t.css('height', '22px');
+	}
+	
+	function eventBinds() {
+		$s.click(function(e) {
+			$html.trigger(new $.Event("sendMessage", {
+				msg: $t.val(),
+				tab: 0
+			}));
+			adjustHeight();
+			$t.val('');
+		});
+	}
+	
+	eventBinds();
 };
 
 com.hiyoko.tofclient.Chat.InputArea.History = function($html){
@@ -1297,10 +1322,8 @@ com.hiyoko.tofclient.Chat.InputArea.ChatParette = function($html) {
 	function sendParsedMessage(text, json, eventType) {
 		var asyncEvent = new $.Event('com.hiyoko.tofclient.Table.DataRequest', {
 			promise: function(result) {
-				cData = result[json.name] || {getValue:function(){return false;}};
+				cData = result[json.name] || {getValue:function(){return undefined;}};
 				var parsedText = self.parseMessage(text, json.vars, cData);
-				
-				
 				$html.trigger(new $.Event(eventType, {
 					msg: parsedText,
 					color: json.color,
