@@ -1322,10 +1322,8 @@ com.hiyoko.tofclient.Chat.InputArea.ChatParette = function($html) {
 	function sendParsedMessage(text, json, eventType) {
 		var asyncEvent = new $.Event('com.hiyoko.tofclient.Table.DataRequest', {
 			promise: function(result) {
-				cData = result[json.name] || {getValue:function(){return false;}};
+				cData = result[json.name] || {getValue:function(){return undefined;}};
 				var parsedText = self.parseMessage(text, json.vars, cData);
-				
-				
 				$html.trigger(new $.Event(eventType, {
 					msg: parsedText,
 					color: json.color,
