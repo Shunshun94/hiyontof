@@ -189,7 +189,9 @@ com.hiyoko.tofclient.Chat = function(tof, interval, serverInfo, options){
 				function(r){
 					getMsg_("Sending...Done! Getting...")
 				},
-				nameSuiter(e.name), e.msg, e.color, e.tab,e.bot);
+				nameSuiter(e.name || inputArea.getName()), e.msg,
+				(e.color || inputArea.getColor()), e.tab,
+				(e.bot || inputArea.getBot()));
 	};
 
 	function sendMsgEvent(e) {
@@ -360,7 +362,6 @@ com.hiyoko.tofclient.Chat.Util.fixChatMsg = function(chatMsg, store){
 			volume: parsedMsg.volume
 		};
 	} else if(store) {
-		
 		cutin = store.getTailCutIn(message);
 	}
 	
@@ -997,7 +998,6 @@ com.hiyoko.tofclient.Chat.InputArea.Input = function($html, isVisitor, tofStatus
 			$name_color.show();
 			$showNameColor.hide();
 			$msg.css('width', '97%');
-			
 		});
 	}
 
@@ -1030,10 +1030,26 @@ com.hiyoko.tofclient.Chat.InputArea.Input = function($html, isVisitor, tofStatus
 com.hiyoko.tofclient.Chat.InputArea.Simple = function($html) {
 	this.disabled = function(){$html.hide();};
 	this.enabled = function(){$html.show();adjustHeight();};
+	var id = $html.attr('id');
+	var $t = $('#' + id + '-text');
+	var $s = $('#' + id + '-send');
 	
 	function adjustHeight() {
-		$html.find('#tofChat-chat-input-simple-text').css('height', '22px');
+		$t.css('height', '22px');
 	}
+	
+	function eventBinds() {
+		$s.click(function(e) {
+			$html.trigger(new $.Event("sendMessage", {
+				msg: $t.val(),
+				tab: 0
+			}));
+			adjustHeight();
+			$t.val('');
+		});
+	}
+	
+	eventBinds();
 };
 
 com.hiyoko.tofclient.Chat.InputArea.History = function($html){
