@@ -52,6 +52,7 @@
 								<div class="tofChat-input-half">
 									<select id="tofChat-chat-input-switch">
 										<option value="talk" label="発言">発言</option>
+										<option value="simple" label="シンプル">シンプル</option>
 										<option value="history" label="発言履歴">発言履歴</option>
 										<option value="secret" label="非公開発言">非公開発言</option>
 										<option value="parette" label="チャットパレット">チャットパレット</option>
@@ -102,7 +103,14 @@
 										<div class="tofChat-button-heavy" id="tofChat-input-send">送信</div>
 									</div>
 								</div>
-	
+							</div>
+							<div id="tofChat-chat-input-simple">
+								<div id="tofChat-chat-input-simple-tbase">
+									<textarea id="tofChat-chat-input-simple-text"></textarea>
+								</div>
+								<div id="tofChat-chat-input-simple-sbase">
+									<span id="tofChat-chat-input-simple-send">送信</span>
+								</div>
 							</div>
 							<div id="tofChat-chat-input-history">
 								<p id="tofChat-chat-input-history-tabs"></p>
@@ -173,14 +181,6 @@
 								</div>
 							</div>
 						</div>
-						<!--  
-						<div id="tofChat-inputArea-showButtonBase">
-							<span id="tofChat-inputArea-showButtonBase-button">▼</span>
-						</div>
-						<div id="tofChat-inputArea-hideButtonBase">
-							<span id="tofChat-inputArea-hideButtonBase-button">▲</span>
-						</div>
-						-->
 					</div>
 					
 				</div>

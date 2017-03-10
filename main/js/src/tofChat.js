@@ -28,6 +28,7 @@ com.hiyoko.tofclient.Chat = function(tof, interval, serverInfo, options){
 		display = new com.hiyoko.tofclient.Chat.Display($("#" + id + "-log"));
 		inputArea = new com.hiyoko.tofclient.Chat.InputArea($("#tofChat-inputArea"),
 				{	talk:$("#tofChat-input"), 
+					simple:$("#" + id + "-input-simple"),
 					history:$("#" + id + "-input-history"),
 					secret:$("#" + id + "-input-secret"),
 					chatparette:$("#" + id + "-input-chatparette")},
@@ -771,6 +772,7 @@ com.hiyoko.tofclient.Chat.Status = function($html){
  */
 com.hiyoko.tofclient.Chat.InputArea = function($parent, children, isVisitor, serverInfo, tofStatus){
 	var inputs = {talk:new com.hiyoko.tofclient.Chat.InputArea.Input(children.talk, isVisitor, tofStatus),
+				  simple:new com.hiyoko.tofclient.Chat.InputArea.Simple(children.simple),
 	              history:new com.hiyoko.tofclient.Chat.InputArea.History(children.history),
 	              secret:new com.hiyoko.tofclient.Chat.InputArea.Secret(children.secret),
 	              parette:new com.hiyoko.tofclient.Chat.InputArea.ChatParette(children.chatparette)};
@@ -1023,6 +1025,15 @@ com.hiyoko.tofclient.Chat.InputArea.Input = function($html, isVisitor, tofStatus
 	$name.val(decodeURI(getParam("name")) || localStorage.getItem("name") || 'ななしのひよこ');
 	eventBind();
 	$color.css("background-color", "#" + self.getColor());
+};
+
+com.hiyoko.tofclient.Chat.InputArea.Simple = function($html) {
+	this.disabled = function(){$html.hide();};
+	this.enabled = function(){$html.show();adjustHeight();};
+	
+	function adjustHeight() {
+		$html.find('#tofChat-chat-input-simple-text').css('height', '22px');
+	}
 };
 
 com.hiyoko.tofclient.Chat.InputArea.History = function($html){

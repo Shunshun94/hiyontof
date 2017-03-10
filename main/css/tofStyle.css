@@ -321,6 +321,27 @@ span.tofChat-chat-submenu-list-item {
 	display:inline-block;
 }
 
+#tofChat-chat-input-simple-tbase {
+	display:inline-block;
+	width:83%;
+}
+
+#tofChat-chat-input-simple-text {
+	
+}
+
+#tofChat-chat-input-simple-sbase {
+	display:inline-block;
+	width:15%;
+	text-align:right;
+	vertical-align:center;
+	position:relative;
+}
+
+#tofChat-chat-input-simple-send {
+	border:2px #A0AAA0 outset;
+}
+
 #tofChat-chat-input-history {
 	background-color:#A0FFA0;
 	border-radius: 12px;
