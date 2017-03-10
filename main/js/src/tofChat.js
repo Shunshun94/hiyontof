@@ -350,7 +350,7 @@ com.hiyoko.tofclient.Chat.Util.fixChatMsg = function(chatMsg, store){
 		tab = 0;
 	}
 	if(startsWith(message, '###CutInMovie###')) {
-		var parsedMsg = com.hiyoko.tofclient.Chat.Util.parseCommand(message, '###CutInMovie###');
+		var parsedMsg = com.hiyoko.tofclient.Chat.Util.parseCommand(message.replace(/\t/gm, '  '), '###CutInMovie###');
 		
 		message = parsedMsg.message;
 		cutin = {
