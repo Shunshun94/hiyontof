@@ -545,6 +545,55 @@ com.hiyoko.tof.room = function(urlInput, roomInput, passInput, callback){
 				});
 	};
 
+	this.uploadPicture = function(callback, failCallBack, params) {
+		var tempSendMsg = 'webif=uploadImageData&room=' + room;
+		if(pass != ""){
+			tempSendMsg += '&password=' + pass;
+		}
+		$.ajax({
+			type:'get',
+			url: url + tempSendMsg,
+			async:false,
+			dataType:'jsonp'}
+		).done(function(validationResult){
+			if(validationResult.result.endsWith('is NOT found')) {
+				failCallBack({result: '[ERROR] どどんとふ Ver.1.48.28 以降でなければこの機能は使えません'}, params);
+				return;
+			}
+			if(! Boolean(params.fileData)) {
+				failCallBack({result: '[ERROR] 画像が指定されていません。', detail: 'args.fileData が指定されている必要があります。'}, params);
+				return;
+			}
+			var formData = new FormData();
+			formData.append('webif', 'uploadImageData');
+			formData.append('fileData', params.fileData);
+			formData.append('room', room);
+			if(pass != ""){
+				formData.append('password', pass);
+			}
+			if(params.smallImageData) {
+				formData.append('smallImageData', params.smallImageData);
+			}
+			if(params.tags) {
+				var tmp_tags = Array.isArray(params.tags) ? params.tags.join(' ') : params.tags;
+				formData.append('tags', tmp_tags);
+			}
+			$.ajax({
+				url  : url,
+				type : 'POST',
+				data : formData,
+				async: false,
+				cache       : false,
+				contentType : false,
+				processData : false
+			}).done(function(result) {
+				callback(result, params);
+			}).fail(function(result) {
+				failCallBack(result, params);
+			});
+		});
+	};
+
 	this.getRoomInfo(function(result){
 		me.setStatus(result);
 		if(callback){callback(me);};
