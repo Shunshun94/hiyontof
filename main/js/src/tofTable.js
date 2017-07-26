@@ -6,6 +6,7 @@ com.hiyoko.HiyoLogger = com.hiyoko.HiyoLogger || function(){
 com.hiyoko.tofclient = com.hiyoko.tofclient || {};
 com.hiyoko.tofclient.Table = function(tof, interval, options){
 	var $html = options.html ? options.html : $("#tofChat-table");
+	var id = $html.attr('id');
 	
 	var debug = options.debug ? true : false;
 	
@@ -61,6 +62,9 @@ com.hiyoko.tofclient.Table = function(tof, interval, options){
 					$(document.activeElement).is('#tofChat-table-display textarea') ||
 					$('.tofChat-table-display-serverImageList').filter(function(i, dom){
 						return $(dom).css('display') === 'block'
+					}).length ||
+					$('.' + id + '-display-serverImageUpload-selectpic').filter(function(i, dom){
+						return $(dom).prop('files')[0];
 					}).length ) {
 					return;
 				}
@@ -116,6 +120,9 @@ com.hiyoko.tofclient.Table = function(tof, interval, options){
 				"キャラクター追加</div>");
 		button.click(addCharacter);
 		$disp.append(button);
+		$('.' + id + '-display-serverImageUpload').each(function(i) {
+			
+		})
 	};
 	
 	var rendCharacterTable = function(charCandidates){
@@ -140,11 +147,14 @@ com.hiyoko.tofclient.Table = function(tof, interval, options){
 			} else {
 				keysV.push(v);
 			}
-		})
+		});
 
 		$table = drawAccordion(keysV, keysB, list);
-
 		$disp.append($table);
+		
+		$('.' + id + '-display-serverImageUpload').each(function(i) {
+			new com.hiyoko.tof.ImageUploader($(this), {tags: 'キャラクター画像 ひよんとふ ' + list[i].name})
+		});
 	};
 	
 	var drawAccordion = function(keysV, keysB, list) {
@@ -201,13 +211,11 @@ com.hiyoko.tofclient.Table = function(tof, interval, options){
 				$ct.append($tr);
 			});
 			
+			var $picTr = $('<tr></tr>');
+			$picTr.append('<th>画像</th>');
+			var $picTd = $('<td></td>');
 			if(outerImage || serverImageButton) {
-				var $picTr = $('<tr></tr>');
-				$picTr.append('<th>画像</th>');
-				
-				var $picTd = $('<td></td>');
 				var $picInput = $('<input />');
-				
 				$picInput.attr({
 					name: 'image',
 					type: 'text',
@@ -216,10 +224,11 @@ com.hiyoko.tofclient.Table = function(tof, interval, options){
 				});
 				$picTd.append($picInput);
 				$picTd.append(serverImageButton);
-				$picTr.append($picTd);
-				$ct.append($picTr);
+				$picTd.append('<hr/>');
 			}
-			
+			$picTd.append(com.hiyoko.tofclient.Table.getImageUploaderDom(id + '-display-serverImageUpload-' + i, id + '-display-serverImageUpload'));
+			$picTr.append($picTd);
+			$ct.append($picTr);
 			$ct.append("<tr><th>その他</th>"
 						+ "<td><textarea name='info'>" + c.info + "</textarea></td></tr>");
 			$ct.change(function(e){
@@ -254,4 +263,12 @@ com.hiyoko.tofclient.Table = function(tof, interval, options){
 	});
 	
 	this.init();
+};
+
+com.hiyoko.tofclient.Table.getImageUploaderDom = function(id, clazz) {
+	return '<div id="' + id + '" class="' + clazz + '">' +
+	'<input type="file" id="' + id + '-selectpic" class="' + clazz + '-selectpic" name="fileData" accept="image/*">' +
+	'<input id="' + id + '-tags" class="' + clazz + '-tags" value="" />' +
+	'<canvas id="' + id + '-canvas" class="' + clazz + '-canvas"></canvas>' +
+	'<button id="' + id + '-upload" class="' + clazz + '-upload">アップロードする</button></div>';
 };
