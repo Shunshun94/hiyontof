@@ -6,6 +6,7 @@ com.hiyoko.HiyoLogger = com.hiyoko.HiyoLogger || function(){
 com.hiyoko.tofclient = com.hiyoko.tofclient || {};
 com.hiyoko.tofclient.Table = function(tof, interval, options){
 	var $html = options.html ? options.html : $("#tofChat-table");
+	var id = $html.attr('id');
 	
 	var debug = options.debug ? true : false;
 	
@@ -61,12 +62,30 @@ com.hiyoko.tofclient.Table = function(tof, interval, options){
 					$(document.activeElement).is('#tofChat-table-display textarea') ||
 					$('.tofChat-table-display-serverImageList').filter(function(i, dom){
 						return $(dom).css('display') === 'block'
+					}).length ||
+					$('.' + id + '-display-serverImageUpload-selectpic').filter(function(i, dom){
+						return $(dom).prop('files')[0];
 					}).length ) {
 					return;
 				}
 				$read.click();
 			}, interval);
 		}
+		$disp.on(com.hiyoko.tof.ImageUploader.Events.REQUEST, function(e) {
+			tof.uploadPicture(e.resolve, e.reject, e);
+		});
+		$disp.on(com.hiyoko.tof.ImageUploader.Events.DONE, function(e) {
+			alert('画像の変更に成功しました。');
+			$(e.target).trigger(new $.Event(com.hiyoko.tofclient.Table.ImageChangeRequestFromChild, {url: e.fileName}));
+		});
+		$disp.on(com.hiyoko.tof.ImageUploader.Events.NO_PATH, function(e) {
+			alert('画像のアップロードを試みました。\nタグとして ' + e.params.tags + ' が付与されています。\n他ユーザに画像の確認と設定を依頼してください\n\n' +
+					'もしされていなかったら?\n画像のサイズが大きすぎるかもしれません。小さくリサイズしてやり直してください。');
+			$read.click();
+		});
+		$disp.on(com.hiyoko.tof.ImageUploader.Events.FAIL, function(e) {
+			alert(e.message);
+		});
 		// 少し時間をおいてロードしないと先頭項目のチェックボックスが変になる
 		window.setTimeout(function(){
 			$read.click();
@@ -140,11 +159,14 @@ com.hiyoko.tofclient.Table = function(tof, interval, options){
 			} else {
 				keysV.push(v);
 			}
-		})
+		});
 
 		$table = drawAccordion(keysV, keysB, list);
-
 		$disp.append($table);
+		
+		$('.' + id + '-display-serverImageUpload').each(function(i) {
+			new com.hiyoko.tof.ImageUploader($(this), {tags: 'キャラクター画像 ひよんとふ ' + list[i].name})
+		});
 	};
 	
 	var drawAccordion = function(keysV, keysB, list) {
@@ -201,13 +223,11 @@ com.hiyoko.tofclient.Table = function(tof, interval, options){
 				$ct.append($tr);
 			});
 			
+			var $picTr = $('<tr></tr>');
+			$picTr.append('<th>画像</th>');
+			var $picTd = $('<td></td>');
 			if(outerImage || serverImageButton) {
-				var $picTr = $('<tr></tr>');
-				$picTr.append('<th>画像</th>');
-				
-				var $picTd = $('<td></td>');
 				var $picInput = $('<input />');
-				
 				$picInput.attr({
 					name: 'image',
 					type: 'text',
@@ -216,10 +236,11 @@ com.hiyoko.tofclient.Table = function(tof, interval, options){
 				});
 				$picTd.append($picInput);
 				$picTd.append(serverImageButton);
-				$picTr.append($picTd);
-				$ct.append($picTr);
+				$picTd.append('<hr/>');
 			}
-			
+			$picTd.append(com.hiyoko.tofclient.Table.getImageUploaderDom(id + '-display-serverImageUpload-' + i, id + '-display-serverImageUpload'));
+			$picTr.append($picTd);
+			$ct.append($picTr);
 			$ct.append("<tr><th>その他</th>"
 						+ "<td><textarea name='info'>" + c.info + "</textarea></td></tr>");
 			$ct.change(function(e){
@@ -231,7 +252,7 @@ com.hiyoko.tofclient.Table = function(tof, interval, options){
 				}
 				$tag.css('opacity', '0').animate({opacity:'1'}, 800);
 			});
-			$ct.on('ServerImageListSelect', function(e){
+			$ct.on(com.hiyoko.tofclient.Table.ImageChangeRequestFromChild, function(e){
 				var $image = $ct.find('input[name="image"]');
 				$image.val(e.url);
 				$image.change();
@@ -250,8 +271,17 @@ com.hiyoko.tofclient.Table = function(tof, interval, options){
 					com.hiyoko.tof.getImageJsonUrl(tof.getStatus().url),
 					tof.getStatus().url.replace('DodontoFServer.rb?', ''));
 		}
-		
 	});
 	
 	this.init();
+};
+
+com.hiyoko.tofclient.Table.ImageChangeRequestFromChild = 'ServerImageListSelect';
+
+com.hiyoko.tofclient.Table.getImageUploaderDom = function(id, clazz) {
+	return '<div id="' + id + '" class="' + clazz + '">' +
+	'<input type="file" id="' + id + '-selectpic" class="' + clazz + '-selectpic" name="fileData" accept="image/*">' +
+	'<input id="' + id + '-tags" class="' + clazz + '-tags" value="" />' +
+	'<canvas id="' + id + '-canvas" class="' + clazz + '-canvas"></canvas><br/>' +
+	'<button id="' + id + '-upload" class="' + clazz + '-upload">アップロードする</button></div>';
 };
