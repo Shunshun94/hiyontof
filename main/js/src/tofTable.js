@@ -71,6 +71,20 @@ com.hiyoko.tofclient.Table = function(tof, interval, options){
 				$read.click();
 			}, interval);
 		}
+		$disp.on(com.hiyoko.tof.ImageUploader.Events.REQUEST, function(e) {
+			tof.uploadPicture(e.resolve, e.reject, e);
+		});
+		$disp.on(com.hiyoko.tof.ImageUploader.Events.DONE, function(e) {
+			alert('画像の変更に成功しました。');
+			$(e.target).trigger(new $.Event(com.hiyoko.tofclient.Table.ImageChangeRequestFromChild, {url: e.fileName}));
+		});
+		$disp.on(com.hiyoko.tof.ImageUploader.Events.NO_PATH, function(e) {
+			alert('画像のアップロードに成功しました。\nタグとして ' + e.params.tags + ' が付与されています。\n他ユーザに画像の設定を依頼してください');
+			$read.click();
+		});
+		$disp.on(com.hiyoko.tof.ImageUploader.Events.FAIL, function(e) {
+			alert(e.message);
+		});
 		// 少し時間をおいてロードしないと先頭項目のチェックボックスが変になる
 		window.setTimeout(function(){
 			$read.click();
@@ -240,7 +254,7 @@ com.hiyoko.tofclient.Table = function(tof, interval, options){
 				}
 				$tag.css('opacity', '0').animate({opacity:'1'}, 800);
 			});
-			$ct.on('ServerImageListSelect', function(e){
+			$ct.on(com.hiyoko.tofclient.Table.ImageChangeRequestFromChild, function(e){
 				var $image = $ct.find('input[name="image"]');
 				$image.val(e.url);
 				$image.change();
@@ -259,16 +273,17 @@ com.hiyoko.tofclient.Table = function(tof, interval, options){
 					com.hiyoko.tof.getImageJsonUrl(tof.getStatus().url),
 					tof.getStatus().url.replace('DodontoFServer.rb?', ''));
 		}
-		
 	});
 	
 	this.init();
 };
 
+com.hiyoko.tofclient.Table.ImageChangeRequestFromChild = 'ServerImageListSelect';
+
 com.hiyoko.tofclient.Table.getImageUploaderDom = function(id, clazz) {
 	return '<div id="' + id + '" class="' + clazz + '">' +
 	'<input type="file" id="' + id + '-selectpic" class="' + clazz + '-selectpic" name="fileData" accept="image/*">' +
 	'<input id="' + id + '-tags" class="' + clazz + '-tags" value="" />' +
-	'<canvas id="' + id + '-canvas" class="' + clazz + '-canvas"></canvas>' +
+	'<canvas id="' + id + '-canvas" class="' + clazz + '-canvas"></canvas><br/>' +
 	'<button id="' + id + '-upload" class="' + clazz + '-upload">アップロードする</button></div>';
 };
