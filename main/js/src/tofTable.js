@@ -79,7 +79,8 @@ com.hiyoko.tofclient.Table = function(tof, interval, options){
 			$(e.target).trigger(new $.Event(com.hiyoko.tofclient.Table.ImageChangeRequestFromChild, {url: e.fileName}));
 		});
 		$disp.on(com.hiyoko.tof.ImageUploader.Events.NO_PATH, function(e) {
-			alert('画像のアップロードに成功しました。\nタグとして ' + e.params.tags + ' が付与されています。\n他ユーザに画像の設定を依頼してください');
+			alert('画像のアップロードを試みました。\nタグとして ' + e.params.tags + ' が付与されています。\n他ユーザに画像の確認と設定を依頼してください\n\n' +
+					'もしされていなかったら?\n画像のサイズが大きすぎるかもしれません。小さくリサイズしてやり直してください。');
 			$read.click();
 		});
 		$disp.on(com.hiyoko.tof.ImageUploader.Events.FAIL, function(e) {
