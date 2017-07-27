@@ -135,9 +135,6 @@ com.hiyoko.tofclient.Table = function(tof, interval, options){
 				"キャラクター追加</div>");
 		button.click(addCharacter);
 		$disp.append(button);
-		$('.' + id + '-display-serverImageUpload').each(function(i) {
-			
-		})
 	};
 	
 	var rendCharacterTable = function(charCandidates){
