@@ -706,6 +706,11 @@ span.tofChat-chat-submenu-list-item {
 	width: 40px;
 }
 
+.tofChat-table-display-serverImageUpload-tags,
+.tofChat-table-display-serverImageUpload-canvas {
+	display:none;
+}
+
 .tofChat-table-display-serverImageButton {
 	text-align:center;
 	vertical-align:bottom;
