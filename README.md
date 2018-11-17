@@ -22,7 +22,7 @@ HTML/JS で動くスマートフォン向けどどんとふクライアントで
 
 ### ガイド
 
-[https://shunshun94.github.io/hiyontof/](docs) 掲載の
+[https://shunshun94.github.io/hiyontof/](docs) 掲載のこかげ BLOG から転載した手順を使うと容易に設置ができます。
 
 ### 設定を書き換える
 
