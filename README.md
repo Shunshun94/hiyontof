@@ -22,9 +22,7 @@ HTML/JS で動くスマートフォン向けどどんとふクライアントで
 
 ### ガイド
 
-[超簡単 どどんとふ設置マニュアル | こかげ工房](https://cokage.works/trpg/dodontof_installer/) の手順に従えばさくらのレンタルサーバ限定ですが、どどんとふとひよんとふを簡単にセットアップできます。
-
-また、 [超簡単 どどんとふメンテナンスマニュアル | こかげ工房](https://cokage.works/trpg/dodontof_maintenance/) の手順に従うことでバージョンアップも容易にできます。
+[https://shunshun94.github.io/hiyontof/](docs) 掲載のこかげ BLOG から転載した手順を使うと容易に設置ができます。
 
 ### 設定を書き換える
 
@@ -188,6 +186,4 @@ MIT ライセンスです。
 ### 設置サーバ (直接連絡を頂いたもののみ)
 
 - [http://sy17.sakura.ne.jp/shunshun/tofChatProto.html](http://sy17.sakura.ne.jp/shunshun/tofChatProto.html)
-- [https://www.taruki.com/](https://www.taruki.com/)
-- [https://cokage.works/](https://cokage.works/)
-
+- [https://dodontof.onlinesession.app/hiyontof/hiyontof.html](https://dodontof.onlinesession.app/hiyontof/hiyontof.html)
