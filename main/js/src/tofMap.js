@@ -246,27 +246,20 @@ com.hiyoko.tofclient.Map.MapBack = function($base) {
 	function drawMap(mapData){
 		var backgroundColors = mapData.mapMarks;
 		var $map = $("<div id='" + id + "-map'></div>");
+		var isBGColor = (Boolean(backgroundColors) && backgroundColors.length !== 0);
 
-		if(backgroundColors && backgroundColors.length !== 0){
-			$.each(backgroundColors, function(ia, boxs){
-				var $tr = $("<div class='" + id + "-line'></div>");
-				$.each(boxs, function(ib, box){
-					var $sq = $("<div class='" + id + "-box'></div>");
-					$sq.css("background-color", intToColor(box));
-					$tr.append($sq);
-				});
-				$map.append($tr);
-			});
-		} else {
-			for(var i = 0; i < mapData.yMax; i++) {
-				var $tr = $("<div class='" + id + "-line'></div>");
-				for(var j = 0; j < mapData.xMax; j++) {
-					var $sq = $("<div class='" + id + "-box'></div>");
-					$tr.append($sq);					
+		for(var i = 0; i < mapData.yMax; i++) {
+			var $tr = $("<div class='" + id + "-line'></div>");
+			for(var j = 0; j < mapData.xMax; j++) {
+				var $sq = $("<div class='" + id + "-box'></div>");
+				if(isBGColor && backgroundColors[i] && backgroundColors[i][j]) {
+					$sq.css("background-color", intToColor(backgroundColors[i][j]));
 				}
-				$map.append($tr);
+				$tr.append($sq);
 			}
+			$map.append($tr);
 		}
+
 		$base.append($map);
 		$("." + id + "-box").css("opacity", mapData.mapMarksAlpha);
 		$("." + id + "-box").css("width", boxSize + "px");
